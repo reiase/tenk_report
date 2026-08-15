@@ -1,0 +1,20 @@
+# 实验记录
+
+每项实验使用目录 `experiments/exp-NNN-short-name/`，从 [实验模板](../templates/experiment.md) 创建 `README.md`。建议结构：
+
+```text
+exp-001-scaling/
+├── README.md
+├── config/       # 脱敏后的运行配置
+├── scripts/      # 运行与处理脚本
+├── summary/      # 可入库的聚合数据
+└── figures/      # 由数据生成的图表
+```
+
+大型原始日志通常不直接提交 Git；在实验 README 中记录受控存储位置、哈希和保留期限。
+
+## 索引
+
+| 编号 | 实验 | 状态 | 负责人 | 日期 | 对应章节 |
+| --- | --- | --- | --- | --- | --- |
+| EXP-001 | 待登记 | 计划中 | 待认领 | 待确定 | 待关联 |
