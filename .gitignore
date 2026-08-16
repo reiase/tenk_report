@@ -7,3 +7,8 @@
 # Local build output
 build/
 site/
+
+# Python and Zensical caches
+.venv/
+__pycache__/
+.cache/

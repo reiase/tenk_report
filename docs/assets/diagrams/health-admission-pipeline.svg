@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">训练资源健康准入与异常闭环</title>
+  <desc id="desc">资产快照依次经过静态、动态、单卡、成对硬件与链路、目标节点和真实训练拓扑检查。功能失败进入隔离和修正，性能候选冻结条件复测并交由人工或厂商复核。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .box { fill: #fff; stroke: #88a5b5; stroke-width: 2; rx: 11; }
+      .pass { fill: #e5f5f5; stroke: #087f8c; }
+      .warn { fill: #fff5e8; stroke: #b87825; }
+      .fail { fill: #fbeeee; stroke: #a95454; }
+      .label { font-size: 15px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #586f7f; }
+      .line { fill: none; stroke: #46728f; stroke-width: 2.2; marker-end: url(#arrow); }
+      .fail-line { stroke: #a95454; }
+      .warn-line { stroke: #b87825; }
+      .edge { font-size: 13px; font-weight: 650; }
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="54" y="55">训练资源健康准入与异常闭环</text>
+  <text class="minor" x="54" y="82">每一级只回答其覆盖范围内的问题；性能偏离先复测，不与功能故障混为一类。</text>
+
+  <g transform="translate(35 140)"><rect class="box" width="135" height="86"/><text class="label" x="67" y="36" text-anchor="middle">资产与作业</text><text class="label" x="67" y="59" text-anchor="middle">快照</text></g>
+  <g transform="translate(195 140)"><rect class="box" width="125" height="86"/><text class="label" x="62" y="49" text-anchor="middle">静态检查</text></g>
+  <g transform="translate(345 140)"><rect class="box" width="135" height="86"/><text class="label" x="67" y="37" text-anchor="middle">单节点</text><text class="label" x="67" y="60" text-anchor="middle">动态检查</text></g>
+  <g transform="translate(505 140)"><rect class="box" width="150" height="86"/><text class="label" x="75" y="36" text-anchor="middle">单卡计算与存储</text><text class="label" x="75" y="59" text-anchor="middle">可靠性测试</text></g>
+  <g transform="translate(680 140)"><rect class="box" width="150" height="86"/><text class="label" x="75" y="36" text-anchor="middle">成对硬件与</text><text class="label" x="75" y="59" text-anchor="middle">链路筛查</text></g>
+  <g transform="translate(855 140)"><rect class="box" width="140" height="86"/><text class="label" x="70" y="37" text-anchor="middle">目标节点</text><text class="label" x="70" y="60" text-anchor="middle">精确准入</text></g>
+  <g transform="translate(1020 140)"><rect class="box pass" width="145" height="86"/><text class="label" x="72" y="36" text-anchor="middle">真实训练拓扑</text><text class="label" x="72" y="59" text-anchor="middle">验收</text></g>
+  <path class="line" d="M170 183 H194"/><path class="line" d="M320 183 H344"/><path class="line" d="M480 183 H504"/><path class="line" d="M655 183 H679"/><path class="line" d="M830 183 H854"/><path class="line" d="M995 183 H1019"/>
+
+  <g transform="translate(930 310)"><rect class="box pass" width="235" height="82"/><text class="label" x="117" y="34" text-anchor="middle">训练复现或正式训练</text><text class="minor" x="117" y="59" text-anchor="middle">保留拓扑与证据快照</text></g>
+  <path class="line" d="M1092 226 V280 H1048 V309"/>
+
+  <g transform="translate(560 335)"><rect class="box warn" width="245" height="86"/><text class="label" x="122" y="35" text-anchor="middle">冻结物理条件复测</text><text class="minor" x="122" y="61" text-anchor="middle">同 cohort · 同用例 · 同版本</text></g>
+  <path class="line warn-line" d="M755 226 V290 H682 V334"/><text class="edge" x="766" y="278" fill="#9a641e">性能候选</text>
+  <g transform="translate(560 500)"><rect class="box warn" width="245" height="82"/><text class="label" x="122" y="34" text-anchor="middle">人工或厂商复核</text><text class="minor" x="122" y="59" text-anchor="middle">确认硬件、链路或环境原因</text></g>
+  <path class="line warn-line" d="M682 421 V499"/><text class="edge" x="695" y="465" fill="#9a641e">持续偏离</text>
+
+  <g transform="translate(205 340)"><rect class="box fail" width="190" height="78"/><text class="label" x="95" y="47" text-anchor="middle">隔离异常资源</text></g>
+  <path class="line fail-line" d="M257 226 V339"/><path class="line fail-line" d="M412 226 V280 H300 V339"/><path class="line fail-line" d="M580 226 V300 H395"/><path class="line fail-line" d="M755 226 V300 H395"/>
+  <text class="edge" x="410" y="290" fill="#9b4b4b">功能失败</text>
+  <g transform="translate(205 505)"><rect class="box fail" width="190" height="78"/><text class="label" x="95" y="35" text-anchor="middle">维修或配置修正</text><text class="minor" x="95" y="59" text-anchor="middle">形成处置记录</text></g>
+  <path class="line fail-line" d="M300 418 V504"/>
+  <path class="line fail-line" d="M205 544 H125 V270 H257 V227"/>
+  <text class="minor" x="78" y="410" transform="rotate(-90 78 410)">修正后从静态检查重新进入</text>
+</svg>

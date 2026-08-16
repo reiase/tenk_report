@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">训练资源工程验证闭环</title>
+  <desc id="desc">资源依次经过快速筛查、完整健康检查、小规模训练基线、调优和逐级扩容；达到性能与稳定性门限后扩展，未达到则返回故障定位和重新筛查。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .box { fill: #fff; stroke: #8aa5b5; stroke-width: 2; rx: 11; }
+      .gate { fill: #e5f5f5; stroke: #087f8c; stroke-width: 2.2; }
+      .label { font-size: 16px; font-weight: 650; }
+      .minor { font-size: 14px; fill: #597181; }
+      .line { fill: none; stroke: #46728f; stroke-width: 2.3; marker-end: url(#arrow); }
+      .pass { fill: #087f8c; font-size: 14px; font-weight: 650; }
+      .fail { fill: #a24b4b; font-size: 14px; font-weight: 650; }
+    </style>
+  </defs>
+  <rect width="1200" height="560" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="54" y="55">从资产准入到规模扩展的工程闭环</text>
+  <g transform="translate(50 115)"><rect class="box" width="150" height="72"/><text class="label" x="75" y="43" text-anchor="middle">资产入池</text></g>
+  <g transform="translate(240 115)"><rect class="box" width="150" height="72"/><text class="label" x="75" y="34" text-anchor="middle">快速筛查</text><text class="minor" x="75" y="56" text-anchor="middle">淘汰明显异常</text></g>
+  <g transform="translate(430 115)"><rect class="box" width="170" height="72"/><text class="label" x="85" y="34" text-anchor="middle">完整健康检查</text><text class="minor" x="85" y="56" text-anchor="middle">冻结证据与状态</text></g>
+  <g transform="translate(640 115)"><rect class="box" width="160" height="72"/><text class="label" x="80" y="43" text-anchor="middle">训练资源池</text></g>
+  <g transform="translate(840 115)"><rect class="box" width="200" height="72"/><text class="label" x="100" y="34" text-anchor="middle">小规模 Megatron</text><text class="minor" x="100" y="56" text-anchor="middle">性能与正确性基线</text></g>
+  <path class="line" d="M200 151 H239"/><path class="line" d="M390 151 H429"/><path class="line" d="M600 151 H639"/><path class="line" d="M800 151 H839"/>
+
+  <g transform="translate(770 270)"><rect class="box" width="270" height="76"/><text class="label" x="135" y="34" text-anchor="middle">算子 · 并行 · 通信调优</text><text class="minor" x="135" y="58" text-anchor="middle">固定变量，小步 A/B</text></g>
+  <g transform="translate(510 270)"><rect class="box" width="190" height="76"/><text class="label" x="95" y="34" text-anchor="middle">逐级扩容</text><text class="minor" x="95" y="58" text-anchor="middle">规模阶梯验证</text></g>
+  <path class="line" d="M940 187 V225 H905 V269"/><path class="line" d="M770 308 H701"/>
+
+  <polygon class="gate" points="360,260 465,308 360,356 255,308"/>
+  <text class="label" x="360" y="302" text-anchor="middle">性能与稳定性</text><text class="label" x="360" y="326" text-anchor="middle">门限</text>
+  <path class="line" d="M510 308 H466"/>
+
+  <g transform="translate(50 272)"><rect class="box" width="155" height="72"/><text class="label" x="77" y="34" text-anchor="middle">定位异常</text><text class="minor" x="77" y="56" text-anchor="middle">卡 · 链路 · 配置</text></g>
+  <path class="line" d="M255 308 H206"/><text class="fail" x="216" y="292">未通过</text>
+  <path class="line" d="M127 272 V232 H315 V188"/><text class="minor" x="170" y="223">修正后重新筛查</text>
+
+  <g transform="translate(285 430)"><rect class="box gate" width="260" height="72"/><text class="label" x="130" y="34" text-anchor="middle">进入下一级规模</text><text class="minor" x="130" y="57" text-anchor="middle">保留基线、门限与证据</text></g>
+  <path class="line" d="M360 356 V429"/><text class="pass" x="376" y="397">通过</text>
+</svg>

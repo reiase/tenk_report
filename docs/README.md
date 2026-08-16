@@ -4,26 +4,48 @@
 
 | 编号 | 章节 | 负责人 | 评审者 | 状态 |
 | --- | --- | --- | --- | --- |
-| 00 | [执行摘要](00-executive-summary.md) | 待认领 | 待指定 | 未开始 |
-| 01 | [背景、目标与边界](01-background-and-goals.md) | 待认领 | 待指定 | 未开始 |
-| 02 | [系统总体架构](02-system-architecture.md) | 待认领 | 待指定 | 未开始 |
-| 03 | [加速卡与软件栈](03-accelerator-and-software-stack.md) | 待认领 | 待指定 | 未开始 |
-| 04 | [集群、网络与存储](04-cluster-network-storage.md) | 待认领 | 待指定 | 未开始 |
-| 05 | [训练系统与并行策略](05-training-and-parallelism.md) | 待认领 | 待指定 | 未开始 |
-| 06 | [稳定性、容错与可观测性](06-reliability-and-observability.md) | 待认领 | 待指定 | 未开始 |
-| 07 | [评测方法与实验设计](07-evaluation-methodology.md) | 待认领 | 待指定 | 未开始 |
-| 08 | [结果与分析](08-results-and-analysis.md) | 待认领 | 待指定 | 未开始 |
+| 00 | [执行摘要](00-executive-summary.md) | 待认领 | 待指定 | 撰写中 |
+| 01 | [背景、目标与边界](01-background-and-goals.md) | 待认领 | 待指定 | 撰写中 |
+| 02 | [系统总体架构](02-system-architecture.md) | 待认领 | 待指定 | 撰写中 |
+| 03 | [加速卡与软件栈](03-accelerator-and-software-stack.md) | 待认领 | 待指定 | 撰写中 |
+| 04 | [集群、网络与存储](04-cluster-network-storage.md) | 待认领 | 待指定 | 撰写中 |
+| 04A | [A3 HCCL 通信优化与超节点亲和性调度](04a-a3-hccl-communication-optimization.md) | 待认领 | 待指定 | 撰写中 |
+| 05 | [Megatron 训练系统与并行调优](05-training-and-parallelism.md) | 待认领 | 待指定 | 撰写中 |
+| 06 | [筛卡、健康检查与稳定性](06-reliability-and-observability.md) | 待认领 | 待指定 | 撰写中 |
+| 06A | [训练通信观测与多加速卡兼容设计](06a-training-communication-observability.md) | 待认领 | 待指定 | 撰写中 |
+| 07 | [线性加速比与实验设计](07-evaluation-methodology.md) | 待认领 | 待指定 | 撰写中 |
+| 08 | [结果与分析](08-results-and-analysis.md) | 待认领 | 待指定 | 撰写中（待导入数据） |
 | 09 | [成本、能耗与资源效率](09-cost-energy-efficiency.md) | 待认领 | 待指定 | 未开始 |
-| 10 | [问题、经验与工程实践](10-lessons-learned.md) | 待认领 | 待指定 | 未开始 |
+| 10 | [问题、经验与工程实践](10-lessons-learned.md) | 待认领 | 待指定 | 撰写中 |
 | 11 | [结论与后续工作](11-conclusion-and-future-work.md) | 待认领 | 待指定 | 未开始 |
-| A | [术语与缩略语](appendix-a-glossary.md) | 待认领 | 待指定 | 未开始 |
-| B | [复现实验清单](appendix-b-reproducibility.md) | 待认领 | 待指定 | 未开始 |
+| A | [术语与缩略语](appendix-a-glossary.md) | 待认领 | 待指定 | 撰写中 |
+| B | [复现实验清单](appendix-b-reproducibility.md) | 待认领 | 待指定 | 撰写中 |
 | C | [版本与变更记录](appendix-c-revision-history.md) | 待认领 | 待指定 | 撰写中 |
 
 ## 阅读路径
 
 - 决策者：00 → 01 → 08 → 09 → 11
-- 系统工程：02 → 04 → 05 → 06 → 10
-- 性能复核：03 → 07 → 08 → 附录 B → `experiments/`
+- 系统工程：02 → 04 → 04A → 05 → 06 → 06A → 10
+- 性能复核：03 → 04A → 06A → 07 → 08 → 附录 B → `experiments/`
+
+## 当前技术主线
+
+报告围绕两个独立硬件资源池和三项核心工程工作展开：
+
+1. **筛卡与健康检查**：建立节点准入、运行中巡检、异常隔离和恢复后复验闭环。
+2. **Megatron 调优**：针对两套软硬件栈分别完成算子、并行、显存、通信和调度优化。
+3. **线性加速比控制**：从小规模基线逐级放大，以扩展效率作为每一级扩容的准入指标。
+
+两类加速卡的性能和扩展效率分别建模、分别报告，不将异构卡数简单相加后计算单一吞吐指标。
+
+观测不是第四条独立业务主线，而是贯穿三项工作的证据层：常驻路径保存低成本训练坐标和趋势，异常窗口再下钻到 module、collective、通信 task、kernel 或 stack；所有跨 rank 结果同时披露覆盖、丢弃、partial 和开销。
+
+## 当前证据成熟度
+
+- 已有：结构化实验条件、单节点与单卡筛查、物理拓扑感知的成对检查、精确节点准入、真实训练通信组定义、存活监控和多集群方法设计。
+- 待导入：历史两节点 C550 与 32 节点拓扑试验的原始测量和完整运行条件。
+- 待执行：2,048 卡 C550、8,192 卡 A3 的分池准入与 Megatron 扩展实验。
+
+因此，06、07、10 和附录 B 目前已具备方法评审基础；08 只能评审结果表结构，不能评审生产性能结论。指定负责人和评审者后，再把相应状态更新为“待评审”。
 
 章节之间通过相对链接互相引用。不要复制同一份表格或数字；指定一个权威位置，其他章节链接过去。

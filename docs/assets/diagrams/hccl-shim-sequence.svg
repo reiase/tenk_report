@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc">
+  <title id="title">HCCL MSProf shim 采集与转发时序</title>
+  <desc id="desc">HCCL runtime 调用 Probing 的 libprofapi shim，shim 校验并分类事件，追加本进程事实，同时将原参数转发到真实 CANN libprofapi，最后保持原返回语义返回 HCCL。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
+    <marker id="arrow-dash" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#778d9b"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .actor { fill: #fff; stroke: #7c9aaa; stroke-width: 2; rx: 10; }
+      .shim { fill: #e5f5f5; stroke: #087f8c; }
+      .store { fill: #edf2fa; stroke: #446f96; }
+      .label { font-size: 15px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #587080; }
+      .life { stroke: #9cb0bd; stroke-width: 1.7; stroke-dasharray: 7 7; }
+      .msg { stroke: #46728f; stroke-width: 2.2; marker-end: url(#arrow); }
+      .return { stroke: #778d9b; stroke-width: 2; stroke-dasharray: 7 5; marker-end: url(#arrow-dash); }
+      .self { fill: none; stroke: #087f8c; stroke-width: 2.2; marker-end: url(#arrow); }
+      .step { fill: #102f49; }
+      .steptext { fill: #fff; font-size: 12px; font-weight: 700; }
+      .note { fill: #eef3f7; stroke: #b6c6d0; rx: 8; }
+    </style>
+  </defs>
+  <rect width="1200" height="690" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="54" y="52">HCCL MSProf shim：本地采集与透明转发</text>
+  <g transform="translate(55 90)"><rect class="actor" width="210" height="64"/><text class="label" x="105" y="29" text-anchor="middle">HCCL runtime</text><text class="minor" x="105" y="51" text-anchor="middle">调用既有 MSProf ABI</text></g>
+  <g transform="translate(350 90)"><rect class="actor shim" width="245" height="64"/><text class="label" x="122" y="29" text-anchor="middle">Probing libprofapi.so shim</text><text class="minor" x="122" y="51" text-anchor="middle">边缘适配器</text></g>
+  <g transform="translate(680 90)"><rect class="actor store" width="200" height="64"/><text class="label" x="100" y="29" text-anchor="middle">hccl.* mmap tables</text><text class="minor" x="100" y="51" text-anchor="middle">本进程事实</text></g>
+  <g transform="translate(965 90)"><rect class="actor" width="190" height="64"/><text class="label" x="95" y="29" text-anchor="middle">CANN libprofapi.so</text><text class="minor" x="95" y="51" text-anchor="middle">真实厂商库</text></g>
+  <line class="life" x1="160" y1="154" x2="160" y2="630"/><line class="life" x1="472" y1="154" x2="472" y2="630"/><line class="life" x1="780" y1="154" x2="780" y2="630"/><line class="life" x1="1060" y1="154" x2="1060" y2="630"/>
+
+  <circle class="step" cx="100" cy="220" r="14"/><text class="steptext" x="100" y="224" text-anchor="middle">1</text><line class="msg" x1="160" y1="220" x2="465" y2="220"/>
+  <text class="label" x="312" y="203" text-anchor="middle">MsprofReportApi / CompactInfo / AdditionalInfo</text>
+
+  <circle class="step" cx="412" cy="290" r="14"/><text class="steptext" x="412" y="294" text-anchor="middle">2</text><path class="self" d="M472 290 H585 V335 H480"/>
+  <text class="label" x="600" y="306">校验长度 · 分类事件 · 解析字段</text>
+
+  <circle class="step" cx="412" cy="395" r="14"/><text class="steptext" x="412" y="399" text-anchor="middle">3</text><line class="msg" x1="472" y1="395" x2="773" y2="395"/>
+  <text class="label" x="622" y="378" text-anchor="middle">追加本进程事实</text>
+  <rect class="note" x="620" y="420" width="320" height="55"/>
+  <text class="minor" x="780" y="443" text-anchor="middle">每张表独立、延迟打开</text><text class="minor" x="780" y="463" text-anchor="middle">单表失败不阻断真实调用</text>
+
+  <circle class="step" cx="412" cy="515" r="14"/><text class="steptext" x="412" y="519" text-anchor="middle">4</text><line class="msg" x1="472" y1="515" x2="1053" y2="515"/>
+  <text class="label" x="766" y="498" text-anchor="middle">原参数转发同名调用</text>
+  <line class="return" x1="1060" y1="565" x2="479" y2="565"/><text class="minor" x="766" y="553" text-anchor="middle">保留真实库返回值</text>
+  <line class="return" x1="472" y1="615" x2="167" y2="615"/><text class="label" x="320" y="603" text-anchor="middle">按原调用语义返回 HCCL</text>
+</svg>

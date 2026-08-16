@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">异步操作的计时边界与前向进展观测</title>
+  <desc id="desc">图中区分 CPU 提交、运行时排队、设备执行和等待返回，并展示设备事件时间、完成时间、暴露等待以及重复同步间隔各自覆盖的范围。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#3e718d"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #587080; }
+      .lane { stroke: #9bb0bd; stroke-width: 1.5; }
+      .tick { stroke: #486f85; stroke-width: 2; }
+      .dash { stroke: #9bb0bd; stroke-width: 1.3; stroke-dasharray: 5 5; }
+      .cpu { fill: #e9f3f8; stroke: #3e718d; stroke-width: 2; rx: 8; }
+      .runtime { fill: #fff4de; stroke: #b7791f; stroke-width: 2; rx: 8; }
+      .device { fill: #e8f6f1; stroke: #27856d; stroke-width: 2; rx: 8; }
+      .wait { fill: #f4eaf7; stroke: #8755a6; stroke-width: 2; rx: 8; }
+      .box { fill: #fff; stroke: #9bb0bd; stroke-width: 1.7; rx: 10; }
+      .label { font-size: 16px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #587080; }
+      .bracket { fill: none; stroke-width: 4; stroke-linecap: round; }
+      .hosttime { stroke: #8755a6; }
+      .devtime { stroke: #27856d; }
+      .progress { stroke: #b8543c; }
+      .flow { fill: none; stroke: #3e718d; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1200" height="650" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="48" y="50">异步完成不是单一时间点</text>
+  <text class="subtitle" x="48" y="77">设备执行时间、端到端完成时间与消费点暴露等待回答不同问题</text>
+
+  <text class="label" x="48" y="137">CPU / 训练线程</text>
+  <line class="lane" x1="190" y1="132" x2="1140" y2="132"/>
+  <rect class="cpu" x="238" y="108" width="142" height="48"/><text class="minor" x="309" y="137" text-anchor="middle">submit API</text>
+  <rect class="cpu" x="480" y="108" width="180" height="48"/><text class="minor" x="570" y="137" text-anchor="middle">overlappable compute</text>
+  <rect class="wait" x="710" y="108" width="218" height="48"/><text class="minor" x="819" y="137" text-anchor="middle">consumer calls wait</text>
+  <rect class="cpu" x="978" y="108" width="116" height="48"/><text class="minor" x="1036" y="137" text-anchor="middle">consume</text>
+
+  <text class="label" x="48" y="237">运行时 / 驱动</text>
+  <line class="lane" x1="190" y1="232" x2="1140" y2="232"/>
+  <rect class="runtime" x="335" y="208" width="262" height="48"/><text class="minor" x="466" y="237" text-anchor="middle">queue · dependency · dispatch</text>
+  <rect class="runtime" x="835" y="208" width="182" height="48"/><text class="minor" x="926" y="237" text-anchor="middle">completion notify</text>
+
+  <text class="label" x="48" y="337">设备 stream</text>
+  <line class="lane" x1="190" y1="332" x2="1140" y2="332"/>
+  <rect class="device" x="520" y="308" width="330" height="48"/><text class="minor" x="685" y="337" text-anchor="middle">start event · operation · end event</text>
+
+  <line class="dash" x1="238" y1="88" x2="238" y2="370"/>
+  <line class="dash" x1="380" y1="88" x2="380" y2="370"/>
+  <line class="dash" x1="520" y1="88" x2="520" y2="370"/>
+  <line class="dash" x1="710" y1="88" x2="710" y2="370"/>
+  <line class="dash" x1="850" y1="88" x2="850" y2="370"/>
+  <line class="dash" x1="928" y1="88" x2="928" y2="370"/>
+  <path class="bracket devtime" d="M520 386 V398 H850 V386"/>
+  <text class="minor" x="685" y="420" text-anchor="middle">Tdevice：同一 stream 的 event 区间</text>
+  <path class="bracket hosttime" d="M380 437 V449 H928 V437"/>
+  <text class="minor" x="654" y="472" text-anchor="middle">Tcompletion：提交返回至 wait 返回</text>
+  <path class="bracket progress" d="M710 488 V500 H928 V488"/>
+  <text class="minor" x="819" y="523" text-anchor="middle">Texposed：消费点实际等待</text>
+
+  <g transform="translate(48 548)">
+    <rect class="box" width="1104" height="68"/>
+    <text class="label" x="22" y="28">重复完成观测</text>
+    <circle cx="222" cy="42" r="7" fill="#27856d"/><circle cx="382" cy="42" r="7" fill="#27856d"/><circle cx="652" cy="42" r="7" fill="#b8543c"/><circle cx="812" cy="42" r="7" fill="#27856d"/>
+    <path class="flow" d="M231 42 H371"/><path class="flow" d="M391 42 H641"/><path class="flow" d="M661 42 H801"/>
+    <text class="minor" x="302" y="28" text-anchor="middle">正常 gap</text>
+    <text class="minor" x="516" y="28" text-anchor="middle">长 gap：整条链路无可见前向进展</text>
+    <text class="minor" x="935" y="46">零通信时隔离单卡链路</text>
+  </g>
+</svg>

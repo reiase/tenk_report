@@ -1,0 +1,127 @@
+[project]
+site_name = "万卡国产加速卡训练技术报告"
+site_description = "面向万卡规模国产加速卡训练系统的架构、通信、可靠性与评测技术报告"
+site_author = "项目技术报告组"
+docs_dir = "docs"
+site_dir = "site"
+dev_addr = "127.0.0.1:8000"
+use_directory_urls = true
+copyright = "技术报告 · 内容以已评审版本和可追溯证据为准"
+extra_css = ["stylesheets/extra.css"]
+extra_javascript = [
+  "javascripts/mathjax.js",
+  "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
+]
+nav = [
+  { "报告入口" = "README.md" },
+  { "执行摘要" = "00-executive-summary.md" },
+  { "架构与硬件" = [
+    { "背景、目标与边界" = "01-background-and-goals.md" },
+    { "系统总体架构" = "02-system-architecture.md" },
+    { "加速卡与软件栈" = "03-accelerator-and-software-stack.md" },
+  ] },
+  { "通信与训练" = [
+    { "集群、网络与存储" = "04-cluster-network-storage.md" },
+    { "A3 HCCL 通信优化" = "04a-a3-hccl-communication-optimization.md" },
+    { "训练系统与并行策略" = "05-training-and-parallelism.md" },
+    { "训练通信观测" = "06a-training-communication-observability.md" },
+  ] },
+  { "可靠性与评测" = [
+    { "稳定性、容错与可观测性" = "06-reliability-and-observability.md" },
+    { "评测方法与实验设计" = "07-evaluation-methodology.md" },
+    { "结果与分析" = "08-results-and-analysis.md" },
+    { "成本、能耗与资源效率" = "09-cost-energy-efficiency.md" },
+  ] },
+  { "总结" = [
+    { "问题、经验与工程实践" = "10-lessons-learned.md" },
+    { "结论与后续工作" = "11-conclusion-and-future-work.md" },
+  ] },
+  { "证据与治理" = [
+    { "参考资料" = "references.md" },
+    { "实验记录" = "experiments.md" },
+    { "架构决策记录" = "decisions.md" },
+  ] },
+  { "附录" = [
+    { "术语与缩略语" = "appendix-a-glossary.md" },
+    { "复现实验清单" = "appendix-b-reproducibility.md" },
+    { "版本与变更记录" = "appendix-c-revision-history.md" },
+  ] },
+]
+
+[project.theme]
+variant = "modern"
+language = "zh"
+font = false
+features = [
+  "navigation.instant",
+  "navigation.tracking",
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.sections",
+  "navigation.path",
+  "navigation.top",
+  "navigation.footer",
+  "toc.follow",
+  "search.highlight",
+  "content.code.copy",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "跟随系统配色"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun"
+toggle.name = "切换到深色模式"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/moon"
+toggle.name = "切换到系统配色"
+
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.def_list]
+[project.markdown_extensions.footnotes]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.tables]
+
+[project.markdown_extensions.toc]
+permalink = true
+toc_depth = 3
+
+[project.markdown_extensions.toc.slugify]
+object = "pymdownx.slugs.slugify"
+kwds = { case = "lower" }
+
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.arithmatex]
+generic = true
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.superfences]
+
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+combine_header_slug = true
+
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
+
+[project.markdown_extensions.pymdownx.tilde]
