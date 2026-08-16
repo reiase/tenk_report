@@ -1,0 +1,137 @@
+:root {
+  --report-navy-900: #102f49;
+  --report-navy-700: #1b4f72;
+  --report-cyan-600: #087f8c;
+  --report-cyan-400: #22a6b3;
+  --report-line: #d8e2ea;
+  --md-primary-fg-color: var(--report-navy-900);
+  --md-primary-fg-color--light: var(--report-navy-700);
+  --md-primary-fg-color--dark: #0a2338;
+  --md-accent-fg-color: var(--report-cyan-600);
+  --md-text-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    sans-serif;
+  --md-code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+}
+
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: #f8fafc;
+  --md-default-fg-color: #182631;
+  --md-default-fg-color--light: #526574;
+  --md-default-fg-color--lighter: #718392;
+  --md-typeset-a-color: var(--report-cyan-600);
+  --md-code-bg-color: #eef3f7;
+  --md-code-fg-color: #18354a;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-hue: 210;
+  --md-primary-fg-color: #8bd4e1;
+  --md-primary-fg-color--light: #b5e7ef;
+  --md-primary-fg-color--dark: #54b8c8;
+  --md-accent-fg-color: #5eead4;
+  --md-typeset-a-color: #67d3df;
+  --md-default-bg-color: #0e1722;
+  --md-default-fg-color: #e1eaf0;
+  --md-code-bg-color: #152333;
+  --md-code-fg-color: #d9e7ef;
+}
+
+.md-grid {
+  max-width: 92rem;
+}
+
+.md-typeset {
+  font-size: 0.78rem;
+  line-height: 1.75;
+}
+
+.md-typeset h1 {
+  color: var(--md-default-fg-color);
+  font-weight: 720;
+  letter-spacing: -0.025em;
+  border-bottom: 1px solid color-mix(in srgb, var(--md-default-fg-color) 14%, transparent);
+  padding-bottom: 0.45rem;
+}
+
+.md-typeset h2 {
+  color: var(--md-default-fg-color);
+  font-weight: 680;
+  letter-spacing: -0.015em;
+  margin-top: 2.2em;
+}
+
+.md-typeset h3 {
+  font-weight: 650;
+}
+
+.md-typeset table:not([class]) {
+  border: 1px solid color-mix(in srgb, var(--md-default-fg-color) 14%, transparent);
+  border-radius: 0.35rem;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background: color-mix(in srgb, var(--md-primary-fg-color) 10%, var(--md-default-bg-color));
+  color: var(--md-default-fg-color);
+  font-weight: 650;
+}
+
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  border-color: color-mix(in srgb, var(--md-default-fg-color) 11%, transparent);
+  padding: 0.7em 0.9em;
+}
+
+.md-typeset code {
+  border-radius: 0.24rem;
+}
+
+.md-typeset pre > code {
+  line-height: 1.6;
+}
+
+.md-typeset .arithmatex {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.md-typeset .arithmatex mjx-container[display="true"] {
+  margin: 1.35rem 0;
+  padding: 0.25rem 0;
+}
+
+.md-typeset .arithmatex mjx-container:not([display="true"]) {
+  padding: 0 0.08em;
+}
+
+.md-typeset blockquote {
+  border-left-color: var(--md-accent-fg-color);
+  color: var(--md-default-fg-color--light);
+}
+
+.md-nav__link--active,
+.md-nav__link:is(:focus, :hover) {
+  color: var(--md-accent-fg-color);
+}
+
+.md-header,
+.md-tabs {
+  box-shadow: none;
+}
+
+.technical-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1.5rem auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 0.55rem color-mix(in srgb, var(--md-default-fg-color) 10%, transparent);
+}
+
+@media screen and (max-width: 76.234375em) {
+  .md-typeset {
+    font-size: 0.76rem;
+  }
+}

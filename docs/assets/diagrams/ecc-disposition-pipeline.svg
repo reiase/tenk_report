@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">ECC/RAS 信号进入训练系统决策的路径</title>
+  <desc id="desc">ECC/RAS 事实与单卡正确性、HBM、热态、长稳和通信证据在统一坐标下解释，形成数据正确性、前向进度和性能风险，最终作为精确训练节点集合的约束。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 14px; fill: #597181; }
+      .box { fill: #fff; stroke: #88a5b5; stroke-width: 2; rx: 12; }
+      .model { fill: #eef4f7; stroke: #46728f; stroke-width: 2.2; rx: 12; }
+      .correct { fill: #e9f6f6; stroke: #087f8c; stroke-width: 2; rx: 12; }
+      .progress { fill: #fff5e8; stroke: #b87825; stroke-width: 2; rx: 12; }
+      .integrity { fill: #fbeeee; stroke: #a95454; stroke-width: 2; rx: 12; }
+      .unknown { fill: #f2eef8; stroke: #765a9b; stroke-width: 2; rx: 12; }
+      .label { font-size: 16px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #597181; }
+      .line { fill: none; stroke: #46728f; stroke-width: 2.2; marker-end: url(#arrow); }
+      .edge { font-size: 13px; font-weight: 650; }
+    </style>
+  </defs>
+  <rect width="1200" height="820" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="52" y="52">ECC/RAS 信号如何进入训练系统决策</text>
+  <text class="subtitle" x="52" y="79">目标不是生成设备告警清单，而是约束结果可信度、rank 前向进度和固定 world size 的资源集合。</text>
+
+  <g transform="translate(40 125)">
+    <rect class="box" width="190" height="112"/>
+    <text class="label" x="95" y="33" text-anchor="middle">ECC/RAS 事实</text>
+    <text class="minor" x="95" y="59" text-anchor="middle">CE · UE/DBE · 隔离页</text>
+    <text class="minor" x="95" y="82" text-anchor="middle">计数 · 事件 · ECC 状态</text>
+  </g>
+  <g transform="translate(40 275)">
+    <rect class="box" width="190" height="145"/>
+    <text class="label" x="95" y="31" text-anchor="middle">工作负载证据</text>
+    <text class="minor" x="95" y="57" text-anchor="middle">数值正确性 · SDC</text>
+    <text class="minor" x="95" y="79" text-anchor="middle">HBM 带宽与数据模式</text>
+    <text class="minor" x="95" y="101" text-anchor="middle">功耗/热态 · 单卡长稳</text>
+    <text class="minor" x="95" y="123" text-anchor="middle">成对通信与拓扑</text>
+  </g>
+
+  <g transform="translate(285 125)">
+    <rect class="model" width="250" height="295"/>
+    <text class="label" x="125" y="34" text-anchor="middle">统一证据坐标</text>
+    <text class="minor" x="24" y="76">保护域：HBM / cache / link</text>
+    <text class="minor" x="24" y="108">空间：node / device / chip</text>
+    <text class="minor" x="24" y="140">时间：event / aggregate / delta</text>
+    <text class="minor" x="24" y="172">覆盖：expected / observed</text>
+    <line x1="24" y1="200" x2="226" y2="200" stroke="#b9c9d3"/>
+    <text class="minor" x="24" y="232">缺失 ≠ 0</text>
+    <text class="minor" x="24" y="260">累计值 ≠ 当前错误率</text>
+  </g>
+  <path class="line" d="M230 181 H284"/>
+  <path class="line" d="M230 347 H260 V330 H284"/>
+
+  <g transform="translate(585 125)">
+    <rect class="model" width="210" height="295"/>
+    <text class="label" x="105" y="34" text-anchor="middle">风险模型</text>
+    <text class="minor" x="105" y="72" text-anchor="middle">alert</text>
+    <text class="minor" x="105" y="96" text-anchor="middle">保留历史风险</text>
+    <line x1="28" y1="125" x2="182" y2="125" stroke="#b9c9d3"/>
+    <text class="minor" x="105" y="163" text-anchor="middle">strict</text>
+    <text class="minor" x="105" y="187" text-anchor="middle">提高正确性约束</text>
+    <line x1="28" y1="216" x2="182" y2="216" stroke="#b9c9d3"/>
+    <text class="minor" x="105" y="251" text-anchor="middle">关键事件不随</text>
+    <text class="minor" x="105" y="274" text-anchor="middle">策略放宽</text>
+  </g>
+  <path class="line" d="M535 272 H584"/>
+
+  <g transform="translate(850 105)"><rect class="correct" width="305" height="82"/><text class="label" x="152" y="31" text-anchor="middle">历史纠错风险</text><text class="minor" x="152" y="56" text-anchor="middle">累计 CE · 无窗口增量 · 工作负载正常</text></g>
+  <g transform="translate(850 215)"><rect class="progress" width="305" height="82"/><text class="label" x="152" y="31" text-anchor="middle">活动性故障候选</text><text class="minor" x="152" y="56" text-anchor="middle">计数增长 · 位置复发 · 热态/长稳异常</text></g>
+  <g transform="translate(850 325)"><rect class="integrity" width="305" height="82"/><text class="label" x="152" y="31" text-anchor="middle">正确性或前向进度硬风险</text><text class="minor" x="152" y="56" text-anchor="middle">DBE/UE · SDC · hang · persistent failure</text></g>
+  <path class="line" d="M795 180 H825 V146 H849"/>
+  <path class="line" d="M795 272 H849"/>
+  <path class="line" d="M795 360 H825 V366 H849"/>
+
+  <g transform="translate(285 490)"><rect class="unknown" width="250" height="100"/><text class="label" x="125" y="34" text-anchor="middle">证据不可判定</text><text class="minor" x="125" y="61" text-anchor="middle">查询、覆盖或时间语义不完整</text><text class="minor" x="125" y="82" text-anchor="middle">EVIDENCE_BLOCKED</text></g>
+  <path class="line" d="M410 420 V489"/>
+
+  <g transform="translate(625 490)">
+    <rect class="model" width="310" height="100"/>
+    <text class="label" x="155" y="34" text-anchor="middle">节点资源状态</text>
+    <text class="minor" x="155" y="61" text-anchor="middle">硬约束 + 风险向量 + 待验证约束</text>
+    <text class="minor" x="155" y="82" text-anchor="middle">保留 device / chip 解释粒度</text>
+  </g>
+  <path class="line" d="M1002 187 V450 H860 V489"/>
+  <path class="line" d="M1002 297 V465 H825 V489"/>
+  <path class="line" d="M1002 407 V480 H790 V489"/>
+
+  <g transform="translate(445 650)"><rect class="model" width="310" height="88"/><text class="label" x="155" y="34" text-anchor="middle">固定规模节点集合构造</text><text class="minor" x="155" y="61" text-anchor="middle">覆盖完整 · |S| = K · 拓扑约束 · 风险最小</text></g>
+  <path class="line" d="M780 590 V620 H650 V649"/>
+  <path class="line" d="M410 590 V620 H550 V649"/>
+
+  <g transform="translate(135 765)"><text class="edge" x="0" y="0" fill="#087f8c">OBSERVE_ELIGIBLE：参与风险排序</text></g>
+  <g transform="translate(445 765)"><text class="edge" x="0" y="0" fill="#b87825">RETEST_REQUIRED：验证完成前不候选</text></g>
+  <g transform="translate(800 765)"><text class="edge" x="0" y="0" fill="#a95454">HARD_EXCLUDED：正确性或进度硬失败</text></g>
+</svg>

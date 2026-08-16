@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Fleet-wide 观测、联邦查询与分布式火焰图</title>
+  <desc id="desc">每个 rank 在本地记录低密度事实，查询通过节点代理分层聚合；异常 rank 集合确定后才读取窄窗口折叠栈并合并为带 rank 覆盖的分布式火焰图。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 14px; fill: #597181; }
+      .lane { fill: #f1f5f8; stroke: #d1dce4; stroke-width: 1.5; rx: 12; }
+      .box { fill: #fff; stroke: #88a5b5; stroke-width: 2; rx: 10; }
+      .local { fill: #e9f6f6; stroke: #087f8c; stroke-width: 2; rx: 10; }
+      .query { fill: #edf2fa; stroke: #3f6f98; stroke-width: 2; rx: 10; }
+      .deep { fill: #fff5e8; stroke: #b87825; stroke-width: 2; rx: 10; }
+      .output { fill: #102f49; stroke: #102f49; stroke-width: 2; rx: 10; }
+      .label { font-size: 15px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #597181; }
+      .light { fill: #fff; }
+      .lane-title { font-size: 14px; font-weight: 700; fill: #4d6879; letter-spacing: .05em; }
+      .line { fill: none; stroke: #46728f; stroke-width: 2.2; marker-end: url(#arrow); }
+      .dash { stroke-dasharray: 7 6; }
+    </style>
+  </defs>
+  <rect width="1200" height="760" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="52" y="52">从 fleet-wide 常驻事实到分布式调用路径</text>
+  <text class="subtitle" x="52" y="79">全部 rank 参与低密度观测；跨层只交换当前问题所需的可归并状态，精确事件留给异常集合。</text>
+
+  <rect class="lane" x="35" y="105" width="1130" height="160"/>
+  <text class="lane-title" x="55" y="132">RANK 本地：常驻低密度事实</text>
+  <g transform="translate(85 155)"><rect class="local" width="205" height="75"/><text class="label" x="102" y="30" text-anchor="middle">rank 0</text><text class="minor" x="102" y="54" text-anchor="middle">step · module · collective</text></g>
+  <g transform="translate(365 155)"><rect class="local" width="205" height="75"/><text class="label" x="102" y="30" text-anchor="middle">rank 1 …</text><text class="minor" x="102" y="54" text-anchor="middle">有界 ring · 确定性采样</text></g>
+  <g transform="translate(645 155)"><rect class="local" width="205" height="75"/><text class="label" x="102" y="30" text-anchor="middle">rank N</text><text class="minor" x="102" y="54" text-anchor="middle">本地表 · 丢弃计数</text></g>
+  <g transform="translate(925 155)"><rect class="box" width="190" height="75"/><text class="label" x="95" y="30" text-anchor="middle">成员元数据</text><text class="minor" x="95" y="54" text-anchor="middle">异步心跳 · 收敛后退避</text></g>
+
+  <rect class="lane" x="35" y="290" width="1130" height="180"/>
+  <text class="lane-title" x="55" y="317">查询时：COORDINATOR → LOCAL0 → LEAF</text>
+  <g transform="translate(80 345)"><rect class="query" width="225" height="82"/><text class="label" x="112" y="31" text-anchor="middle">协调层</text><text class="minor" x="112" y="56" text-anchor="middle">成员快照 · 全局归并</text></g>
+  <g transform="translate(385 345)"><rect class="query" width="225" height="82"/><text class="label" x="112" y="31" text-anchor="middle">节点代理层</text><text class="minor" x="112" y="56" text-anchor="middle">合并本机 rank partial</text></g>
+  <g transform="translate(690 345)"><rect class="query" width="225" height="82"/><text class="label" x="112" y="31" text-anchor="middle">数据所在 rank</text><text class="minor" x="112" y="56" text-anchor="middle">filter · interval union · Top-K</text></g>
+  <g transform="translate(970 335)"><rect class="box" width="155" height="102"/><text class="label" x="77" y="28" text-anchor="middle">质量收据</text><text class="minor" x="77" y="52" text-anchor="middle">coverage</text><text class="minor" x="77" y="72" text-anchor="middle">partial · dropped</text><text class="minor" x="77" y="92" text-anchor="middle">exact · error</text></g>
+  <path class="line" d="M305 386 H384"/>
+  <path class="line" d="M610 386 H689"/>
+  <path class="line dash" d="M915 386 H969"/>
+
+  <rect class="lane" x="35" y="495" width="1130" height="215"/>
+  <text class="lane-title" x="55" y="522">逐级缩小：作业概览 → 异常集合 → 调用路径</text>
+  <g transform="translate(65 560)"><rect class="box" width="205" height="92"/><text class="label" x="102" y="31" text-anchor="middle">Step × Rank 概览</text><text class="minor" x="102" y="57" text-anchor="middle">P50/P95/Max · 尾部</text></g>
+  <g transform="translate(315 560)"><rect class="box" width="205" height="92"/><text class="label" x="102" y="31" text-anchor="middle">行为组与异常 Rank</text><text class="minor" x="102" y="57" text-anchor="middle">subject / reference cohort</text></g>
+  <g transform="translate(565 550)"><rect class="deep" width="220" height="112"/><text class="label" x="110" y="30" text-anchor="middle">窄窗口深度事实</text><text class="minor" x="110" y="56" text-anchor="middle">module · op · kernel</text><text class="minor" x="110" y="78" text-anchor="middle">rank 本地 folded stack</text></g>
+  <g transform="translate(830 550)"><rect class="output" width="285" height="112"/><text class="label light" x="142" y="30" text-anchor="middle">分布式火焰图</text><text class="minor light" x="142" y="56" text-anchor="middle">path weight · rank coverage</text><text class="minor light" x="142" y="78" text-anchor="middle">subject/reference · variance</text></g>
+  <path class="line" d="M270 606 H314"/>
+  <path class="line" d="M520 606 H564"/>
+  <path class="line" d="M785 606 H829"/>
+  <path class="line dash" d="M972 662 V685 H417 V653"/>
+
+  <text class="minor" x="52" y="735">常驻成本由 dispatch 与采样重路径分别测量；联邦查询和短窗口 profiler 的成本不计入同一个百分比。</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 330" role="img" aria-labelledby="title desc">
+  <title id="title">观测数据逐级下钻</title>
+  <desc id="desc">观测数据从各 rank 本地采集开始，形成有界本地事实，经聚合后得到作业概览，再下钻到异常节点和窄时间窗。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#3e718d"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .step { fill: #fff; stroke: #7397aa; stroke-width: 2; rx: 12; }
+      .focus { fill: #e5f5f5; stroke: #087f8c; }
+      .label { font-size: 17px; font-weight: 650; }
+      .minor { font-size: 14px; fill: #587080; }
+      .num { fill: #102f49; }
+      .numtext { fill: #fff; font-size: 14px; font-weight: 700; }
+      .line { stroke: #3e718d; stroke-width: 2.4; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1200" height="330" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="54" y="55">从全量低成本观测到少量深度采集</text>
+  <line class="line" x1="242" y1="183" x2="276" y2="183"/>
+  <line class="line" x1="465" y1="183" x2="499" y2="183"/>
+  <line class="line" x1="688" y1="183" x2="722" y2="183"/>
+  <line class="line" x1="911" y1="183" x2="945" y2="183"/>
+  <g transform="translate(45 115)"><rect class="step" width="197" height="136"/><circle class="num" cx="28" cy="28" r="16"/><text class="numtext" x="28" y="33" text-anchor="middle">1</text><text class="label" x="98" y="64" text-anchor="middle">各 rank 本地采集</text><text class="minor" x="98" y="92" text-anchor="middle">热路径不依赖中心服务</text></g>
+  <g transform="translate(268 115)"><rect class="step" width="197" height="136"/><circle class="num" cx="28" cy="28" r="16"/><text class="numtext" x="28" y="33" text-anchor="middle">2</text><text class="label" x="98" y="64" text-anchor="middle">有界本地事实</text><text class="minor" x="98" y="92" text-anchor="middle">ring · Top-K · 分位数</text></g>
+  <g transform="translate(491 115)"><rect class="step" width="197" height="136"/><circle class="num" cx="28" cy="28" r="16"/><text class="numtext" x="28" y="33" text-anchor="middle">3</text><text class="label" x="98" y="58" text-anchor="middle">按稳定坐标聚合</text><text class="minor" x="98" y="86" text-anchor="middle">step · rank · role</text></g>
+  <g transform="translate(714 115)"><rect class="step" width="197" height="136"/><circle class="num" cx="28" cy="28" r="16"/><text class="numtext" x="28" y="33" text-anchor="middle">4</text><text class="label" x="98" y="58" text-anchor="middle">作业级异常集合</text><text class="minor" x="98" y="86" text-anchor="middle">定位节点或行为组</text></g>
+  <g transform="translate(937 115)"><rect class="step focus" width="218" height="136"/><circle class="num" cx="28" cy="28" r="16"/><text class="numtext" x="28" y="33" text-anchor="middle">5</text><text class="label" x="109" y="58" text-anchor="middle">窄窗口深度采集</text><text class="minor" x="109" y="86" text-anchor="middle">少量异常 rank</text><text class="minor" x="109" y="109" text-anchor="middle">op · kernel · stack</text></g>
+</svg>

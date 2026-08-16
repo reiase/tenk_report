@@ -1,7 +1,13 @@
-.PHONY: check todo tree
+.PHONY: check site-build site-serve todo tree
 
 check:
 	python3 scripts/check_markdown.py
+
+site-build: check
+	uv run zensical build --clean --strict
+
+site-serve:
+	uv run zensical serve
 
 todo:
 	@rg --line-number 'TODO\(' --glob '*.md' . || true

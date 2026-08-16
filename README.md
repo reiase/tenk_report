@@ -26,4 +26,13 @@ make todo        # 汇总未完成事项
 make tree        # 查看报告相关目录
 ```
 
-本仓库暂不绑定特定发布工具。Markdown 文件可直接在 Git 平台评审；待内容稳定后，可再引入 Pandoc、MkDocs 或其他发布链路。
+## 文档站预览
+
+本仓库使用 Zensical 生成技术报告站点。首次运行会由 `uv` 创建隔离环境并安装锁定版本的 Zensical：
+
+```bash
+make site-serve    # 本地实时预览
+make site-build    # 校验并生成静态站点
+```
+
+站点采用系统中文字体、自动明暗配色、全文搜索、章节导航和固定布局的 SVG 技术图。静态输出位于 `site/`，不提交版本库；Markdown 文件仍可直接在 Git 平台评审。

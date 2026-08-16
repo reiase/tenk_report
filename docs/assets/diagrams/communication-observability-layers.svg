@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">训练通信观测的分层兼容架构</title>
+  <desc id="desc">训练代码经 PyTorch 公共接口进入 collective tracer 和训练语义观测，再分别连接 HCCL、NCCL 或其他厂商后端及其可选原生适配器，所有事实与系统指标进入统一查询层。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .lane { fill: #f1f5f8; stroke: #d1dce4; stroke-width: 1.5; rx: 12; }
+      .box { fill: #fff; stroke: #87a4b4; stroke-width: 2; rx: 10; }
+      .common { fill: #e5f5f5; stroke: #087f8c; }
+      .native { fill: #edf2fa; stroke: #3f6f98; }
+      .query { fill: #102f49; stroke: #102f49; }
+      .querytext { fill: #fff; }
+      .label { font-size: 15px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #587080; }
+      .lane-title { font-size: 14px; font-weight: 700; fill: #4d6879; letter-spacing: .06em; }
+      .line { fill: none; stroke: #46728f; stroke-width: 2.1; marker-end: url(#arrow); }
+      .dash { stroke-dasharray: 6 6; }
+    </style>
+  </defs>
+  <rect width="1200" height="760" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="54" y="55">公共训练语义与厂商原生观测的分层组合</text>
+
+  <rect class="lane" x="35" y="85" width="1130" height="112"/><text class="lane-title" x="55" y="112">训练语义</text>
+  <rect class="box common" x="165" y="118" width="245" height="58"/><text class="label" x="287" y="153" text-anchor="middle">训练代码与 Megatron</text>
+  <rect class="box common" x="790" y="118" width="245" height="58"/><text class="label" x="912" y="153" text-anchor="middle">PyTorch 公共接口层</text>
+  <path class="line" d="M410 147 H789"/>
+
+  <rect class="lane" x="35" y="215" width="1130" height="118"/><text class="lane-title" x="55" y="242">公共采集</text>
+  <rect class="box common" x="260" y="252" width="285" height="58"/><text class="label" x="402" y="277" text-anchor="middle">torch.distributed collective tracer</text><text class="minor" x="402" y="298" text-anchor="middle">op · rank · group · bytes · wall clock</text>
+  <rect class="box common" x="655" y="252" width="285" height="58"/><text class="label" x="797" y="277" text-anchor="middle">module · step · tensor 观测</text><text class="minor" x="797" y="298" text-anchor="middle">训练坐标与设备计时</text>
+  <path class="line" d="M870 176 L465 251"/><path class="line" d="M930 176 L830 251"/>
+
+  <rect class="lane" x="35" y="350" width="1130" height="175"/><text class="lane-title" x="55" y="377">通信后端与原生适配</text>
+  <g transform="translate(90 395)"><rect class="box native" width="270" height="52"/><text class="label" x="135" y="31" text-anchor="middle">ProcessGroupHCCL</text><rect class="box native" y="78" width="270" height="52"/><text class="label" x="135" y="109" text-anchor="middle">HCCL MSProf shim</text></g>
+  <g transform="translate(465 395)"><rect class="box native" width="270" height="52"/><text class="label" x="135" y="31" text-anchor="middle">ProcessGroupNCCL</text><rect class="box native" y="78" width="270" height="52"/><text class="label" x="135" y="109" text-anchor="middle">NCCL profiler plugin</text></g>
+  <g transform="translate(840 395)"><rect class="box native" width="270" height="52"/><text class="label" x="135" y="31" text-anchor="middle">其他厂商 ProcessGroup</text><rect class="box native" y="78" width="270" height="52"/><text class="label" x="135" y="109" text-anchor="middle">可选厂商原生适配器</text></g>
+  <path class="line" d="M350 310 L225 394"/><path class="line" d="M402 310 L600 394"/><path class="line" d="M470 310 L975 394"/>
+  <path class="line" d="M225 447 V472"/><path class="line" d="M600 447 V472"/><path class="line" d="M975 447 V472"/>
+
+  <rect class="lane" x="35" y="545" width="1130" height="170"/><text class="lane-title" x="55" y="572">事实汇聚与查询</text>
+  <rect class="box" x="80" y="610" width="280" height="64"/><text class="label" x="220" y="635" text-anchor="middle">CPU · 进程 · 文件 · 系统指标</text><text class="minor" x="220" y="658" text-anchor="middle">独立采集，共享坐标</text>
+  <rect class="query" x="480" y="600" width="620" height="82" rx="12"/><text class="label querytext" x="790" y="635" text-anchor="middle">统一事实表与 SQL 查询</text><text class="minor querytext" x="790" y="660" text-anchor="middle">按 job · step · rank · role · time 关联；允许 partial 结果</text>
+  <path class="line" d="M220 610 V578 H479 V620"/>
+  <path class="line dash" d="M225 525 V565 H600 V599"/><path class="line dash" d="M600 525 V599"/><path class="line dash" d="M975 525 V565 H790 V599"/>
+  <path class="line dash" d="M797 310 V570 H920 V599"/>
+</svg>

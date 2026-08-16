@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 730" role="img" aria-labelledby="title desc">
+  <title id="title">A3 作业从健康状态到训练启动的控制时序</title>
+  <desc id="desc">设备插件上报健康状态，资产服务提供快照，训练作业向调度器提交并行配置，调度器输出确定性映射，生成器创建并校验 rank table，作业完成自检后上报训练指标。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .actor { fill: #fff; stroke: #7898aa; stroke-width: 2; rx: 10; }
+      .actor-accent { fill: #e5f5f5; stroke: #087f8c; }
+      .label { font-size: 14px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #526a7a; }
+      .life { stroke: #9bb0bd; stroke-width: 1.7; stroke-dasharray: 7 7; }
+      .msg { stroke: #46728f; stroke-width: 2.1; marker-end: url(#arrow); }
+      .self { fill: none; stroke: #46728f; stroke-width: 2.1; marker-end: url(#arrow); }
+      .step { fill: #102f49; }
+      .steptext { fill: #fff; font-size: 12px; font-weight: 700; }
+    </style>
+  </defs>
+  <rect width="1200" height="730" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="54" y="52">拓扑感知调度与训练启动时序</text>
+  <g transform="translate(35 85)"><rect class="actor" width="180" height="58"/><text class="label" x="90" y="27" text-anchor="middle">设备插件</text><text class="minor" x="90" y="47" text-anchor="middle">Device Plugin</text></g>
+  <g transform="translate(265 85)"><rect class="actor" width="180" height="58"/><text class="label" x="90" y="27" text-anchor="middle">健康与资产服务</text><text class="minor" x="90" y="47" text-anchor="middle">状态事实源</text></g>
+  <g transform="translate(495 85)"><rect class="actor actor-accent" width="190" height="58"/><text class="label" x="95" y="27" text-anchor="middle">调度器</text><text class="minor" x="95" y="47" text-anchor="middle">Volcano / MindCluster</text></g>
+  <g transform="translate(735 85)"><rect class="actor" width="180" height="58"/><text class="label" x="90" y="27" text-anchor="middle">Rank Table 生成器</text><text class="minor" x="90" y="47" text-anchor="middle">确定性拓扑</text></g>
+  <g transform="translate(965 85)"><rect class="actor actor-accent" width="195" height="58"/><text class="label" x="97" y="27" text-anchor="middle">Megatron 作业</text><text class="minor" x="97" y="47" text-anchor="middle">训练数据面</text></g>
+  <line class="life" x1="125" y1="143" x2="125" y2="680"/><line class="life" x1="355" y1="143" x2="355" y2="680"/><line class="life" x1="590" y1="143" x2="590" y2="680"/><line class="life" x1="825" y1="143" x2="825" y2="680"/><line class="life" x1="1062" y1="143" x2="1062" y2="680"/>
+
+  <g><circle class="step" cx="65" cy="195" r="14"/><text class="steptext" x="65" y="199" text-anchor="middle">1</text><line class="msg" x1="125" y1="195" x2="348" y2="195"/><text class="label" x="236" y="184" text-anchor="middle">上报设备与健康状态</text></g>
+  <g><circle class="step" cx="295" cy="265" r="14"/><text class="steptext" x="295" y="269" text-anchor="middle">2</text><line class="msg" x1="355" y1="265" x2="583" y2="265"/><text class="label" x="469" y="254" text-anchor="middle">提供拓扑与健康快照</text></g>
+  <g><circle class="step" cx="1002" cy="335" r="14"/><text class="steptext" x="1002" y="339" text-anchor="middle">3</text><line class="msg" x1="1062" y1="335" x2="597" y2="335"/><text class="label" x="830" y="324" text-anchor="middle">提交规模、逻辑域大小与并行配置</text></g>
+  <g><circle class="step" cx="530" cy="400" r="14"/><text class="steptext" x="530" y="404" text-anchor="middle">4</text><path class="self" d="M590 400 H675 V438 H598"/><text class="label" x="728" y="423">预选 · 评分 · gang reserve</text></g>
+  <g><circle class="step" cx="530" cy="485" r="14"/><text class="steptext" x="530" y="489" text-anchor="middle">5</text><line class="msg" x1="590" y1="485" x2="818" y2="485"/><text class="label" x="704" y="474" text-anchor="middle">输出节点与设备映射</text></g>
+  <g><circle class="step" cx="765" cy="545" r="14"/><text class="steptext" x="765" y="549" text-anchor="middle">6</text><path class="self" d="M825 545 H910 V580 H833"/><text class="label" x="924" y="568">生成并校验 rank table</text></g>
+  <g><circle class="step" cx="765" cy="625" r="14"/><text class="steptext" x="765" y="629" text-anchor="middle">7</text><line class="msg" x1="825" y1="625" x2="1055" y2="625"/><text class="label" x="940" y="614" text-anchor="middle">挂载拓扑与映射摘要</text></g>
+  <path class="self" d="M1062 655 H1145 V685 H1070"/><text class="minor" x="1000" y="686" text-anchor="end">启动前自检并持续上报指标</text>
+</svg>
