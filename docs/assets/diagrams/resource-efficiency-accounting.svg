@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 700" role="img" aria-labelledby="title desc">
+  <title id="title">分布式训练的资源时间与能耗核算边界</title>
+  <desc id="desc">多个 rank 的墙钟时间被划分为有效计算、必要通信、被掩盖通信、暴露等待、故障恢复和观测成本，并分别积累为加速器秒与能耗。</desc>
+  <defs>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #5b7080; }
+      .axis { stroke: #8099a8; stroke-width: 1.6; }
+      .label { font-size: 15px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #5b7080; }
+      .compute { fill: #4c9b80; }
+      .comm { fill: #5587ad; }
+      .hidden { fill: #8db5cf; }
+      .wait { fill: #d59a45; }
+      .recovery { fill: #9a659f; }
+      .observe { fill: #8a9ca8; }
+      .outline { fill: #fff; stroke: #c0cdd5; rx: 10; }
+      .brace { fill: none; stroke: #476f88; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1280" height="700" rx="20" fill="#f8fafc" stroke="#d7e1e8"/>
+  <text class="title" x="54" y="54">分布式训练的资源时间与能耗核算边界</text>
+  <text class="subtitle" x="54" y="82">墙钟时间相同并不意味着有效训练工作或能耗结构相同</text>
+
+  <text class="label" x="92" y="143">rank 0</text>
+  <rect class="compute" x="170" y="116" width="290" height="42"/>
+  <rect class="hidden" x="420" y="116" width="100" height="42"/>
+  <rect class="wait" x="520" y="116" width="210" height="42"/>
+  <rect class="compute" x="730" y="116" width="220" height="42"/>
+  <rect class="observe" x="950" y="116" width="34" height="42"/>
+
+  <text class="label" x="92" y="213">rank 1</text>
+  <rect class="compute" x="170" y="186" width="340" height="42"/>
+  <rect class="comm" x="510" y="186" width="220" height="42"/>
+  <rect class="compute" x="730" y="186" width="220" height="42"/>
+  <rect class="observe" x="950" y="186" width="34" height="42"/>
+
+  <text class="label" x="92" y="283">rank 2</text>
+  <rect class="compute" x="170" y="256" width="300" height="42"/>
+  <rect class="hidden" x="430" y="256" width="80" height="42"/>
+  <rect class="wait" x="510" y="256" width="220" height="42"/>
+  <rect class="compute" x="730" y="256" width="130" height="42"/>
+  <rect class="recovery" x="860" y="256" width="124" height="42"/>
+
+  <text class="label" x="92" y="353">rank 3</text>
+  <rect class="compute" x="170" y="326" width="280" height="42"/>
+  <rect class="hidden" x="410" y="326" width="100" height="42"/>
+  <rect class="wait" x="510" y="326" width="220" height="42"/>
+  <rect class="compute" x="730" y="326" width="220" height="42"/>
+  <rect class="observe" x="950" y="326" width="34" height="42"/>
+
+  <line class="axis" x1="170" y1="390" x2="984" y2="390"/>
+  <text class="minor" x="170" y="414">step start</text>
+  <text class="minor" x="706" y="414">同步完成</text>
+  <text class="minor" x="924" y="414">step end</text>
+
+  <rect class="outline" x="56" y="470" width="554" height="170"/>
+  <text class="label" x="82" y="505">资源时间</text>
+  <text class="minor" x="82" y="538">总占用：A_total = ∑r ∫ dt</text>
+  <text class="minor" x="82" y="568">有效训练：A_useful = ∑r ∫ 1useful(r,t) dt</text>
+  <text class="minor" x="82" y="598">暴露空等：A_wait = ∑r ∫ 1waiting(r,t) dt</text>
+  <text class="minor" x="82" y="624">等待区间重叠时按 rank 与时间求并集，不按事件次数相加</text>
+
+  <rect class="outline" x="646" y="470" width="578" height="170"/>
+  <text class="label" x="672" y="505">能耗</text>
+  <text class="minor" x="672" y="538">E_k = ∑r ∫ P_r(t) · 1k(r,t) dt</text>
+  <text class="minor" x="672" y="568">高利用率可包含等待、自旋或后台工作</text>
+  <text class="minor" x="672" y="598">因此功率必须与完成事件、训练阶段和有效 token 对齐</text>
+  <text class="minor" x="672" y="624">质量等价时，再比较 time-to-quality、总能耗和恢复损失</text>
+
+  <rect class="compute" x="1042" y="120" width="20" height="20"/><text class="minor" x="1072" y="136">有效计算</text>
+  <rect class="comm" x="1042" y="160" width="20" height="20"/><text class="minor" x="1072" y="176">必要通信</text>
+  <rect class="hidden" x="1042" y="200" width="20" height="20"/><text class="minor" x="1072" y="216">被掩盖通信</text>
+  <rect class="wait" x="1042" y="240" width="20" height="20"/><text class="minor" x="1072" y="256">暴露等待</text>
+  <rect class="recovery" x="1042" y="280" width="20" height="20"/><text class="minor" x="1072" y="296">恢复与重放</text>
+  <rect class="observe" x="1042" y="320" width="20" height="20"/><text class="minor" x="1072" y="336">观测增量</text>
+</svg>

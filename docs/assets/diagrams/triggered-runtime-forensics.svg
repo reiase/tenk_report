@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 820" role="img" aria-labelledby="title desc">
+  <title id="title">触发式运行时取证与跨 rank 证据归并</title>
+  <desc id="desc">常驻低密度事实、人工请求、watchdog、Python 异常和原生 fatal signal 触发不同强度的本地快照；证据携带 rank、step、角色和质量坐标，在本地折叠后按节点和作业归并为分布式火焰图、变量状态矩阵、崩溃指纹簇和时间线。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#466c86"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #19364a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #607786; }
+      .lane { fill: #f2f6f8; stroke: #d2dee5; stroke-width: 1.5; rx: 14; }
+      .source { fill: #ffffff; stroke: #8ba5b5; stroke-width: 2; rx: 10; }
+      .trigger { fill: #e9f5f4; stroke: #16808b; stroke-width: 2; rx: 12; }
+      .live { fill: #edf3fb; stroke: #4b7198; stroke-width: 2; rx: 10; }
+      .fatal { fill: #fff1e7; stroke: #b6672f; stroke-width: 2; rx: 10; }
+      .evidence { fill: #fff9e7; stroke: #b58a2c; stroke-width: 2; rx: 10; }
+      .output { fill: #173e59; stroke: #173e59; stroke-width: 2; rx: 10; }
+      .guard { fill: #f5eff8; stroke: #806192; stroke-width: 1.8; rx: 10; }
+      .label { font-size: 16px; font-weight: 680; }
+      .minor { font-size: 13px; fill: #607786; }
+      .tiny { font-size: 12px; fill: #607786; }
+      .light { fill: #ffffff; }
+      .lane-title { font-size: 14px; font-weight: 700; fill: #4e6979; letter-spacing: .05em; }
+      .line { fill: none; stroke: #466c86; stroke-width: 2.1; marker-end: url(#arrow); }
+      .dash { stroke-dasharray: 7 6; }
+    </style>
+  </defs>
+  <rect width="1440" height="820" rx="20" fill="#f9fbfc" stroke="#d7e2e8"/>
+  <text class="title" x="52" y="54">触发式运行时取证：把瞬态现场转化为分布式证据</text>
+  <text class="subtitle" x="52" y="82">常驻路径负责发现偏离；深度证据只在明确触发后采集，且不为取证引入新的训练全局同步。</text>
+
+  <rect class="lane" x="34" y="108" width="1372" height="145"/>
+  <text class="lane-title" x="54" y="135">触发来源</text>
+  <g transform="translate(65 158)"><rect class="source" width="225" height="66"/><text class="label" x="112" y="27" text-anchor="middle">角色条件异常</text><text class="minor" x="112" y="49" text-anchor="middle">step · memory · collective</text></g>
+  <g transform="translate(335 158)"><rect class="source" width="225" height="66"/><text class="label" x="112" y="27" text-anchor="middle">分析请求</text><text class="minor" x="112" y="49" text-anchor="middle">指定 rank · step · 变量</text></g>
+  <g transform="translate(605 158)"><rect class="source" width="225" height="66"/><text class="label" x="112" y="27" text-anchor="middle">Watchdog / Timeout</text><text class="minor" x="112" y="49" text-anchor="middle">未完成通信 · 进展超时</text></g>
+  <g transform="translate(875 158)"><rect class="source" width="225" height="66"/><text class="label" x="112" y="27" text-anchor="middle">Python 异常</text><text class="minor" x="112" y="49" text-anchor="middle">主线程 · 后台线程</text></g>
+  <g transform="translate(1145 158)"><rect class="source" width="225" height="66"/><text class="label" x="112" y="27" text-anchor="middle">Fatal Signal</text><text class="minor" x="112" y="49" text-anchor="middle">崩溃线程 · fault address</text></g>
+
+  <g transform="translate(510 278)"><rect class="trigger" width="420" height="72"/><text class="label" x="210" y="29" text-anchor="middle">触发协调与证据坐标冻结</text><text class="minor" x="210" y="52" text-anchor="middle">trigger_id · rank/role · step/phase · time window</text></g>
+  <path class="line" d="M177 224 V268 H575 V277"/>
+  <path class="line" d="M447 224 V252 H640 V277"/>
+  <path class="line" d="M717 224 V277"/>
+  <path class="line" d="M987 224 V252 H800 V277"/>
+  <path class="line" d="M1257 224 V268 H865 V277"/>
+
+  <rect class="lane" x="34" y="378" width="1372" height="188"/>
+  <text class="lane-title" x="54" y="405">RANK 本地取证：按触发类型选择最小充分证据</text>
+  <g transform="translate(65 432)"><rect class="live" width="250" height="94"/><text class="label" x="125" y="27" text-anchor="middle">调用栈与短窗口采样</text><text class="minor" x="125" y="51" text-anchor="middle">Python / native snapshot</text><text class="minor" x="125" y="72" text-anchor="middle">module · op · kernel</text></g>
+  <g transform="translate(345 432)"><rect class="live" width="250" height="94"/><text class="label" x="125" y="27" text-anchor="middle">Python 状态观测</text><text class="minor" x="125" y="51" text-anchor="middle">函数作用域 · 变量变化</text><text class="minor" x="125" y="72" text-anchor="middle">类型 · 摘要 · 位置</text></g>
+  <g transform="translate(625 432)"><rect class="live" width="250" height="94"/><text class="label" x="125" y="27" text-anchor="middle">通信进行中证据</text><text class="minor" x="125" y="51" text-anchor="middle">sequence · age · wait</text><text class="minor" x="125" y="72" text-anchor="middle">Flight Recorder 快照</text></g>
+  <g transform="translate(905 422)"><rect class="fatal" width="250" height="114"/><text class="label" x="125" y="27" text-anchor="middle">异常上下文</text><text class="minor" x="125" y="51" text-anchor="middle">traceback · all threads</text><text class="minor" x="125" y="72" text-anchor="middle">step/phase · last collective</text><text class="minor" x="125" y="93" text-anchor="middle">memory · fingerprint</text></g>
+  <g transform="translate(1185 422)"><rect class="fatal" width="185" height="114"/><text class="label" x="92" y="27" text-anchor="middle">最小崩溃转储</text><text class="minor" x="92" y="51" text-anchor="middle">备用信号栈</text><text class="minor" x="92" y="72" text-anchor="middle">raw PC 优先</text><text class="minor" x="92" y="93" text-anchor="middle">本地写后再退出</text></g>
+  <path class="line" d="M650 350 V382 H190 V431"/>
+  <path class="line" d="M685 350 V396 H470 V431"/>
+  <path class="line" d="M720 350 V431"/>
+  <path class="line" d="M755 350 V396 H1030 V421"/>
+  <path class="line" d="M790 350 V382 H1277 V421"/>
+
+  <g transform="translate(220 598)"><rect class="evidence" width="1000" height="72"/><text class="label" x="500" y="28" text-anchor="middle">有界证据包</text><text class="minor" x="500" y="51" text-anchor="middle">job · rank · role · step · trigger · source · coverage · dropped · partial · integrity</text></g>
+  <path class="line" d="M190 526 V575 H395 V597"/>
+  <path class="line" d="M470 526 V597"/>
+  <path class="line" d="M750 526 V575 H650 V597"/>
+  <path class="line" d="M1030 536 V575 H935 V597"/>
+  <path class="line" d="M1277 536 V575 H1080 V597"/>
+
+  <g transform="translate(65 704)"><rect class="output" width="270" height="76"/><text class="label light" x="135" y="29" text-anchor="middle">分布式火焰图</text><text class="minor light" x="135" y="53" text-anchor="middle">路径分布 · rank 覆盖</text></g>
+  <g transform="translate(365 704)"><rect class="output" width="270" height="76"/><text class="label light" x="135" y="29" text-anchor="middle">变量状态矩阵</text><text class="minor light" x="135" y="53" text-anchor="middle">变化位置 · rank/step 差异</text></g>
+  <g transform="translate(665 704)"><rect class="output" width="270" height="76"/><text class="label light" x="135" y="29" text-anchor="middle">崩溃指纹簇</text><text class="minor light" x="135" y="53" text-anchor="middle">异常类型 · 顶层帧 · 影响面</text></g>
+  <g transform="translate(965 704)"><rect class="output" width="270" height="76"/><text class="label light" x="135" y="29" text-anchor="middle">Timeline / 瀑布图</text><text class="minor light" x="135" y="53" text-anchor="middle">调用路径 · 通信 · 内存关联</text></g>
+  <g transform="translate(1260 694)"><rect class="guard" width="110" height="96"/><text class="label" x="55" y="24" text-anchor="middle">边界</text><text class="tiny" x="55" y="46" text-anchor="middle">有界开销</text><text class="tiny" x="55" y="64" text-anchor="middle">脱敏审计</text><text class="tiny" x="55" y="82" text-anchor="middle">缺失显式化</text></g>
+  <path class="line" d="M420 670 V690 H200 V703"/>
+  <path class="line" d="M610 670 V690 H500 V703"/>
+  <path class="line" d="M830 670 V690 H800 V703"/>
+  <path class="line" d="M1020 670 V690 H1100 V703"/>
+  <path class="line dash" d="M1220 634 H1315 V693"/>
+</svg>

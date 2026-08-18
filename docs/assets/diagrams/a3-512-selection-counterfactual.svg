@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">A3 固定 512 卡资源池的节点选择训练对照</title>
+  <desc id="desc">固定三十二个节点及停顿排序，分别移除四个高事件节点、三组随机节点和四个低事件节点，在四百四十八卡上运行三类训练。结果按各负载随机组中位数归一化，显示资源排序的训练影响依赖工作负载。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#3e718d"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #587080; }
+      .box { fill: #fff; stroke: #7397aa; stroke-width: 2; rx: 12; }
+      .source { fill: #edf6fa; stroke: #3e718d; }
+      .freeze { fill: #f4eef8; stroke: #8055a1; }
+      .cohort { fill: #f8fafc; stroke: #7397aa; }
+      .label { font-size: 18px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #587080; }
+      .tiny { font-size: 12px; fill: #587080; }
+      .line { stroke: #3e718d; stroke-width: 2.2; marker-end: url(#arrow); fill: none; }
+      .axis { stroke: #9aabb6; stroke-width: 1.3; }
+      .guide { stroke: #cbd6dd; stroke-width: 1; stroke-dasharray: 4 5; }
+      .hot { fill: #c96a45; }
+      .random { fill: #3e718d; }
+      .cold { fill: #479783; }
+      .panel { fill: #fff; stroke: #d4dfe6; stroke-width: 1.5; rx: 10; }
+      .note { fill: #fff8e8; stroke: #c79a45; stroke-width: 1.5; rx: 9; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
+  <text class="title" x="48" y="50">固定资源池中的节点选择反事实</text>
+  <text class="subtitle" x="48" y="77">只比较同为 448 卡的集合；训练 step 时间以三组随机移除的中位数归一化为 100%</text>
+
+  <g transform="translate(48 110)">
+    <rect class="box source" width="275" height="92"/>
+    <text class="label" x="137" y="34" text-anchor="middle">固定候选池</text>
+    <text class="minor" x="137" y="60" text-anchor="middle">32 节点 × 16 卡 = 512 卡</text>
+    <text class="tiny" x="137" y="80" text-anchor="middle">同一作业、同一节点集合</text>
+  </g>
+  <path class="line" d="M323 156 L390 156"/>
+  <g transform="translate(390 110)">
+    <rect class="box freeze" width="300" height="92"/>
+    <text class="label" x="150" y="34" text-anchor="middle">冻结探针排序</text>
+    <text class="minor" x="150" y="60" text-anchor="middle">按节点聚合长窗停顿事件</text>
+    <text class="tiny" x="150" y="80" text-anchor="middle">训练阶段不重新选择排名</text>
+  </g>
+  <path class="line" d="M690 156 L757 156"/>
+  <g transform="translate(757 98)">
+    <rect class="box cohort" width="395" height="116"/>
+    <text class="label" x="197" y="31" text-anchor="middle">构造同规模训练集合</text>
+    <text class="minor" x="197" y="57" text-anchor="middle">移除 4 个高事件节点 · 随机移除 ×3</text>
+    <text class="minor" x="197" y="79" text-anchor="middle">移除 4 个低事件节点</text>
+    <text class="tiny" x="197" y="101" text-anchor="middle">28 节点 × 16 卡 = 448 卡</text>
+  </g>
+
+  <text class="label" x="48" y="260">相对 step 时间（越低越快）</text>
+  <g transform="translate(735 242)">
+    <rect class="hot" x="0" y="0" width="14" height="14" rx="2"/><text class="tiny" x="21" y="12">移除高事件节点</text>
+    <rect class="random" x="145" y="0" width="14" height="14" rx="2"/><text class="tiny" x="166" y="12">随机中位数</text>
+    <rect class="cold" x="263" y="0" width="14" height="14" rx="2"/><text class="tiny" x="284" y="12">移除低事件节点</text>
+  </g>
+
+  <g transform="translate(48 280)">
+    <rect class="panel" width="1104" height="112"/>
+    <text class="label" x="22" y="34">小模型纯 DP</text>
+    <text class="tiny" x="22" y="58">第 5–64 步</text>
+    <line class="guide" x1="650" y1="14" x2="650" y2="98"/><text class="tiny" x="650" y="106" text-anchor="middle">100%</text>
+    <rect class="hot" x="250" y="18" width="288" height="19" rx="3"/><text class="tiny" x="546" y="32">72%</text>
+    <rect class="random" x="250" y="46" width="400" height="19" rx="3"/><text class="tiny" x="658" y="60">100%（361–646 ms）</text>
+    <rect class="cold" x="250" y="74" width="640" height="19" rx="3"/><text class="tiny" x="898" y="88">160%</text>
+  </g>
+
+  <g transform="translate(48 410)">
+    <rect class="panel" width="1104" height="112"/>
+    <text class="label" x="22" y="34">Dense 8B · TP4×PP4</text>
+    <text class="tiny" x="22" y="58">第 5–25 步</text>
+    <line class="guide" x1="650" y1="14" x2="650" y2="98"/><text class="tiny" x="650" y="106" text-anchor="middle">100%</text>
+    <rect class="hot" x="250" y="18" width="376" height="19" rx="3"/><text class="tiny" x="634" y="32">94%</text>
+    <rect class="random" x="250" y="46" width="400" height="19" rx="3"/><text class="tiny" x="658" y="60">100%（5126–5364 ms）</text>
+    <rect class="cold" x="250" y="74" width="432" height="19" rx="3"/><text class="tiny" x="690" y="88">108%</text>
+  </g>
+
+  <g transform="translate(48 540)">
+    <rect class="panel" width="1104" height="112"/>
+    <text class="label" x="22" y="34">MoE · EP32</text>
+    <text class="tiny" x="22" y="58">第 5–25 步</text>
+    <line class="guide" x1="650" y1="14" x2="650" y2="98"/><text class="tiny" x="650" y="106" text-anchor="middle">100%</text>
+    <rect class="hot" x="250" y="18" width="416" height="19" rx="3"/><text class="tiny" x="674" y="32">104%</text>
+    <rect class="random" x="250" y="46" width="400" height="19" rx="3"/><text class="tiny" x="658" y="60">100%（26615–30660 ms）</text>
+    <rect class="cold" x="250" y="74" width="448" height="19" rx="3"/><text class="tiny" x="706" y="88">112%</text>
+  </g>
+
+  <g transform="translate(48 678)">
+    <rect class="note" width="1104" height="50"/>
+    <text class="minor" x="552" y="21" text-anchor="middle">低事件节点移除组在三类负载中均最慢；高事件节点移除只在 Dense 中快于全部随机集合。</text>
+    <text class="tiny" x="552" y="40" text-anchor="middle">随机集合仅 3 组；节点移除同时改变 rank/拓扑映射；Dense 与 MoE 只包含 21 个稳态 step。</text>
+  </g>
+</svg>

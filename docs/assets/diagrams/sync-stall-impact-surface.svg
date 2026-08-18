@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="610" viewBox="0 0 1200 610" role="img" aria-labelledby="title desc">
+  <title id="title">同步完成等待的系统影响面</title>
+  <desc id="desc">单个 rank 的固定等待先经过计算掩盖，再由同步边界传播给通信组，并在重复训练步中影响尾部、MFU、超时和资源组合。</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f8fc; }
+      .panel { fill: #ffffff; stroke: #c7cedd; stroke-width: 2; }
+      .rank { fill: #e9efff; stroke: #6c84c6; stroke-width: 1.5; }
+      .wait { fill: #f4c46b; stroke: #b77a18; stroke-width: 1.5; }
+      .sync { fill: #dceee8; stroke: #4f8a75; stroke-width: 1.5; }
+      .impact { fill: #f7e7ec; stroke: #a85b72; stroke-width: 1.5; }
+      .line { stroke: #687083; stroke-width: 2; fill: none; }
+      .dash { stroke: #9aa3b5; stroke-width: 1.5; stroke-dasharray: 6 5; }
+      .title { font: 700 27px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #202536; }
+      .head { font: 700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #293044; }
+      .body { font: 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #40485c; }
+      .small { font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #5b6478; }
+      .formula { font: 600 16px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #343b4d; }
+    </style>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#687083"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1200" height="610" rx="18"/>
+  <text class="title" x="48" y="52">一次单卡等待，如何成为训练系统问题</text>
+  <text class="body" x="48" y="82">重要性来自“暴露时长 × 同步扇出 × 重复次数”，而不是对单次事件使用更强的形容词</text>
+
+  <g transform="translate(48,116)">
+    <rect class="panel" width="250" height="300" rx="14"/>
+    <text class="head" x="22" y="38">1　单 rank 出现额外等待</text>
+    <rect class="rank" x="22" y="72" width="206" height="30" rx="7"/>
+    <rect class="rank" x="22" y="119" width="112" height="30" rx="7"/>
+    <rect class="wait" x="134" y="119" width="94" height="30" rx="7"/>
+    <rect class="rank" x="22" y="166" width="206" height="30" rx="7"/>
+    <text class="small" x="30" y="92">rank 0　正常推进</text>
+    <text class="small" x="30" y="139">rank 1</text>
+    <text class="small" x="151" y="139">等待 D</text>
+    <text class="small" x="30" y="186">rank 2　正常推进</text>
+    <line class="dash" x1="134" y1="62" x2="134" y2="212"/>
+    <text class="body" x="22" y="239">计算余量 S 先吸收一部分：</text>
+    <text class="formula" x="22" y="270">D_exposed = max(0, D-S)</text>
+  </g>
+
+  <path class="line" d="M310 266 H350" marker-end="url(#arrow)"/>
+
+  <g transform="translate(365,116)">
+    <rect class="panel" width="300" height="300" rx="14"/>
+    <text class="head" x="22" y="38">2　同步边界传播等待</text>
+    <rect class="sync" x="22" y="70" width="256" height="46" rx="9"/>
+    <text class="body" x="53" y="98">collective / barrier / BSP</text>
+    <line class="line" x1="68" y1="116" x2="68" y2="174"/>
+    <line class="line" x1="150" y1="116" x2="150" y2="174"/>
+    <line class="line" x1="232" y1="116" x2="232" y2="174"/>
+    <rect class="impact" x="30" y="174" width="76" height="42" rx="8"/>
+    <rect class="impact" x="112" y="174" width="76" height="42" rx="8"/>
+    <rect class="impact" x="194" y="174" width="76" height="42" rx="8"/>
+    <text class="small" x="48" y="200">空等</text>
+    <text class="small" x="130" y="200">慢者</text>
+    <text class="small" x="212" y="200">空等</text>
+    <text class="body" x="22" y="246">一个慢 rank 改变整个组的返回时间</text>
+    <text class="formula" x="22" y="276">C_idle ≈ (N-1) D_exposed</text>
+  </g>
+
+  <path class="line" d="M677 266 H717" marker-end="url(#arrow)"/>
+
+  <g transform="translate(732,116)">
+    <rect class="panel" width="420" height="300" rx="14"/>
+    <text class="head" x="22" y="38">3　重复训练步形成系统影响</text>
+    <g transform="translate(22,68)">
+      <rect class="impact" width="176" height="60" rx="10"/>
+      <text class="head" x="20" y="27">性能尾部</text>
+      <text class="small" x="20" y="47">step P95/P99、MFU</text>
+    </g>
+    <g transform="translate(220,68)">
+      <rect class="impact" width="176" height="60" rx="10"/>
+      <text class="head" x="20" y="27">训练进度</text>
+      <text class="small" x="20" y="47">完工时间、检查点间进展</text>
+    </g>
+    <g transform="translate(22,150)">
+      <rect class="impact" width="176" height="60" rx="10"/>
+      <text class="head" x="20" y="27">可用性边界</text>
+      <text class="small" x="20" y="47">watchdog、timeout、重试</text>
+    </g>
+    <g transform="translate(220,150)">
+      <rect class="impact" width="176" height="60" rx="10"/>
+      <text class="head" x="20" y="27">资源组合</text>
+      <text class="small" x="20" y="47">热点成员、拓扑、rank 角色</text>
+    </g>
+    <text class="body" x="22" y="252">长时间运行使稀疏事件不断获得暴露机会</text>
+    <text class="small" x="22" y="278">峰值能力正常与训练尾部受损可以同时成立</text>
+  </g>
+
+  <g transform="translate(48,452)">
+    <rect class="panel" width="1104" height="112" rx="14"/>
+    <text class="head" x="22" y="34">规模化判断</text>
+    <text class="formula" x="22" y="65">P_group = 1 - ∏(1-p_i)</text>
+    <text class="body" x="320" y="65">概率决定遇到多少次</text>
+    <text class="body" x="510" y="65">宽度与掩盖决定暴露多少</text>
+    <text class="body" x="760" y="65">同步扇出决定牵连多少资源</text>
+    <text class="small" x="22" y="91">最终使用逐 rank 时间线重放；公式用于解释量级、确定观察窗口和安排验证优先级。</text>
+  </g>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">算力、HBM 带宽与功率热状态共同形成性能包络</title>
+  <desc id="desc">Roofline 关系显示低算术强度负载受 HBM 带宽约束，高算术强度负载受计算吞吐约束，功率和温度状态会进一步降低可持续性能上限。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#476f88"/></marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #173247; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #5b7080; }
+      .axis { stroke: #476f88; stroke-width: 2.3; marker-end: url(#arrow); }
+      .grid { stroke: #d9e2e8; stroke-width: 1; stroke-dasharray: 5 6; }
+      .roof { fill: none; stroke: #267f88; stroke-width: 5; }
+      .degraded { fill: none; stroke: #b67a2d; stroke-width: 3; stroke-dasharray: 8 6; }
+      .point { fill: #8c5a93; stroke: #fff; stroke-width: 2; }
+      .label { font-size: 16px; font-weight: 650; }
+      .minor { font-size: 13px; fill: #5b7080; }
+      .box { rx: 12; stroke-width: 1.8; }
+      .memory { fill: #e9f1fa; stroke: #497ca5; }
+      .compute { fill: #e6f4ee; stroke: #3a8970; }
+      .state { fill: #fff1df; stroke: #b67a2d; }
+    </style>
+  </defs>
+  <rect width="1280" height="720" rx="20" fill="#f8fafc" stroke="#d7e1e8"/>
+  <text class="title" x="55" y="54">算力、HBM 带宽与功率热状态的联合性能包络</text>
+  <text class="subtitle" x="55" y="82">单一峰值指标无法判定设备在给定负载下的可持续服务率</text>
+
+  <line class="axis" x1="110" y1="604" x2="790" y2="604"/>
+  <line class="axis" x1="110" y1="604" x2="110" y2="136"/>
+  <text class="label" x="450" y="655" text-anchor="middle">算术强度 I = FLOPs / Byte</text>
+  <text class="label" x="31" y="376" text-anchor="middle" transform="rotate(-90 31 376)">可持续吞吐 Pobs</text>
+  <line class="grid" x1="110" y1="470" x2="770" y2="470"/>
+  <line class="grid" x1="110" y1="330" x2="770" y2="330"/>
+  <line class="grid" x1="280" y1="604" x2="280" y2="150"/>
+  <line class="grid" x1="470" y1="604" x2="470" y2="150"/>
+
+  <path class="roof" d="M120 585 L495 235 H770"/>
+  <path class="degraded" d="M120 585 L445 282 H770"/>
+  <text class="label" x="618" y="218">计算上限 Pcompute</text>
+  <text class="label" x="244" y="430" transform="rotate(-43 244 430)">HBM 上限 I · BHBM</text>
+  <text class="minor" x="578" y="301">功率/热限频后的稳态包络</text>
+
+  <circle class="point" cx="285" cy="431" r="9"/>
+  <text class="minor" x="300" y="423">流式访存、拷贝</text>
+  <circle class="point" cx="590" cy="235" r="9"/>
+  <text class="minor" x="606" y="255">高强度矩阵计算</text>
+
+  <rect class="box memory" x="842" y="132" width="374" height="132"/>
+  <text class="label" x="1029" y="168" text-anchor="middle">带宽受限区</text>
+  <text class="minor" x="870" y="201">吞吐随有效 HBM 带宽近似线性变化</text>
+  <text class="minor" x="870" y="229">数据模式、对齐、缓存和并发度改变斜率</text>
+
+  <rect class="box compute" x="842" y="286" width="374" height="132"/>
+  <text class="label" x="1029" y="322" text-anchor="middle">计算受限区</text>
+  <text class="minor" x="870" y="355">吞吐受精度、矩阵形状和执行单元约束</text>
+  <text class="minor" x="870" y="383">峰值规格仅提供理想上限</text>
+
+  <rect class="box state" x="842" y="440" width="374" height="164"/>
+  <text class="label" x="1029" y="476" text-anchor="middle">稳态修正</text>
+  <text class="minor" x="870" y="511">功率上限、温度、时钟与限频共同作用</text>
+  <text class="minor" x="870" y="539">需要联合观察吞吐 P(t)、功率 W(t)</text>
+  <text class="minor" x="870" y="567">温度 T(t) 与频率 f(t)，而非单点比较</text>
+</svg>

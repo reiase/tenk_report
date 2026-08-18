@@ -10,7 +10,7 @@ from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[1]
-IGNORED_DIRS = {".git", ".venv", "build", "site"}
+IGNORED_DIRS = {".git", ".venv", "3rd", "build", "site"}
 LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
 REMOTE_SCHEMES = ("http://", "https://", "mailto:", "tel:", "data:")

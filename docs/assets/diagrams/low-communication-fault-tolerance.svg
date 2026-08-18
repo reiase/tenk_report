@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="690" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc">
+  <title id="title">低通信训练岛与 Parameter Server outer state plane</title>
+  <desc id="desc">多个高带宽训练岛在内部进行频繁同步和本地优化，只在低频 outer round 向复制的 Parameter Server 发布版本化参数差并取得新全局版本。</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f8fc; }
+      .panel { fill: #ffffff; stroke: #c5ccdc; stroke-width: 2; }
+      .island { fill: #e9efff; stroke: #687fbe; stroke-width: 2; }
+      .ps { fill: #dceee8; stroke: #4f8873; stroke-width: 2; }
+      .state { fill: #f7e7ec; stroke: #a45e74; stroke-width: 1.5; }
+      .node { fill: #ffffff; stroke: #8291b6; stroke-width: 1.3; }
+      .local { stroke: #687fbe; stroke-width: 2; fill: none; }
+      .outer { stroke: #a86f22; stroke-width: 2.3; stroke-dasharray: 8 6; fill: none; }
+      .title { font: 700 27px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #202536; }
+      .head { font: 700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #293044; }
+      .body { font: 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #41495c; }
+      .small { font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #5a6376; }
+      .mono { font: 600 14px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #343b4d; }
+    </style>
+    <marker id="arrowOuter" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#a86f22"/>
+    </marker>
+    <marker id="arrowLocal" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#687fbe"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1200" height="690" rx="18"/>
+  <text class="title" x="48" y="50">高频同步留在训练岛，低频状态交换跨越故障域</text>
+  <text class="body" x="48" y="80">DiLoCo 描述本地优化与 outer update；Parameter Server 提供版本、成员和恢复状态</text>
+
+  <g transform="translate(48,118)">
+    <rect class="panel" width="735" height="420" rx="15"/>
+    <text class="head" x="24" y="38">高带宽训练数据面</text>
+    <text class="small" x="24" y="62">每个 island 内部保留 TP / PP / DP / EP 与频繁 collective</text>
+
+    <g transform="translate(24,88)">
+      <rect class="island" width="215" height="250" rx="13"/>
+      <text class="head" x="18" y="34">Island A</text>
+      <text class="small" x="18" y="56">inner optimizer · H steps</text>
+      <rect class="node" x="18" y="82" width="76" height="44" rx="7"/>
+      <rect class="node" x="120" y="82" width="76" height="44" rx="7"/>
+      <rect class="node" x="18" y="150" width="76" height="44" rx="7"/>
+      <rect class="node" x="120" y="150" width="76" height="44" rx="7"/>
+      <text class="small" x="43" y="109">rank</text>
+      <text class="small" x="145" y="109">rank</text>
+      <text class="small" x="43" y="177">rank</text>
+      <text class="small" x="145" y="177">rank</text>
+      <path class="local" d="M94 104 H120 M94 172 H120 M56 126 V150 M158 126 V150"/>
+      <text class="mono" x="18" y="226">Δ_A^(r)</text>
+    </g>
+
+    <g transform="translate(260,88)">
+      <rect class="island" width="215" height="250" rx="13"/>
+      <text class="head" x="18" y="34">Island B</text>
+      <text class="small" x="18" y="56">inner optimizer · H steps</text>
+      <rect class="node" x="18" y="82" width="76" height="44" rx="7"/>
+      <rect class="node" x="120" y="82" width="76" height="44" rx="7"/>
+      <rect class="node" x="18" y="150" width="76" height="44" rx="7"/>
+      <rect class="node" x="120" y="150" width="76" height="44" rx="7"/>
+      <text class="small" x="43" y="109">rank</text>
+      <text class="small" x="145" y="109">rank</text>
+      <text class="small" x="43" y="177">rank</text>
+      <text class="small" x="145" y="177">rank</text>
+      <path class="local" d="M94 104 H120 M94 172 H120 M56 126 V150 M158 126 V150"/>
+      <text class="mono" x="18" y="226">Δ_B^(r)</text>
+    </g>
+
+    <g transform="translate(496,88)">
+      <rect class="island" width="215" height="250" rx="13"/>
+      <text class="head" x="18" y="34">Island C</text>
+      <text class="small" x="18" y="56">可退出 · 可重新加入</text>
+      <rect class="node" x="18" y="82" width="76" height="44" rx="7"/>
+      <rect class="node" x="120" y="82" width="76" height="44" rx="7"/>
+      <rect class="node" x="18" y="150" width="76" height="44" rx="7"/>
+      <rect class="state" x="120" y="150" width="76" height="44" rx="7"/>
+      <text class="small" x="43" y="109">rank</text>
+      <text class="small" x="145" y="109">rank</text>
+      <text class="small" x="43" y="177">rank</text>
+      <text class="small" x="135" y="177">recover</text>
+      <path class="local" d="M94 104 H120 M56 126 V150"/>
+      <text class="mono" x="18" y="226">Δ_C^(r)</text>
+    </g>
+
+    <text class="body" x="24" y="376">岛内故障由本地 checkpoint、并行组重构和数据位置恢复处理</text>
+    <text class="small" x="24" y="401">高频 collective 不经过中心状态服务</text>
+  </g>
+
+  <g transform="translate(825,118)">
+    <rect class="panel" width="327" height="420" rx="15"/>
+    <text class="head" x="22" y="38">低频 outer state plane</text>
+    <text class="small" x="22" y="62">复制与版本化的 Parameter Server</text>
+
+    <rect class="ps" x="22" y="88" width="130" height="66" rx="10"/>
+    <rect class="ps" x="175" y="88" width="130" height="66" rx="10"/>
+    <text class="body" x="48" y="116">PS shard 0</text>
+    <text class="small" x="45" y="138">leader / replica</text>
+    <text class="body" x="201" y="116">PS shard 1</text>
+    <text class="small" x="198" y="138">leader / replica</text>
+
+    <rect class="state" x="22" y="184" width="283" height="154" rx="11"/>
+    <text class="head" x="40" y="215">版本化状态</text>
+    <text class="body" x="40" y="246">θ^(r) · outer optimizer</text>
+    <text class="body" x="40" y="274">membership snapshot</text>
+    <text class="body" x="40" y="302">update receipts · token count</text>
+    <text class="small" x="40" y="326">epoch fencing · snapshot · WAL</text>
+
+    <text class="body" x="22" y="374">outer round 选择一致性模型：</text>
+    <text class="small" x="22" y="400">全成员同步 / quorum / 有界陈旧</text>
+  </g>
+
+  <path class="outer" d="M165 456 C380 605 760 602 898 272" marker-end="url(#arrowOuter)"/>
+  <path class="outer" d="M401 456 C560 568 792 540 940 272" marker-end="url(#arrowOuter)"/>
+  <path class="outer" d="M637 456 C742 510 865 456 985 272" marker-end="url(#arrowOuter)"/>
+  <text class="small" x="410" y="588">每 H 个本地 step 发布带版本的参数差；新 outer 版本再返回各 island</text>
+
+  <g transform="translate(48,570)">
+    <rect class="panel" width="1104" height="78" rx="13"/>
+    <text class="head" x="22" y="31">设计边界</text>
+    <text class="body" x="145" y="31">降低同步频率 ≠ 自动获得无损容错</text>
+    <text class="small" x="22" y="57">必须联合验证收敛、陈旧更新、token accounting、outer state 恢复、峰值带宽与重复计算。</text>
+  </g>
+</svg>

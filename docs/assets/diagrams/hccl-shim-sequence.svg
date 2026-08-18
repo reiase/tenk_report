@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc">
-  <title id="title">HCCL MSProf shim 采集与转发时序</title>
-  <desc id="desc">HCCL runtime 调用 Probing 的 libprofapi shim，shim 校验并分类事件，追加本进程事实，同时将原参数转发到真实 CANN libprofapi，最后保持原返回语义返回 HCCL。</desc>
+  <title id="title">HCCL 原生事件采集与透明转发时序</title>
+  <desc id="desc">HCCL runtime 调用原生 profiling 边界，边缘适配器校验并分类事件，追加本进程事实，同时将原参数转发到厂商 profiling 实现，最后保持原返回语义返回 HCCL。</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#46728f"/></marker>
     <marker id="arrow-dash" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#778d9b"/></marker>
@@ -22,11 +22,11 @@
     </style>
   </defs>
   <rect width="1200" height="690" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
-  <text class="title" x="54" y="52">HCCL MSProf shim：本地采集与透明转发</text>
+  <text class="title" x="54" y="52">HCCL 原生事件：本地采集与透明转发</text>
   <g transform="translate(55 90)"><rect class="actor" width="210" height="64"/><text class="label" x="105" y="29" text-anchor="middle">HCCL runtime</text><text class="minor" x="105" y="51" text-anchor="middle">调用既有 MSProf ABI</text></g>
-  <g transform="translate(350 90)"><rect class="actor shim" width="245" height="64"/><text class="label" x="122" y="29" text-anchor="middle">Probing libprofapi.so shim</text><text class="minor" x="122" y="51" text-anchor="middle">边缘适配器</text></g>
-  <g transform="translate(680 90)"><rect class="actor store" width="200" height="64"/><text class="label" x="100" y="29" text-anchor="middle">hccl.* mmap tables</text><text class="minor" x="100" y="51" text-anchor="middle">本进程事实</text></g>
-  <g transform="translate(965 90)"><rect class="actor" width="190" height="64"/><text class="label" x="95" y="29" text-anchor="middle">CANN libprofapi.so</text><text class="minor" x="95" y="51" text-anchor="middle">真实厂商库</text></g>
+  <g transform="translate(350 90)"><rect class="actor shim" width="245" height="64"/><text class="label" x="122" y="29" text-anchor="middle">原生事件边缘适配器</text><text class="minor" x="122" y="51" text-anchor="middle">校验 · 分类 · 透明转发</text></g>
+  <g transform="translate(680 90)"><rect class="actor store" width="200" height="64"/><text class="label" x="100" y="29" text-anchor="middle">有界本地事实</text><text class="minor" x="100" y="51" text-anchor="middle">按事件类型隔离</text></g>
+  <g transform="translate(965 90)"><rect class="actor" width="190" height="64"/><text class="label" x="95" y="29" text-anchor="middle">厂商 profiling 实现</text><text class="minor" x="95" y="51" text-anchor="middle">保持原调用语义</text></g>
   <line class="life" x1="160" y1="154" x2="160" y2="630"/><line class="life" x1="472" y1="154" x2="472" y2="630"/><line class="life" x1="780" y1="154" x2="780" y2="630"/><line class="life" x1="1060" y1="154" x2="1060" y2="630"/>
 
   <circle class="step" cx="100" cy="220" r="14"/><text class="steptext" x="100" y="224" text-anchor="middle">1</text><line class="msg" x1="160" y1="220" x2="465" y2="220"/>
