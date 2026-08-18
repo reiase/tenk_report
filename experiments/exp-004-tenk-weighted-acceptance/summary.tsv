@@ -1,0 +1,5 @@
+platform	groups	cards_per_group	total_cards	weight	baseline_tflops_per_card	mix_tflops_per_card	steps_per_group	window_seconds	skipped_max	nan_max
+A3	4	2048	8192	0.8	108.5571	101.6508	239	47436	0	0
+C550	4	512	2048	0.2	60.9000	51.0364	120	47436	0	0
+weighted	8		10240	1.0	99.0257	91.5279		47436	0	0
+result	NA	NA	NA	NA	NA	92.4284	NA	NA	NA	NA

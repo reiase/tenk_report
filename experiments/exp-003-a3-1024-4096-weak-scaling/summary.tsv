@@ -1,0 +1,4 @@
+scale	run_id	cards	tp	pp	dp	vpp	gbs	mbs	microbatches	seq_length	recompute	window	window_n	avg_ms	avg_tflops_gpu	skipped_max	nan_max	config_sha256	metric_log_sha256
+baseline	qwen3-200b-1024-tp1pp64-target92-c8-bucket8m-r1	1024	1	64	16	2	4096	1	256	4096	block1	6-12	7	185822.0714	108.5571429	0	0	95bd671347cee6e7e80e054b7894bacb5da948d97b6a55cba1071cafa66bdce8	17af56dc7dca3a8d1abca2ae42ffa2e9e3b512c5b5c3abbd754b5a3997378eeb
+target	qwen3-200b-4096-tp1pp64-target92-c8-bucket8m-r1	4096	1	64	64	2	16384	1	256	4096	block1	6-12	7	197207.8429	102.3285714	0	0	4052863c36ff90370895ce4c599968567dce94019f254e2ddd0d003a5a371020	c3a3523dfaf311f5033da53dc0943db13ad942db16d41bc175699dd547f6bc14
+result	weak-scaling-efficiency	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	94.2624	NA	NA	NA	NA

@@ -1,0 +1,17 @@
+phase	index	name	run_id	wrapper	mapping	recompute	overlap_grad	overlap_param	task_queue	hccl_roce	hccl_pcie	train_iters	failed_pods	scored_iters	avg_ms	avg_tflops_gpu	min_tflops_gpu	max_tflops_gpu	status
+smoke	00	smoke-tp1-baseline	qwen3-200b-1024-long-r2-00-smoke-tp1-baseline	tp1_pp64_1024_tunable.sh	0	block	1	1	2	1	0	2	0	2	213434.0	96.250	83.400	109.100	PASS
+long	01	tp1-base-map0	qwen3-200b-1024-long-r2-01-tp1-base-map0	tp1_pp64_1024_tunable.sh	0	block	1	1	2	1	0	20	0	5	183943.7	109.680	109.500	109.800	PASS
+long	02	tp1-base-map1	qwen3-200b-1024-long-r2-02-tp1-base-map1	tp1_pp64_1024_tunable.sh	1	block	1	1	2	1	0	20	0	5	185142.7	108.980	108.600	109.200	PASS
+long	03	tp8-base-map0	qwen3-200b-1024-long-r2-03-tp8-base-map0	tp8_pp8_1024_tunable.sh	0	uniform	1	1	2	1	0	20	0	5	184047.1	109.620	108.300	111.100	PASS
+long	04	tp8-base-map1	qwen3-200b-1024-long-r2-04-tp8-base-map1	tp8_pp8_1024_tunable.sh	1	uniform	1	1	2	1	0	20	0	5	185504.6	108.780	107.400	109.700	PASS
+long	05	tp1-uniform-map0	qwen3-200b-1024-long-r2-05-tp1-uniform-map0	tp1_pp64_1024_tunable.sh	0	uniform	1	1	2	1	0	20	0	5	183652.0	109.860	109.600	110.100	PASS
+long	06	tp1-uniform-map1	qwen3-200b-1024-long-r2-06-tp1-uniform-map1	tp1_pp64_1024_tunable.sh	1	uniform	1	1	2	1	0	20	0	5	187558.2	107.600	105.600	108.600	PASS
+long	07	tp8-block-map0	qwen3-200b-1024-long-r2-07-tp8-block-map0	tp8_pp8_1024_tunable.sh	0	block	1	1	2	1	0	20	0	5	149486.4	135.000	132.900	137.600	PASS
+long	08	tp8-block-map1	qwen3-200b-1024-long-r2-08-tp8-block-map1	tp8_pp8_1024_tunable.sh	1	block	1	1	2	1	0	20	0	5	155459.2	129.860	125.500	134.900	PASS
+long	09	tp1-no-grad-overlap	qwen3-200b-1024-long-r2-09-tp1-no-grad-overlap	tp1_pp64_1024_tunable.sh	0	block	0	1	2	1	0	20	64	0	NA	NA	NA	NA	FAIL
+long	10	tp1-no-param-overlap	qwen3-200b-1024-long-r2-10-tp1-no-param-overlap	tp1_pp64_1024_tunable.sh	0	block	1	0	2	1	0	20	0	5	183775.2	109.780	109.500	110.000	PASS
+long	11	tp1-no-overlap	qwen3-200b-1024-long-r2-11-tp1-no-overlap	tp1_pp64_1024_tunable.sh	0	block	0	0	2	1	0	20	0	5	183887.1	109.700	109.500	109.900	PASS
+long	12	tp1-taskqueue1	qwen3-200b-1024-long-r2-12-tp1-taskqueue1	tp1_pp64_1024_tunable.sh	0	block	1	1	1	1	0	20	0	5	183640.1	109.860	109.500	110.000	PASS
+long	13	tp1-hccl-pcie-map0	qwen3-200b-1024-long-r2-13-tp1-hccl-pcie-map0	tp1_pp64_1024_tunable.sh	0	block	1	1	2	0	1	20	0	5	183571.4	109.880	109.600	110.000	PASS
+long	14	tp1-hccl-pcie-map1	qwen3-200b-1024-long-r2-14-tp1-hccl-pcie-map1	tp1_pp64_1024_tunable.sh	1	block	1	1	2	0	1	20	0	5	187564.8	107.580	106.900	108.000	PASS
+long	15	tp1-baseline-repeat	qwen3-200b-1024-long-r2-15-tp1-baseline-repeat	tp1_pp64_1024_tunable.sh	0	block	1	1	2	1	0	20	0	5	183542.6	109.920	109.600	110.000	PASS

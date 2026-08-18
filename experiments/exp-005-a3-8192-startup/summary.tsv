@@ -1,0 +1,3 @@
+run_id	cards	nnodes	nproc_per_node	tp	pp	dp	vpp	gbs	microbatches	recompute	disable_gloo_group	observed_iters	status	primary_observation
+qwen3-200b-8192-r1-tp2pp16-uniform1	8192	512	16	2	16	256	2	32768	128	uniform1	0	0	FAIL_BEFORE_ITERATION	Gloo connectFullMesh failed
+qwen3-200b-8192-r2-tp2pp16-uniform1-no-gloo	8192	512	16	2	16	256	2	32768	128	uniform1	1	7	STARTUP_PASS_PARTIAL_RUN	entered iteration 1-7; skipped=0; nan=0

@@ -3,14 +3,14 @@ title: 训练系统与并行策略
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-15
+last_updated: 2026-08-18
 ---
 
 # 训练系统与并行策略
 
 ## 模型与工作负载
 
-记录模型规模、序列长度、批大小、数据规模和训练阶段。敏感参数可采用区间或脱敏标识，但必须保持统计口径可解释。
+当前已导入的主性能工作负载是 Qwen3-200B 稠密模型，sequence length 4096、MBS 1，训练代码冻结到 commit `54daa56ad07f86e510b8be9027fcdbd9957fc998`。实验以 12--30 步短程性能测量为主，不用于收敛结论；MoE 与正式 mid-training 工作负载尚未进入本报告主结果。
 
 ## 并行策略
 
@@ -18,14 +18,23 @@ last_updated: 2026-08-15
 
 | 维度 | 并行度 | 分组方式 | 主要通信 | 选择依据 |
 | --- | ---: | --- | --- | --- |
-| 数据并行 | 待补充 | 跨超节点时对称分布 | AllReduce / ReduceScatter / AllGather | 均衡出口网卡负载 |
-| 张量并行 | 待补充 | 优先位于同一逻辑超节点 | AllReduce / AllGather / ReduceScatter | 降低高频通信距离 |
-| 流水线并行 | 待补充 | 减少相邻 stage 跨域次数 | Send / Recv | 控制边界激活传输 |
-| 专家并行 | 待补充 | 按 AlltoAll 实测单独映射 | AlltoAll / AlltoAllV | 不复用 AllReduce 假设 |
+| 数据并行 | 16 / 64 / 256 | 跨超节点时对称分布 | AllReduce / ReduceScatter / AllGather | 对应已导入的 1024 / 4096 / 8192 卡稠密实验 |
+| 张量并行 | 1 / 2 / 8 | 优先位于同一逻辑超节点 | AllReduce / AllGather / ReduceScatter | 由显存、算子效率和高频通信距离共同决定 |
+| 流水线并行 | 8 / 16 / 64 | 减少相邻 stage 跨域次数 | Send / Recv | 兼顾模型切分、bubble 与边界激活传输 |
+| 专家并行 | 待正式导入 | 按 AlltoAll 实测单独映射 | AlltoAll / AlltoAllV | 不从稠密模型结果反推 MoE 配置 |
+
+### 已验证配置
+
+| 实验 | 卡数 | TP / PP / DP / VPP | GBS | 重计算 | 主要结论 |
+| --- | ---: | --- | ---: | --- | --- |
+| [EXP-001](https://github.com/reiase/tenk_report/blob/master/experiments/exp-001-a3-1024-tuning/README.md) | 1,024 | TP1/PP64 或 TP8/PP8，DP16，VPP2 | 按用例冻结 | block / uniform | mapping0 在五组配对中均更高；小于 1% 的差异待重复 |
+| [EXP-002](https://github.com/reiase/tenk_report/blob/master/experiments/exp-002-a3-4096-dp-communication/README.md) | 4,096 | TP8/PP8/DP64 | 16,384 | 冻结 | no-overlap 与 bucket-128m 是复测候选 |
+| [EXP-003](https://github.com/reiase/tenk_report/blob/master/experiments/exp-003-a3-1024-4096-weak-scaling/README.md) | 1,024 / 4,096 | TP1/PP64/DP16 或 64/VPP2 | 4,096 / 16,384 | block1 | 7 步弱扩展效率 94.26% |
+| [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) | 8,192 | TP2/PP16/DP256/VPP2 | 32,768 | uniform1 | 无 Gloo 路径完成建组并进入 iteration 7 |
 
 ## 内存与显存优化
 
-覆盖状态切分、激活重计算、通信缓冲、内存碎片和卸载策略。
+已导入实验覆盖 block/uniform 激活重计算、DDP bucket 和通信重叠开关。EXP-003 与 EXP-005 的 optimizer/activation offload 均关闭；现有 MoE offload 试跑没有形成同口径、可复核的主结果，因此不在这里给出性能收益。后续仍需覆盖状态切分、通信缓冲、内存碎片与卸载策略的随机化 A/B。
 
 ## 训练坐标与阶段边界
 
@@ -90,4 +99,4 @@ last_updated: 2026-08-15
 
 ## 当前证据缺口
 
-现有材料包含 4,096 卡 A3、2,048 卡 C550 的 Qwen3-200B 稠密训练拓扑设想，以及若干 Qwen3 MoE 诊断场景；它们只能说明预期覆盖范围，不是生产训练事实。由于尚无目标训练系统的完整版本证据和对应运行结果，模型负载、并行度与显存优化仍需由实际训练配置、通信组定义和实测结果共同证明，不能从通用健康检查中的示例专家并行度或非均匀全交换模式反推正式训练并行度。
+A3 已有 1024/4096 卡短程性能和 8192 卡启动证据，但缺少长稳、检查点恢复、完整 placement 与成员质量收据；C550 仍缺 2048 卡独立分池扩展实验。Qwen3 MoE、1T 模型与 offload 探索尚未形成冻结工作负载和可比较重复，不进入主性能结论。健康检查中的示例专家并行度或非均匀全交换模式也不能反推正式训练并行度。

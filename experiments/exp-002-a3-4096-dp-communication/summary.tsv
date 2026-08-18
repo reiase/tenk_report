@@ -1,0 +1,9 @@
+run_id	case	status	log_files	steady_iters	first_iter	last_iter	gbs	elapsed_ms_mean	elapsed_ms_median	tflops_mean	tflops_median	tflops_min	tflops_max	tflops_cv_pct	vs_no_param_a_pct	skipped_max	nan_max
+qwen3-200b-tp8pp8-4096-dpcomm-r1-1-full-overlap-a	full-overlap-a	PASS	256	25	6	30	16384	193775.976	194925.0	104.148	103.5	101.3	109.3	2.1114909199910916	-0.3902215080913596	0	0
+qwen3-200b-tp8pp8-4096-dpcomm-r1-2-no-param-overlap-a	no-param-overlap-a	PASS	256	25	6	30	16384	193119.236	193433.3	104.556	104.3	99.7	109.1	2.6715898446792665	0.0	0	0
+qwen3-200b-tp8pp8-4096-dpcomm-r1-3-bucket-32m	bucket-32m	PASS	256	25	6	30	16384	196071.484	195806.3	102.984	103.0	97.5	109.3	2.9865493175003084	-1.5035005164696469	0	0
+qwen3-200b-tp8pp8-4096-dpcomm-r1-4-bucket-128m	bucket-128m	PASS	256	25	6	30	16384	183247.0	182452.2	110.152	110.6	104.6	114.1	2.1811892348946107	5.352155782547152	0	0
+qwen3-200b-tp8pp8-4096-dpcomm-r1-5-no-align-grad-64m	no-align-grad-64m	PASS	256	25	6	30	16384	185820.748	186757.4	108.608	108.0	103.4	112.1	1.8931131292524706	3.875435173495556	0	0
+qwen3-200b-tp8pp8-4096-dpcomm-r1-6-no-overlap	no-overlap	PASS	256	25	6	30	16384	180625.076	179937.6	111.764	112.1	105.0	116.3	2.5117787356183348	6.893913309613975	0	0
+qwen3-200b-tp8pp8-4096-dpcomm-r1-7-no-param-overlap-b	no-param-overlap-b	PASS	256	25	6	30	16384	189901.316	191581.2	106.304	105.3	101.2	111.2	2.377393758452741	1.671831363097298	0	0
+qwen3-200b-tp8pp8-4096-dpcomm-r1-8-full-overlap-b	full-overlap-b	NO_DATA	256	0	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA
