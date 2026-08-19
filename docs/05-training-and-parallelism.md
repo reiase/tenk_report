@@ -3,7 +3,7 @@ title: 训练系统与并行策略
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-18
+last_updated: 2026-08-19
 ---
 
 # 训练系统与并行策略
@@ -25,12 +25,25 @@ last_updated: 2026-08-18
 
 ### 已验证配置
 
-| 实验 | 卡数 | TP / PP / DP / VPP | GBS | 重计算 | 主要结论 |
+| 实验 | 规模 | TP / PP / DP / VPP | GBS | 重计算 | 主要结论 |
 | --- | ---: | --- | ---: | --- | --- |
 | [EXP-001](https://github.com/reiase/tenk_report/blob/master/experiments/exp-001-a3-1024-tuning/README.md) | 1,024 | TP1/PP64 或 TP8/PP8，DP16，VPP2 | 按用例冻结 | block / uniform | mapping0 在五组配对中均更高；小于 1% 的差异待重复 |
 | [EXP-002](https://github.com/reiase/tenk_report/blob/master/experiments/exp-002-a3-4096-dp-communication/README.md) | 4,096 | TP8/PP8/DP64 | 16,384 | 冻结 | no-overlap 与 bucket-128m 是复测候选 |
 | [EXP-003](https://github.com/reiase/tenk_report/blob/master/experiments/exp-003-a3-1024-4096-weak-scaling/README.md) | 1,024 / 4,096 | TP1/PP64/DP16 或 64/VPP2 | 4,096 / 16,384 | block1 | 7 步弱扩展效率 94.26% |
 | [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) | 8,192 | TP2/PP16/DP256/VPP2 | 32,768 | uniform1 | 无 Gloo 路径完成建组并进入 iteration 7 |
+| [EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) | 2,048 die | TP1--8 / PP8--64 / VPP2；另有 VPP4 消融 | 1,024 / 8,192 | uniform1 / block1 | 网格中 TP2/PP16/uniform1 的 MFU 最高，为 33.4%；文档级证据 |
+
+### 并行度、GBS 与重计算的联合选择
+
+[EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) 导入了 2048 die、Qwen3-200B、GBS8192、MBS1、VPP2 下的七组配置搜索。原文使用 `die` 作为规模单位，本文保留该单位，不将其自动换算为卡数。
+
+完整七点结果表见[2048 die 并行度网格](08-results-and-analysis.md#2048-die-并行度网格)。
+
+在该网格内，TP2/PP16/uniform1 是最佳已测点。TP×PP=64 且 uniform1 的子集中，TP2/PP32（30.4%）高于 TP4/PP16（29.8%）和 TP8/PP8（24.1%）；TP1/PP64（26.7%）也低于 TP2/PP32。这说明配置选择需要同时避免过深流水线和过大的张量并行通信域，但不能据此宣布 TP2/PP16 对其他规模、模型或拓扑普遍最优。
+
+同一来源在 TP8/PP8/VPP4、2048 die 下报告，GBS 从 1024 增至 8192 时，MFU 从约 20.7% 升至约 24.1%。另一组重计算对比报告 TP8/PP8 从 24.1% 升至 28.1%、TP1/PP64 从 26.7% 升至 27.0%，但没有单独注明 TP1/PP64 的 VPP。block1 在 PP8 下重计算 8 层，在 PP64 下重计算 64 层，因此同名策略并不代表相同重计算量，+4.0 个百分点不能直接归因于 TP8。
+
+并行配置搜索应先满足显存与数值正确性，再在相同 GBS、MBS、VPP、有效重计算层数、软件版本和 placement 下比较 TP/PP。最终候选还要同时检查 pipeline bubble、暴露通信、小消息 collective、ReduceScatter 尾部拥塞和跨 rank 方差，避免只按单点 MFU 排名。
 
 ## 内存与显存优化
 
@@ -99,4 +112,4 @@ last_updated: 2026-08-18
 
 ## 当前证据缺口
 
-A3 已有 1024/4096 卡短程性能和 8192 卡启动证据，但缺少长稳、检查点恢复、完整 placement 与成员质量收据；C550 仍缺 2048 卡独立分池扩展实验。Qwen3 MoE、1T 模型与 offload 探索尚未形成冻结工作负载和可比较重复，不进入主性能结论。健康检查中的示例专家并行度或非均匀全交换模式也不能反推正式训练并行度。
+A3 已有 1024/4096 卡短程性能、8192 卡启动证据和 2048 die 并行策略文档级分析，但缺少长稳、检查点恢复、完整 placement 与成员质量收据；EXP-006 还缺逐步数据、运行版本和原始 profile。C550 仍缺 2048 卡独立分池扩展实验。Qwen3 MoE、1T 模型与 offload 探索尚未形成冻结工作负载和可比较重复，不进入主性能结论。健康检查中的示例专家并行度或非均匀全交换模式也不能反推正式训练并行度。

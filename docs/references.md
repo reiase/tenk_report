@@ -172,6 +172,17 @@
 - 支撑内容：加速器内存 ECC、scrubbing、page offlining、row remapping、spare repair、data poison、错误 containment、总线/链路保护和错误报告要求
 - 备注：这是面向超大规模加速器系统的通用 RAS 要求；具体能力仍以 A3、C550 的产品和固件版本为准
 
+## R018
+
+- 标题：昇腾 910C 训练集群并行策略对 MFU 影响的技术分析报告
+- 作者或机构：未署名
+- 创建日期：2026-08-17（PDF 元数据）
+- 导入日期：2026-08-19
+- 链接：[仓库附件](https://github.com/reiase/tenk_report/blob/master/references/ascend-910c-parallelism-mfu-analysis.pdf)
+- SHA256：`1afd922dfa074143ad093ed78d753be80b563d43686b5e07cd4f5d7c4ca42aaa`
+- 支撑内容：TP/PP 与 world size 的 MFU 趋势、GBS 和重计算消融、TensorBoard/Profiling 通信归因摘要，以及 2048 die 下七组并行配置搜索
+- 备注：仅有聚合报告，缺少 run ID、逐步数据、完整 MFU 公式和原始 profile；按文档级证据使用
+
 ## I001
 
 - 标题：Probing HCCL MSProf shim 实现

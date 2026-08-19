@@ -3,7 +3,7 @@ title: 术语与缩略语
 status: outline
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-16
+last_updated: 2026-08-19
 ---
 
 # 术语与缩略语
@@ -13,8 +13,8 @@ last_updated: 2026-08-16
 | 术语 | 英文或缩写 | 本报告定义 | 备注 |
 | --- | --- | --- | --- |
 | 万卡规模 | 10K-scale | 待定义：物理卡数、分配卡数或有效参与训练卡数 | 必须在摘要中沿用同一口径 |
-| 模型 FLOPs 利用率 | MFU | 待给出公式 | 区分理论峰值口径 |
-| 硬件 FLOPs 利用率 | HFU | 待给出公式 | 说明是否计入重计算 |
+| 模型 FLOPs 利用率 | MFU | (	ext{模型有效 FLOPs/s}/(N P_{mathrm{peak}})) | 冻结模型 FLOPs、精度峰值、设备单位与重计算口径 |
+| 硬件 FLOPs 利用率 | HFU | (	ext{实际执行 FLOPs/s}/(N P_{mathrm{peak}})) | 明确实际执行 FLOPs 与重计算口径 |
 | 有效训练时间占比 | 待统一 | 待给出分子、分母和排除项 | 不与集群可用率混用 |
 | 扩展效率 | Scaling efficiency | 待定义强扩展和弱扩展公式 | 标明基准规模 |
 | 算法带宽 | AlgBW | collective 有效 payload 除以执行时间 | payload 解释随 collective 变化 |

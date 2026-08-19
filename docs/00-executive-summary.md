@@ -3,7 +3,7 @@ title: 执行摘要
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-18
+last_updated: 2026-08-19
 ---
 
 # 执行摘要
@@ -18,6 +18,7 @@ last_updated: 2026-08-18
 
 - 已确定的工作范围包括两类国产硬件资源池，共计 10,240 张加速卡。
 - A3 Qwen3-200B 在严格对齐的 1024 与 4096 卡短程实验中得到 **94.26%** 弱扩展效率；两侧共同统计 iteration 6--12。
+- 新导入的 2048 die 并行度网格中，Qwen3-200B 的 TP2/PP16/uniform1 达到最高 MFU **33.4%**；该结果来自聚合 PDF，属于文档级证据，仍需原始运行和重复轮复核。
 - 8192 卡 r1 在首步前发生 Gloo 全互连建组失败；r2 使用 `--disable-gloo-group` 后完成建组并进入 iteration 7，证明启动阻塞已绕过，但尚未形成长稳与最终性能结论。
 - 8192 张 A3 与 2048 张 C550 的八组日志在 13.18 小时共同窗口内得到 **92.43%** 加权验收指标；它不是 10,240 卡单一同步训练作业的扩展效率。
 - 规模化工作的第一道门槛仍是筛卡和健康检查；所有性能结论必须同时披露配置、统计窗口、证据哈希与未完成项。
@@ -31,6 +32,7 @@ last_updated: 2026-08-18
 | C550 资源池占比 | 20% | 2,048 / 10,240 | 项目部署基线 |
 | A3 最大已进入训练规模 | 8,192 张 | r2 完成建组并观测到 iteration 7；非完整验收 | [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) |
 | A3 1024→4096 弱扩展效率 | **94.26%** | 同代码/模型/序列长度/并行组合，7 个共同稳态步 | [EXP-003](https://github.com/reiase/tenk_report/blob/master/experiments/exp-003-a3-1024-4096-weak-scaling/README.md) |
+| A3 2048 die 配置搜索最佳 MFU | **33.4%** | Qwen3-200B、GBS8192、MBS1、VPP2、TP2/PP16/uniform1；文档级证据 | [EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) |
 | 10240 卡加权验收指标 | **92.43%** | 8192:2048 加权 ECP，8 组共同 47,436 秒 | [EXP-004](https://github.com/reiase/tenk_report/blob/master/experiments/exp-004-tenk-weighted-acceptance/README.md) |
 | 单作业最终验收规模 | 待完成 | 完整训练、成员收据、检查点与恢复均通过 | [结果边界](08-results-and-analysis.md#结果边界) |
 | 端到端吞吐 | 待补充 | 包含启动、数据、检查点和恢复的墙钟口径 | [结果](08-results-and-analysis.md#端到端训练性能) |
@@ -46,4 +48,4 @@ last_updated: 2026-08-18
 
 ## 限制与适用范围
 
-当前已写入部分训练配置和短程实测结果，但硬件批次、完整 placement、健康准入漏斗、端到端时间分解和长稳结果仍不完整。94.26% 只有 7 个评分步；92.43% 依赖仅 3 个有效 iteration 的 C550 独立基线。A3 与 C550 的单平台结果继续分别报告，加权 ECP 仅作为验收指标，不用于跨硬件性能排名。
+当前已写入部分训练配置和短程实测结果，但硬件批次、完整 placement、健康准入漏斗、端到端时间分解和长稳结果仍不完整。94.26% 只有 7 个评分步；92.43% 依赖仅 3 个有效 iteration 的 C550 独立基线；33.4% 来自缺少逐步数据、MFU 公式和重复轮的聚合 PDF。A3 与 C550 的单平台结果继续分别报告，加权 ECP 仅作为验收指标，不用于跨硬件性能排名。

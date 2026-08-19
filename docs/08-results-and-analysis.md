@@ -3,14 +3,14 @@ title: 结果与分析
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-18
+last_updated: 2026-08-19
 ---
 
 # 结果与分析
 
 ## 当前证据状态
 
-仓库已经导入五组带稳定编号的训练实验。聚合结果、冻结配置、受控原始证据位置和 SHA256 已登记；结论按“可复核短程结果、部分启动验证、待完成生产验收”分层。
+仓库已经导入六组带稳定编号的训练实验。聚合结果、冻结配置、受控原始证据位置和 SHA256 已登记；结论按“可复核短程结果、部分启动验证、待完成生产验收”分层。
 
 | 结论层级 | 当前状态 | 可使用的证据 | 尚缺材料 |
 | --- | --- | --- | --- |
@@ -20,6 +20,7 @@ last_updated: 2026-08-18
 | [EXP-003](https://github.com/reiase/tenk_report/blob/master/experiments/exp-003-a3-1024-4096-weak-scaling/README.md) A3 弱扩展 | 已复核短程结果 | 两侧配置、代表日志与哈希；共同 7 步窗口 | 长稳、重复 placement 与端到端时间 |
 | [EXP-004](https://github.com/reiase/tenk_report/blob/master/experiments/exp-004-tenk-weighted-acceptance/README.md) 万卡加权验收 | 可复核点估计 | 8 组共同 13.18 小时窗口、日志包哈希与公式 | C550 稳态独立基线、完整 800 步 |
 | [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) A3 8192 卡启动 | 部分通过 | r1/r2 配置与日志、修正启动器哈希 | 完整 30 步、长稳与成员质量收据 |
+| [EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) A3 2048 die 并行策略与 MFU | 文档级证据 | 聚合表、趋势图、PDF 与 SHA256 | run ID、逐步数据、MFU 公式、完整配置与原始 profile |
 | 2,048 卡 C550 分池验收 | 待执行 | 万卡窗口中的 C550 分组结果 | 独立分池准入、扩展曲线与长稳 |
 | 10,240 卡单作业结论 | 不适用 | 验收加权指标 92.43% | 不得改写为 10,240 卡单一同步作业效率 |
 
@@ -37,6 +38,8 @@ last_updated: 2026-08-18
 
 A3 两侧均为 Qwen3-200B、TP1/PP64/VPP2、MBS1、sequence length 4096 和同一代码 commit；DP 与 GBS 随卡数扩大 4 倍，microbatches 保持 256。统计仅含 7 个稳态步，因此 94.26% 是短程弱扩展结果。
 
+EXP-006 使用 `die` 作为规模单位，且没有提供与 EXP-003 对齐的设备换算、运行版本和逐步吞吐，因此不并入上表的“卡数与 TFLOPS/卡”弱扩展曲线。
+
 ### 10240 卡验收加权指标
 
 [EXP-004](https://github.com/reiase/tenk_report/blob/master/experiments/exp-004-tenk-weighted-acceptance/README.md) 按 8192:2048 设备数量加权 A3 与 C550 的每卡 ECP：
@@ -51,7 +54,7 @@ A3 两侧均为 Qwen3-200B、TP1/PP64/VPP2、MBS1、sequence length 4096 和同�
 
 ## 端到端训练性能
 
-稳态吞吐和端到端吞吐分开报告。现有 EXP-001 至 EXP-003 是短程性能实验，禁用了检查点；EXP-004 是共同运行窗口。它们均不能替代包含启动、数据等待、检查点和故障恢复的完整端到端测量。
+稳态吞吐和端到端吞吐分开报告。现有 EXP-001 至 EXP-003 是短程性能实验，禁用了检查点；EXP-004 是共同运行窗口；EXP-006 只有聚合 PDF，不能恢复端到端时间线。它们均不能替代包含启动、数据等待、检查点和故障恢复的完整端到端测量。
 
 | 资源池 | 实验 | 稳态结果 | 端到端吞吐 | 测量窗口 | 检查点开销 | 数据等待 | 故障恢复 |
 | --- | --- | ---: | ---: | --- | ---: | ---: | ---: |
@@ -111,6 +114,7 @@ SDC 结果按目标单元拆开，至少报告实际轮数、命中卡数、异�
 | 4096 卡 iteration 9 降至 97.8 TFLOPS/GPU | EXP-003 原始代表日志 | 瞬时通信或资源竞争 | placement 差异、主机抖动、测量噪声 | 同 placement 复跑并关联 rank/网络遥测 | 未归因，主结果保留该点 |
 | 8192 卡 r1 首步前 Gloo 建组失败 | EXP-005 多 rank 错误与日志哈希 | 分布式优化器 Gloo 全互连路径在该规模失效 | 节点故障或其他网络异常 | r2 仅增加 `--disable-gloo-group` 后复跑 | 启动阻塞已修正，底层网络根因未外推 |
 | C550 独立基线只有 3 个 iteration | EXP-004 基线日志 | 基线统计不足 | 热身阶段尚未结束 | 补跑 20--30 个稳态步并冻结聚合口径 | 已披露，待补证 |
+| TP8 扩展后 forward-compute 与未重叠通信增长 | EXP-006 的 TensorBoard/Profiling 聚合摘要 | 小消息 AllReduce 时延与尾部 ReduceScatter 拥塞 | 配置、placement、外部网络负载或计时口径差异 | 导入原始 profile 与网络 counter，并按相同拓扑随机化复跑 | 来源报告支持，尚未独立闭环 |
 
 健康检查可优先定位正确性失败、慢 rank、慢 group 和通信路径异常；最终归因仍需结合设备日志、交换机遥测、软件版本差异和训练 trace。一次异常应沿“作业概览 → 节点/行为组 → rank/step → module/collective → 原生 task/kernel/stack”逐级收窄，避免先挑选一段细粒度 trace 再事后构造全局解释。
 
@@ -120,6 +124,39 @@ SDC 结果按目标单元拆开，至少报告实际轮数、命中卡数、异�
 
 [EXP-002](https://github.com/reiase/tenk_report/blob/master/experiments/exp-002-a3-4096-dp-communication/README.md) 中 `no-overlap`、`bucket-128m` 相对首个 no-param-overlap 基线分别高 6.89% 和 5.35%；同一 no-param-overlap 的重复轮相差 1.67%，且 `full-overlap-b` 为 NO_DATA。当前结论是选出复测候选，而不是宣布关闭重叠为默认最优。
 
+### 2048 die 并行度网格
+
+[EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) 在 Qwen3-200B、2048 die、GBS8192、MBS1、VPP2 条件下汇总了七个配置：
+
+| TP | PP | 重计算 | TP×PP | MFU |
+| ---: | ---: | --- | ---: | ---: |
+| 1 | 64 | uniform1 | 64 | 26.7% |
+| 2 | 32 | uniform1 | 64 | 30.4% |
+| 4 | 16 | uniform1 | 64 | 29.8% |
+| **2** | **16** | **uniform1** | **32** | **33.4%** |
+| 4 | 8 | uniform1 | 32 | 31.3% |
+| 8 | 8 | uniform1 | 64 | 24.1% |
+| 8 | 8 | block1 | 64 | 28.1% |
+
+本轮最高点是 TP2/PP16/uniform1 的 33.4%。在 TP×PP=64、uniform1 子集中，TP2/PP32（30.4%）高于 TP4/PP16（29.8%）和 TP8/PP8（24.1%）；TP1/PP64（26.7%）也低于 TP2/PP32。结果支持“TP 与 PP 都存在过大损失、需要联合搜索”，但缺少重复次数和误差范围，排序仍应复跑确认。
+
+### GBS 与重计算归因
+
+同一来源在 TP8/PP8/VPP4、2048 die 下报告，仅将 GBS 从 1024 增至 8192 时，MFU 从约 20.7% 升至约 24.1%，增加 3.4 个百分点。GBS8192 从 1024 die 扩到 2048 die 后，MFU 从约 26% 降至约 24%，下降约 2 个百分点。PDF 没有为随后 TP1/PP64 的重计算对比单独注明 VPP，因此该行 VPP 在结构化摘要中保留为 `NA`。
+
+uniform1 改为 block1 后，TP8/PP8 从 24.1% 升至 28.1%，TP1/PP64 从 26.7% 升至 27.0%。原文同时指出 block1 在 PP8 下重计算 8 层、在 PP64 下重计算 64 层，而 uniform1 均为 128 层。因此 +4.0 与 +0.3 个百分点的差异首先反映“减少的重计算层数不同”，不能解释为 TP8 本身带来更高收益。
+
+### 大 TP 的通信归因
+
+| 观察量 | TP8 | TP2/PP8 | 当前解释 |
+| --- | ---: | ---: | --- |
+| Scaling 后 forward-compute 耗时增长 | 约 3.1x | 约 1.83x | 增量集中在 forward 阶段 |
+| 未重叠通信增长 | 120% | 54% | 大 TP 暴露更多通信时延 |
+| 小消息 AllReduce 时延增长 | 约 4--19x | 未报告 | 固定开销与网络时延更难被短计算窗口掩盖 |
+| ReduceScatter 增长相对幅度 | 基准 | 约为 TP8 的 1/4 | 浅流水线使 backward 结束与 DP 通信发射更集中 |
+
+这条链路与网格中 TP8/PP8 的较低 MFU 方向一致，但证据目前只存在于来源 PDF 的聚合叙述中。没有原始 collective 明细、消息大小分布、rank placement 和网络 counter 时，应把它保留为高优先级根因假设，而不是完成的因果闭环。
+
 Megatron 优化仍按单变量或已声明的组合做 A/B，保存完整配置差异，并同时检查吞吐、显存、数值一致性和稳定性。健康检查自身也需要量化漏检、误报和筛查时长，而不是只证明工具能输出 PASS。
 
 ## 结果边界
@@ -127,6 +164,7 @@ Megatron 优化仍按单变量或已声明的组合做 A/B，保存完整配置�
 - EXP-003 的 94.26% 只有 7 个评分步，是短程弱扩展结果，不外推为长稳或端到端效率。
 - EXP-004 的 92.43% 是异构资源池加权验收点估计；C550 基线只有 3 步，补跑稳态基线前不能升级为最终生产结论。
 - EXP-005 只证明 8192 卡 r2 完成建组并进入 iteration 7，不报告稳态 MFU、扩展效率或 30 步完成。
+- EXP-006 的 33.4% 是 2048 die、Qwen3-200B、GBS8192、MBS1、VPP2 网格中的文档级最佳已测点；缺少逐步数据、MFU 公式和重复轮，不与日志级实验做跨口径排名。
 - 合成 BusBW 不外推为 Megatron 吞吐或 MFU；某消息大小、collective 或 EP pattern 不外推到未测试 workload。
 - A3 与 C550 的单平台结果分别报告；加权 ECP 单列，不改写为单一异构同步训练吞吐。
 - 历史运行记录缺少原始测量、完整运行条件、版本和完整性摘要时，只能列为待导入线索。
