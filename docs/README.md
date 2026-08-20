@@ -14,7 +14,7 @@
 | 06 | [筛卡、健康检查与稳定性](06-reliability-and-observability.md) | 待认领 | 待指定 | 撰写中 |
 | 06A | [训练通信观测与多加速卡兼容设计](06a-training-communication-observability.md) | 待认领 | 待指定 | 撰写中 |
 | 07 | [线性加速比与实验设计](07-evaluation-methodology.md) | 待认领 | 待指定 | 撰写中 |
-| 08 | [结果与分析](08-results-and-analysis.md) | 待认领 | 待指定 | 已导入首批数据，待内容评审 |
+| 08 | [结果与分析](08-results-and-analysis.md) | 待认领 | 待指定 | 已导入 14 组实验，待内容评审 |
 | 09 | [成本、能耗与资源效率](09-cost-energy-efficiency.md) | 待认领 | 待指定 | 未开始 |
 | 10 | [问题、经验与工程实践](10-lessons-learned.md) | 待认领 | 待指定 | 撰写中 |
 | 11 | [结论与后续工作](11-conclusion-and-future-work.md) | 待认领 | 待指定 | 撰写中 |

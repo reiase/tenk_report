@@ -1,0 +1,3 @@
+case	model	cards	tp	pp	dp	vpp	gbs	mbs	recompute	window	n	tflops_per_gpu	step_time_s	cv_pct	mfu_pct	status	evidence_status	notes
+tp2pp16_uniform1	Qwen3-200B	4096	2	16	128	2	16384	1	uniform1	iter_6_30	25	124.264	162.398	1.68	33.4	PASS	session_log_aggregate	mfu_uses_approx_372_tflops_peak
+tp8pp8_block1_no_overlap	Qwen3-200B	4096	8	8	64	4	16384	1	block1	iter_6_30	25	111.764	180.625	2.51	NA	PASS	session_log_aggregate	multi_variable_reference_not_single_factor_ab

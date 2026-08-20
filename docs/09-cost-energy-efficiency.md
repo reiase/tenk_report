@@ -3,7 +3,7 @@ title: 成本、能耗与资源效率
 status: outline
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-15
+last_updated: 2026-08-20
 ---
 
 # 成本、能耗与资源效率
@@ -25,6 +25,10 @@ last_updated: 2026-08-15
 区分卡时占用率、有效训练卡时、计算利用率和集群可用率。还要区分以下两类观测成本：常驻路径每个 step 支付的固定 dispatch，以及按采样率摊销的深度采集成本。短窗口 profiler、通信库原生插件和跨 rank 查询分别核算，避免用低频采样掩盖常驻 hook 的固定成本。
 
 万卡场景的证据存储按“本地有界事实、节点/作业聚合、异常原始证据”三层估算。成功样本可以按预注册比例抽样，失败和异常窗口保留较高分辨率；但节省存储不能以删除覆盖率、失败成员和完整性摘要为代价。
+
+EXP-013 说明 MoE 的 TFLOPS/GPU 不能单独代表资源效率：当前公式按 Top-8 激活专家计主要 FLOPs，却没有完整计入 router、permutation、padding、All-to-All 和 CPU offload 开销。Dense/MoE 成本比较必须同时报告 samples/s、tokens/s、step 墙钟、主机 CPU/内存/网络、有效参数更新量和检查点成本，不以 MFU 单指标排序。
+
+EXP-014 的 2.6 GB 是压缩后的工程快照，不是项目总存储占用；约 22 TB checkpoint/权重/派生数据和 84 GB profiler 原件只保存清单。容量与容灾核算应分别报告“已复制字节、只建清单字节、同故障域副本、跨故障域已验证副本”和快照后的增量。
 
 ## 敏感性分析
 

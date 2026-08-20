@@ -30,6 +30,8 @@ TP1 基线复测为 109.92 TFLOPS/GPU，相对首次 109.68 高 0.22%。因此 0
 
 `tp1-no-grad-overlap` 的 64 个 pod 全部失败，不能据此判断关闭梯度重叠的性能。`full-overlap`、`no-param-overlap`、`no-overlap` 与 TaskQueue 变体在 TP1 组的末 5 步均值差异很小，仍需随机化顺序和重复运行排除时间漂移。
 
+S017 的完整会话复核还发现命名边界：运行器中的 `mapping0/1` 对应 `USE_TP_PP_DP_MAPPING=0/1` 开关，但历史日志另有 `MAPPING=tp-dp-pp` 等人类可读标签，二者未归档成一一对应的 resolved command 与代码路径。因此本实验保留 `mapping0/1` 作为用例名，不将 `mapping0` 直接定义为某个 rank-order 字符串。
+
 ## 结论边界
 
 - 这是短窗口性能消融，不是长稳训练、收敛或端到端吞吐结论。

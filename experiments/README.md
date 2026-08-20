@@ -13,5 +13,8 @@
 - [EXP-009：200B Dense 与 1T MoE 交付证据](exp-009-200b-1t-delivery-evidence/README.md)
 - [EXP-010：A3 与 C550 资源池健康准入](exp-010-fleet-health-admission/README.md)
 - [EXP-011：大规模健康检查耗时与运行时优化](exp-011-healthcheck-runtime-optimization/README.md)
+- [EXP-012：A3 4096 卡 TP2/PP16 Dense 运行复核](exp-012-a3-4096-tp2pp16-dense/README.md)
+- [EXP-013：A3 Qwen3-1T MoE 1024--4096 卡调优](exp-013-a3-qwen3-1t-moe-tuning/README.md)
+- [EXP-014：训练实验资产备份与恢复状态](exp-014-training-assets-backup/README.md)
 
 原始大日志不提交 Git。每项记录必须给出受控位置、内容哈希、统计窗口和结论边界，使仓库内聚合可回到原始证据。

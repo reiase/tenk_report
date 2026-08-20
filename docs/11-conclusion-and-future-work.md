@@ -12,13 +12,16 @@ last_updated: 2026-08-20
 
 - A3 上的 Qwen3-200B 已形成可追溯的 1024 卡调优、4096 卡通信消融和 1024→4096 卡短程弱扩展证据。严格对齐配置并保留全部 iteration 6--12 后，弱扩展效率为 **94.26%**。
 - 2048 die 配置搜索的七个聚合点中，TP2/PP16/uniform1 取得最高 MFU **33.4%**。该结果补充了“TP 与 PP 需联合搜索”的方向，并把 GBS 增长、重计算层数减少与 TP8 本身的影响拆开，但当前仍是缺少原始运行的文档级证据。
+- 4096 卡 TP2/PP16/DP128/VPP2/uniform1 在 25 个稳态步中达到 **124.264 TFLOPS/GPU**、CV 1.68%。它相对已测 TP8/PP8 r6 方案高 11.18%，但属于并行、microbatch 和重计算共同变化的方案级优势，不是单一 TP 因果收益。
 - 8192 卡 r1 暴露出分布式优化器 Gloo 全互连建组的规模化阻塞；r2 使用 `--disable-gloo-group` 后完成建组并进入 iteration 7。该结果证明修正方向有效，但还不是 8192 卡完整性能或长稳验收。
 - 8192 张 A3 与 2048 张 C550 的八组日志在共同 13.18 小时窗口内得到 **92.43%** 加权 ECP 保留率。补充编排证据确认八组通过 64 个参数服务器按不同周期同步；该值不代表 10,240 卡运行同一个同步训练作业。
 - A3 前向进展 Stall 的代表事件已从相关性定位推进到 IPVS `estimation_timer` 阻塞 NPU CQ tasklet 的文档内因果闭环。训练侧 TaskQueue level 2 + jemalloc 将固定窗口耗时降至基线的 73.46%，但系统级修复仍需独立回归。
 - C550 单卡 Stall 事件短于 A3 来源中的半秒级尾部，direct dispatch 是有方向性的厂商缓解；大规模 AllReduce 尾延迟和 RDMA retry 仍缺网络遥测，不能归为同一根因。
 - 交付材料新增 200B Dense 1,024 die、800/800 step 和 1T MoE 2,048 die、500/500 step 的功能运行证据。它们补齐“能够推进训练”的证据，不补齐性能、长稳、恢复或收敛。
+- 1T MoE 的 1024/2048/4096 卡短程 last5 分别为 **65.60/61.82/57.66 TFLOPS/GPU**，4096 卡保留 1024 卡约 **87.90%** 的单卡性能。no-param-overlap 有方向性收益，CPU optimizer overlap、EP32 和 128M bucket 未改善；EP8/recompute6 OOM，BF16 main grad 与当前融合算子不兼容。
 - 健康准入材料记录 A3 两个 4,096 卡批次和 96 卡备机筛查，并在 C550 2,336 卡候选池中分型识别 correctness、SDC、累计 ECC、HBM、单机互联和多节点通信异常；筛选后的 256 节点完成 2,048-rank Final256。
 - 健康检查运行时已从“总耗时过长”拆到共享 AFS SQLite、Pairwise 波次、round barrier、超时与复测。64 节点完整流水线观察下降 38.1%，但不同 Job 和未复现长尾使它仍是受混杂影响的结果。
+- 工程资产已形成约 2.6 GB 的 AFS 主快照，10/10 个 tar、6/6 个 Git bundle 和 75/75 项 SHA256 通过；但约 22 TB 大对象只保存清单，主快照后的增量与对象存储副本仍未完成。
 - 现阶段最可靠的资产不是单个最高吞吐数字，而是“配置不变量—稳定实验编号—统计窗口—聚合数据—原始证据哈希—结论边界”的可复核链路。
 
 ## 已知限制
@@ -28,10 +31,12 @@ last_updated: 2026-08-20
 - 8192 卡 r2 的代表日志只到 iteration 7，不能报告 30 步完成率、稳态 MFU 或长稳成功率。
 - EXP-006 没有 run ID、逐 iteration 数据、MFU 峰值公式、完整软件版本、placement 和原始 profile；33.4% 与通信根因不能升级为日志级复核结论。
 - C550 已有 2,336 卡候选池筛查和筛选后 2,048-rank topology PASS 的文档级证据，但独立训练扩展曲线、长稳、成员清单、维修复验和与主性能实验的质量收据仍未闭环。
-- 1T MoE 已形成 2,048 die、500 step 的文档级功能运行，但逐步日志、最终配置、数据身份、检查点、长稳和收敛评估仍缺；offload 和正式 mid-training 也未形成同口径可比较结果。
+- 1T MoE 已形成 2,048 die、500 step 的文档级功能运行和 1024/2048/4096 卡会话聚合性能，但逐 rank 原始日志、数据身份、检查点、长稳和收敛评估仍缺；2048 卡 last5/last10 差异大，87.90% 不能外推为生产扩展效率。
 - A3 Stall 的完整 ftrace 尚未进入受控证据包，IPVS/IRQ 系统级修复也未完成同条件随机化回归。
 - C550 direct dispatch 材料没有披露复测卡数、观察时长和同步次数；AllReduce/RDMA 异常缺交换机与端口 counter。
 - EXP-010/011 的逐卡成员、原始 SQLite/JSON/TSV、group 日志和同节点交错 A/B 未导入；健康状态数量和 38.1% 墙钟变化均保持文档级。
+- EXP-012/013 以完整会话中的工具输出为聚合来源，仓库不能独立重算全部 iteration；mapping 开关与可读 rank-order 标签也尚未一一归档。
+- EXP-014 的主快照与原始资料仍处于同一 AFS 故障域；后续 MoE 增量、约 22 TB 清单对象的跨域保全和对象存储目标端恢复收据均未完成。
 
 ## 后续工作
 
@@ -48,11 +53,12 @@ last_updated: 2026-08-20
 | 同节点复跑健康检查运行时 A/B | 分离软件收益与 Final64/placement 漂移 | 冻结 64 节点、Pairwise 计划、后台负载和超时 | 交错旧/new、至少 3 轮，报告 phase P50/P95/Max、失败率和结果完整性 | 高 |
 | A3 HCCL ABI 与观测开销闭环 | 让通信归因与主结果可信 | 冻结 CANN/HCCL、shadow/on-off 基线 | 字段抽样一致、覆盖完整、P50/P95/Max 开销达标 | 中 |
 | C550 原生通信观测适配 | 补齐 API 层以下证据 | MCCL callback/ABI 与厂商文档 | 与 Torch API 和厂家工具同窗对照 | 中 |
-| 冻结 MoE/1T 工作负载后再调优 | 避免把启动试错写成性能结论 | 模型身份、权重、数据、并行和 offload 配置可审计 | 同配置基线、逐项 A/B、显存/吞吐/稳定性联合报告 | 中 |
+| 复跑 1T MoE 扩展与根因矩阵 | 把 87.90% 短程趋势升级为可复核结论 | 恢复原始日志，冻结 TP1/PP16/EP16、数据、offload、rank-order 与 placement | 各规模至少 3 轮长窗口；profile 拆分 All-to-All、offload、recompute 与负载不均衡 | 高 |
+| 完成工程资产跨故障域归档 | 防止 AFS 回收或共享存储故障丢失复现资产 | 单副本 CPU 节点同时挂载 AFS 与对象存储，凭证不落日志 | 主快照+增量上传，目标端 SHA256/tar/bundle/数量容量对账和抽样恢复全部通过 | 高 |
 
 ## 可复用资产
 
-- 十一组[实验记录](experiments.md)及其 TSV 聚合、受控存储位置和 SHA256；大体积或含内部地址的来源通过脱敏材料索引登记，不直接进入 Git。
+- 十四组[实验记录](experiments.md)及其 TSV 聚合、受控存储位置和 SHA256；大体积或含内部地址的来源通过脱敏材料索引登记，不直接进入 Git。
 - [评测方法](07-evaluation-methodology.md)中的强/弱扩展、异构加权 ECP、计时与证据质量口径。
 - [训练系统](05-training-and-parallelism.md)、[健康与观测](06-reliability-and-observability.md)和[复现实验清单](appendix-b-reproducibility.md)。
 - Markdown 校验脚本与 Zensical 文档站构建配置。

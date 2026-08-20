@@ -1,0 +1,17 @@
+category	case	cards	tp	pp	ep	dp	gbs	window	metric	value	unit	status	evidence_status	notes
+scaling	bucket256m_noparam	1024	1	16	16	64	4096	last5	tflops_per_gpu	65.60	TFLOPS/GPU	PASS	session_log_aggregate	profiler_off_fp32_main_grad_cpu_optimizer_offload_1.0
+scaling	bucket256m_noparam	1024	1	16	16	64	4096	last10	tflops_per_gpu	65.30	TFLOPS/GPU	PASS	session_log_aggregate	profiler_off
+scaling	bucket256m_noparam	2048	1	16	16	128	8192	last5	tflops_per_gpu	61.82	TFLOPS/GPU	PASS	session_log_aggregate	window_sensitive_last10_is_lower
+scaling	bucket256m_noparam	2048	1	16	16	128	8192	last10	tflops_per_gpu	57.43	TFLOPS/GPU	PASS	session_log_aggregate	window_sensitive
+scaling	bucket256m_noparam_nogloo	4096	1	16	16	256	16384	last5	tflops_per_gpu	57.66	TFLOPS/GPU	PASS	session_log_aggregate	disable_gloo_group
+scaling	bucket256m_noparam_nogloo	4096	1	16	16	256	16384	last10	tflops_per_gpu	57.47	TFLOPS/GPU	PASS	session_log_aggregate	disable_gloo_group
+efficiency	1024_to_2048_last5	2048	1	16	16	128	8192	last5	per_gpu_retention	94.24	percent	CALCULATED	session_log_aggregate	61.82_div_65.60
+efficiency	1024_to_4096_last5	4096	1	16	16	256	16384	last5	per_gpu_retention	87.90	percent	CALCULATED	session_log_aggregate	57.66_div_65.60
+ablation	clean_baseline	1024	1	16	16	64	4096	iter_3_22	tflops_per_gpu	62.400	TFLOPS/GPU	PASS	session_log_aggregate	profiler_off
+ablation	no_param_overlap	1024	1	16	16	64	4096	iter_3_22	tflops_per_gpu	64.065	TFLOPS/GPU	PASS	session_log_aggregate	plus_2.67_percent_vs_clean
+ablation	cpu_optimizer_overlap	1024	1	16	16	64	4096	iter_3_22	tflops_per_gpu	60.455	TFLOPS/GPU	PASS	session_log_aggregate	minus_5.63_percent_vs_no_param
+ablation	bucket256m_vs_1.024b	1024	1	16	16	64	4096	iter_3_16	tflops_gain	0.72	percent	PASS	session_log_aggregate	64.629_vs_64.164
+ablation	bucket128m_nogloo	4096	1	16	16	256	16384	last5	tflops_per_gpu	56.66	TFLOPS/GPU	PASS	session_log_aggregate	minus_1.73_percent_vs_256m_nogloo
+failure	ep8_ddp_buffer_oom	1024	1	16	8	64	4096	startup	requested_memory	15.75	GiB	OOM	session_log_aggregate	first_ddp_buffer
+failure	bf16_main_grad_fused_moe	1024	1	16	16	64	4096	first_backward	operator_dtype_compatibility	NA	NA	FAILED	session_log_aggregate	npu_groupmatmul_add_fp32_requires_fp32_main_grad
+failure	recompute4_dns_rendezvous	4096	1	16	16	256	16384	pre_training	performance_data	NA	NA	NO_DATA	session_log_aggregate	master_service_dns_timeout_not_config_failure

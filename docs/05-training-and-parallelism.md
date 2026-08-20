@@ -10,9 +10,9 @@ last_updated: 2026-08-20
 
 ## 模型与工作负载
 
-当前主性能工作负载仍是 Qwen3-200B 稠密模型，sequence length 4096、MBS 1，训练代码冻结到 commit `54daa56ad07f86e510b8be9027fcdbd9957fc998`。EXP-001 至 EXP-006 以短程性能或聚合 MFU 为主，不用于收敛结论。
+当前主性能工作负载包括 Qwen3-200B Dense 与 Qwen3-1T MoE。Dense 使用 sequence length 4096、MBS1；已归档训练代码 commit 为 `54daa56ad07f86e510b8be9027fcdbd9957fc998`。EXP-001 至 EXP-006、EXP-012 和 EXP-013 均以短程性能或聚合 MFU 为主，不用于收敛结论。
 
-[EXP-009](https://github.com/reiase/tenk_report/blob/master/experiments/exp-009-200b-1t-delivery-evidence/README.md) 新增两组功能运行证据：交付材料报告 201.42B Dense 在 1,024 die 完成 800/800 step，1,099.55B MoE 在 2,048 die 完成 500/500 step，并提供 loss 曲线截图。模型估算分别为 200.75B 与 1,091.80B，和交付值相差约 0.33% 与 0.71%。这些结果把 MoE/1T 从“没有运行证据”推进到“文档级功能运行”，但缺少逐步原始日志、最终配置枚举、数据身份、检查点校验和收敛评估，不进入主性能排名。
+[EXP-009](https://github.com/reiase/tenk_report/blob/master/experiments/exp-009-200b-1t-delivery-evidence/README.md) 新增两组功能运行证据：交付材料报告 201.42B Dense 在 1,024 die 完成 800/800 step，1,099.55B MoE 在 2,048 die 完成 500/500 step，并提供 loss 曲线截图。模型估算分别为 200.75B 与 1,091.80B，和交付值相差约 0.33% 与 0.71%。这些结果把 MoE/1T 从“没有运行证据”推进到“文档级功能运行”。[EXP-013](https://github.com/reiase/tenk_report/blob/master/experiments/exp-013-a3-qwen3-1t-moe-tuning/README.md) 又补充了 1024/2048/4096 卡短程性能和故障栈，但证据仍来自会话日志聚合，缺少仓库内逐 rank 原始日志、数据身份、检查点校验和收敛评估；它单列为 MoE 性能曲线，不与 Dense MFU 排名。
 
 ## 并行策略
 
@@ -23,7 +23,7 @@ last_updated: 2026-08-20
 | 数据并行 | 16 / 64 / 256 | 跨超节点时对称分布 | AllReduce / ReduceScatter / AllGather | 对应已导入的 1024 / 4096 / 8192 卡稠密实验 |
 | 张量并行 | 1 / 2 / 8 | 优先位于同一逻辑超节点 | AllReduce / AllGather / ReduceScatter | 由显存、算子效率和高频通信距离共同决定 |
 | 流水线并行 | 8 / 16 / 64 | 减少相邻 stage 跨域次数 | Send / Recv | 兼顾模型切分、bubble 与边界激活传输 |
-| 专家并行 | 待正式导入 | 按 AlltoAll 实测单独映射 | AlltoAll / AlltoAllV | 不从稠密模型结果反推 MoE 配置 |
+| 专家并行 | 16（主线），8/32（消融） | 主线优先保持单节点 EP group，最终以 rank-order/placement 快照复核 | AlltoAll / AlltoAllV | EP8 OOM、EP32 短程回退；只适用于当前 1T MoE 代码与拓扑 |
 
 ### 已验证配置
 
@@ -34,6 +34,8 @@ last_updated: 2026-08-20
 | [EXP-003](https://github.com/reiase/tenk_report/blob/master/experiments/exp-003-a3-1024-4096-weak-scaling/README.md) | 1,024 / 4,096 | TP1/PP64/DP16 或 64/VPP2 | 4,096 / 16,384 | block1 | 7 步弱扩展效率 94.26% |
 | [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) | 8,192 | TP2/PP16/DP256/VPP2 | 32,768 | uniform1 | 无 Gloo 路径完成建组并进入 iteration 7 |
 | [EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) | 2,048 die | TP1--8 / PP8--64 / VPP2；另有 VPP4 消融 | 1,024 / 8,192 | uniform1 / block1 | 网格中 TP2/PP16/uniform1 的 MFU 最高，为 33.4%；文档级证据 |
+| [EXP-012](https://github.com/reiase/tenk_report/blob/master/experiments/exp-012-a3-4096-tp2pp16-dense/README.md) | 4,096 | TP2/PP16/DP128/VPP2 | 16,384 | uniform1 | iteration 6--30 平均 124.264 TFLOPS/GPU；方案级优于已测 TP8/PP8 11.18% |
+| [EXP-013](https://github.com/reiase/tenk_report/blob/master/experiments/exp-013-a3-qwen3-1t-moe-tuning/README.md) | 1,024 / 2,048 / 4,096 | TP1/PP16/EP16，DP64/128/256 | 4,096 / 8,192 / 16,384 | block7 | last5 为 65.60/61.82/57.66 TFLOPS/GPU；会话日志聚合 |
 
 ### 模型交付与混训编排
 
@@ -55,7 +57,9 @@ last_updated: 2026-08-20
 
 ## 内存与显存优化
 
-已导入实验覆盖 block/uniform 激活重计算、DDP bucket 和通信重叠开关。EXP-003 与 EXP-005 的 optimizer/activation offload 均关闭；现有 MoE offload 试跑没有形成同口径、可复核的主结果，因此不在这里给出性能收益。后续仍需覆盖状态切分、通信缓冲、内存碎片与卸载策略的随机化 A/B。
+已导入实验覆盖 block/uniform 激活重计算、DDP bucket、通信重叠和 optimizer CPU offload。Dense EXP-003/005 的 optimizer/activation offload 关闭；1T MoE 主线则使用 optimizer CPU offload fraction 1.0，不能跨模型把 offload 开关效果混算。
+
+EXP-013 的同窗口 1024 卡消融显示：clean baseline 为 62.400 TFLOPS/GPU，关闭 parameter gather overlap 后为 64.065；再启用 CPU optimizer 传输/更新 overlap 只有 60.455，未形成收益。DDP bucket 从 1.024B 降到 256M 的观察提升仅 0.72%，随后被保留为扩展配置；4096 卡继续降到 128M 后反而比 256M no-Gloo 低 1.73%。EP8 和 recompute6 触及 OOM，BF16 main grad 与当前 MoE 融合反向算子不兼容。这些边界只适用于当前代码、参数切分和显存条件。
 
 ## 训练坐标与阶段边界
 
@@ -120,4 +124,4 @@ last_updated: 2026-08-20
 
 ## 当前证据缺口
 
-A3 已有 1024/4096 卡短程性能、8192 卡启动证据和 2048 die 并行策略文档级分析，但缺少长稳、检查点恢复、完整 placement 与成员质量收据；EXP-006 还缺逐步数据、运行版本和原始 profile。C550 仍缺 2048 卡独立分池扩展实验。Qwen3 1T MoE 已有 2,048 die、500 step 的文档级功能运行，尚未形成冻结工作负载、原始逐步数据和可比较重复；offload 也不进入主性能结论。健康检查中的示例专家并行度或非均匀全交换模式也不能反推正式训练并行度。
+A3 已有 1024/4096 卡短程性能、8192 卡启动证据和 2048 die 并行策略文档级分析，但缺少长稳、检查点恢复、完整 placement 与成员质量收据；EXP-006 还缺逐步数据、运行版本和原始 profile，EXP-012 缺仓库内逐 rank 日志与 SuperPod placement。C550 仍缺 2048 卡独立分池训练扩展实验。Qwen3-1T MoE 已形成 2,048 die、500 step 的文档级功能运行，并新增 1024/2048/4096 卡会话聚合性能，但三组都只有约 30 步，2048 卡结果对 last5/last10 窗口敏感，且缺数据身份、检查点、原始日志、重复 placement、长稳和收敛评估。健康检查中的示例专家并行度或非均匀全交换模式也不能反推正式训练并行度。

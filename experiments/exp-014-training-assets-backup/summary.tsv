@@ -1,0 +1,5 @@
+artifact	created_at	size_gb	tar_verified	tar_total	bundle_verified	bundle_total	sha256_pass	sha256_fail	storage_domain	status	evidence_status	notes
+qwen3_1tb_moe_20260817_230336	2026-08-17T23:03:36+08:00	1.6	NA	NA	NA	NA	44	0	AFS	SUPERSEDED	session_log_aggregate	covered_by_full_project_snapshot
+full_training_project_20260817_232003	2026-08-17T23:20:03+08:00	2.6	10	10	6	6	75	0	AFS	VERIFIED	session_log_aggregate	excludes_22tb_large_objects_and_84gb_profiler_raw_data
+incremental_after_20260817_232003	NA	NA	NA	NA	NA	NA	NA	NA	AFS	NOT_CONFIRMED	session_plan_only	required_for_late_1t_moe_4096_runs
+object_storage_replica	NA	NA	NA	NA	NA	NA	NA	NA	separate_object_storage	BLOCKED	session_status	missing_dual_mounted_cpu_node_and_ais_create_permission
