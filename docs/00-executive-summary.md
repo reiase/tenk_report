@@ -24,6 +24,9 @@ last_updated: 2026-08-20
 - A3 单卡同步 Stall 已在来源报告中闭环到 IPVS `estimation_timer` 长时间占用软中断、阻塞同 CPU 的 NPU CQ tasklet；系统级修复回归和完整 ftrace 归档仍待完成。
 - 交付材料报告 200B Dense 在 1,024 die 完成 800/800 step，1T MoE 在 2,048 die 完成 500/500 step。它们是文档级功能运行证据，不是性能、收敛或长稳结论。
 - C550 64 卡前向进展探针的事件宽度集中在 200--272 ms；direct dispatch 是厂商缓解方向，独立观察卡时和通信网络根因仍待补。
+- 健康检查材料记录 A3 两个 4,096 卡批次和 96 卡备机筛查；首批发现 2 张 correctness BAD，第二批 0 BAD，两个 256 节点 Job 均完成过 Final256 集合通信。
+- C550 对 292 节点、2,336 张卡完成全量筛查，记录 1 BAD、3 SDC-SUSPECT、7 DEAD 和 70 HBM SLOW；筛选出的 256 节点完成 Final256 的 2,048-rank 集合通信。
+- 64 节点、1,024 ranks 的健康检查完整流水线从 1,706 秒降到 1,056 秒，观察下降 38.1%；两轮 Job 与节点不同且旧轮含未复现的 Final64 长尾，该值不是纯软件收益。
 - 规模化工作的第一道门槛仍是筛卡和健康检查；所有性能结论必须同时披露配置、统计窗口、证据哈希与未完成项。
 
 ## 关键指标
@@ -33,6 +36,10 @@ last_updated: 2026-08-20
 | 纳管加速卡总数 | 10,240 张 | A3 8,192 + C550 2,048 | 项目部署基线 |
 | A3 资源池占比 | 80% | 8,192 / 10,240 | 项目部署基线 |
 | C550 资源池占比 | 20% | 2,048 / 10,240 | 项目部署基线 |
+| A3 CARD_SCREEN | r1：4,093 GOOD / 2 BAD / 1 CONTENDED；r2：4,093 GOOD / 0 BAD / 3 CONTENDED | 两个独立 4,096 卡批次；文档级证据 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| C550 候选池筛查 | 1 BAD / 3 SDC-SUSPECT / 7 DEAD / 70 HBM SLOW | 292 节点、2,336 卡；状态不合并为坏卡率 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| C550 训练拓扑验收 | Final256 PASS | 筛选后 256 节点、2,048 ranks；只证明集合通信验收 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| 健康检查墙钟观察 | 1,706→1,056 秒（-38.1%） | 64 节点同拓扑、不同 Job；受 Final64 长尾等混杂 | [EXP-011](https://github.com/reiase/tenk_report/blob/master/experiments/exp-011-healthcheck-runtime-optimization/README.md) |
 | A3 最大已进入训练规模 | 8,192 张 | r2 完成建组并观测到 iteration 7；非完整验收 | [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) |
 | A3 1024→4096 弱扩展效率 | **94.26%** | 同代码/模型/序列长度/并行组合，7 个共同稳态步 | [EXP-003](https://github.com/reiase/tenk_report/blob/master/experiments/exp-003-a3-1024-4096-weak-scaling/README.md) |
 | A3 2048 die 配置搜索最佳 MFU | **33.4%** | Qwen3-200B、GBS8192、MBS1、VPP2、TP2/PP16/uniform1；文档级证据 | [EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) |
@@ -54,4 +61,4 @@ last_updated: 2026-08-20
 
 ## 限制与适用范围
 
-当前已写入部分训练配置、短程实测和文档级交付/根因证据，但硬件批次、完整 placement、健康准入漏斗、端到端时间分解和长稳结果仍不完整。94.26% 只有 7 个评分步；92.43% 依赖仅 3 个有效 iteration 的 C550 独立基线；33.4% 来自缺少逐步数据、MFU 公式和重复轮的聚合 PDF。A3 Stall 的完整 ftrace、系统级修复回归，以及 200B/1T 的逐步日志、检查点与收敛评估尚未入库。A3 与 C550 的单平台结果继续分别报告，加权 ECP 仅作为验收指标，不用于跨硬件性能排名。
+当前已写入部分训练配置、短程实测、健康准入汇总和文档级交付/根因证据，但硬件成员清单、完整 placement、维修闭环、端到端时间分解和长稳结果仍不完整。94.26% 只有 7 个评分步；92.43% 依赖仅 3 个有效 iteration 的 C550 独立基线；33.4% 来自缺少逐步数据、MFU 公式和重复轮的聚合 PDF。C550 的 2,048-rank Final256 PASS 是集合通信验收，不是训练扩展或长稳；健康检查的 38.1% 墙钟下降来自不同 Job 的观察性对比。A3 Stall 的完整 ftrace、系统级修复回归，以及 200B/1T 的逐步日志、检查点与收敛评估尚未入库。A3 与 C550 的单平台结果继续分别报告，加权 ECP 仅作为验收指标，不用于跨硬件性能排名。

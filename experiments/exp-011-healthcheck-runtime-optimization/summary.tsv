@@ -1,0 +1,20 @@
+section	case	scale	window	metric	value	unit	evidence_note
+control_plane	no-op-c32	128 nodes	64 groups	wall_time	4	second	approximate
+control_plane	no-op-c32	128 nodes	per connection	connect_p50_low	0.6	second	document_only
+control_plane	no-op-c32	128 nodes	per connection	connect_p50_high	0.9	second	document_only
+pairwise	real-small-c32	128 nodes	64 groups	wall_time	74.58	second	64_of_64_pass
+pairwise	real-22-size-c32	128 nodes	64 groups	wall_time	75.71	second	64_of_64_pass
+group_lifecycle	median	2 nodes	per group	total	34.65	second	document_only
+group_lifecycle	median	2 nodes	per group	pod_dynamic	19.68	second	56.60_percent
+group_lifecycle	median	2 nodes	per group	driver_and_outer	15.04	second	43.40_percent
+group_lifecycle	median	2 nodes	per group	process_group_init	6.02	second	document_only
+group_lifecycle	median	2 nodes	per group	workload	11.83	second	document_only
+group_lifecycle	median	2 nodes	per group	process_group_teardown	1.83	second	document_only
+job	a3-4096-r1	256 nodes	multi-node phase	wall_time	139	minute	approximate
+job	a3-4096-r2	256 nodes	multi-node phase	wall_time	7799	second	approximate
+job	c550-topology	256 nodes	topology phase	wall_time	3203.9	second	approximate
+result_transport	a3-4096-r2	256 nodes	frame retests	wall_time	170	second	2.2_percent_of_multi_node
+ab	legacy	64 nodes / 1024 ranks	full multi-node	wall_time	1706	second	different_job
+ab	main	64 nodes / 1024 ranks	full multi-node	wall_time	1056	second	different_job
+ab	main-vs-legacy	64 nodes / 1024 ranks	full multi-node	wall_time_delta	-650	second	observational
+ab	main-vs-legacy	64 nodes / 1024 ranks	full multi-node	wall_time_reduction	38.1	percent	confounded_observational

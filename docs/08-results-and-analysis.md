@@ -10,7 +10,7 @@ last_updated: 2026-08-20
 
 ## 当前证据状态
 
-仓库已经导入九组带稳定编号的实验。聚合结果、冻结配置、受控原始证据位置和 SHA256 已登记；结论按“日志级短程结果、文档级功能/根因证据、部分启动验证、待完成生产验收”分层。
+仓库已经导入十一组带稳定编号的实验。聚合结果、冻结配置、受控原始证据位置和 SHA256 已登记；结论按“日志级短程结果、文档级功能/根因证据、部分启动验证、待完成生产验收”分层。
 
 | 结论层级 | 当前状态 | 可使用的证据 | 尚缺材料 |
 | --- | --- | --- | --- |
@@ -24,7 +24,9 @@ last_updated: 2026-08-20
 | [EXP-007](https://github.com/reiase/tenk_report/blob/master/experiments/exp-007-a3-forward-progress-stall/README.md) A3 Stall | 根因文档内闭环 | 512/1,024 卡分布、ftrace 配对摘要、缓解消融与 SHA256 | 完整 ftrace、系统级修复后的随机化回归 |
 | [EXP-008](https://github.com/reiase/tenk_report/blob/master/experiments/exp-008-c550-stall-and-communication-tail/README.md) C550 Stall/通信尾延迟 | 文档级证据 | 64 卡探针、256/512 卡通信重复、厂商 direct dispatch 说明 | 原始 gap、复测卡时、交换机 counter 和独立 A/B |
 | [EXP-009](https://github.com/reiase/tenk_report/blob/master/experiments/exp-009-200b-1t-delivery-evidence/README.md) 200B/1T 交付 | 文档级功能运行 | 模型估算、800/500 step 交付截图、混训编排与 SHA256 | 最终配置、逐步日志、检查点校验、性能与收敛评估 |
-| 2,048 卡 C550 分池验收 | 待执行 | 万卡窗口中的 C550 分组结果 | 独立分池准入、扩展曲线与长稳 |
+| [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) 双资源池健康准入 | 文档级准入证据 | A3 两批 4,096 卡与备机、C550 2,336 卡筛查和 2,048-rank Final256 | 成员清单、逐卡原始结果、维修复验与训练长稳 |
+| [EXP-011](https://github.com/reiase/tenk_report/blob/master/experiments/exp-011-healthcheck-runtime-optimization/README.md) 健康检查运行时 | 观察性对比 | 128/256/292 节点耗时分解、64 节点 1,706→1,056 秒 | 同节点交错 A/B、原始阶段数据和失败率区间 |
+| 2,048 卡 C550 分池验收 | 健康 topology 文档级通过；训练待执行 | 2,336 卡候选池筛查与 2,048-rank Final256 | 独立训练扩展曲线、长稳与成员质量收据 |
 | 10,240 卡单作业结论 | 不适用 | 验收加权指标 92.43% | 不得改写为 10,240 卡单一同步作业效率 |
 
 下列生产数字只引用上述实验；没有实验编号、统计窗口和证据哈希的历史陈述仍作为待核验线索。
@@ -93,27 +95,38 @@ C550 64 卡 x 1 h 记录 40 次事件，P50/max 为 212.6/272.3 ms；厂商材�
 
 | 资源池/cohort | 预期卡数 | 实际覆盖 | good | slow | contended | bad/dead | sdc-suspect | 证据 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| A3 / 待冻结 | 待补充 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待导入 |
-| C550 / 待冻结 | 待补充 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待导入 |
+| A3 / 4,096-r1 | 4,096 | 4,096 | 4,093 | 0 | 1 | 2 / 0 | 0 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| A3 / 4,096-r2 | 4,096 | 4,096 | 4,093 | 0 | 3 | 0 / 0 | 0 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| A3 / 备机 | 96 | 96 | 96 | 0 | 0 | 0 / 0 | 0 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| C550 / 候选池 | 2,336 | 2,336 | 未报告 | 70 | 未报告 | 1 / 7 | 3 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
 
 | 资源池/cohort | 矩阵 TFLOPS P10/P50 | HBM GB/s P10/P50 | 稳态 TFLOPS P10/P50 | 稳态/瞬时比 P10/P50 | 满载功耗 P10/P50/P90 | 热/功率限频卡数 |
 | --- | --- | --- | --- | --- | --- | ---: |
 | A3 / 待冻结 | 待实测 | 待实测 | 待实测 | 待计算 | 待实测 | 待实测 |
-| C550 / 待冻结 | 待实测 | 待实测 | 待实测 | 待计算 | 待实测 | 待实测 |
+| C550 / 2,336 卡候选池 | 待补 / 1,488.66；SLOW P50 1,050.28 | 待实测 | 待实测 | 待计算 | 待实测 | 待实测 |
+
+C550 的 70 张 HBM SLOW 集中在 9 个节点，范围为 1,045.05--1,054.11 GB/s；其 1,050.28 GB/s 中位数约为全体有效中位数 1,488.66 GB/s 的 70.6%。这是同轮 cohort 偏离，不是厂商绝对规格判定。
 
 SDC 结果按目标单元拆开，至少报告实际轮数、命中卡数、异常卡数、功耗遥测覆盖，以及因限频而未达到目标压力的卡数。HBM 数据模式测试还要报告实际覆盖 GiB 和覆盖率分布；固定容量抽样不得汇总成全显存无错误。发生命中时保留首个命中轮、不一致元素数、最大偏差、当时可获得的遥测和复测状态。
 
 | 资源池 | 时间范围 | 候选节点 | selected | standby | excluded | FAIL/SUSPECT | topology 状态 | 证据 |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |
-| A3 | 待补充 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待导入 |
-| C550 | 待补充 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 | 待导入 |
+| --- | --- | ---: | ---: | ---: | ---: | --- | --- | --- |
+| A3 / 4,096-r1 | 2026-08-10--11 | 256 | 未提供成员清单 | 未提供 | 未提供 | 2 卡 BAD、1 卡 CONTENDED、1 节点配置异常 | Final256 PASS | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| A3 / 4,096-r2 | 2026-08-10--11 | 256 | 未提供成员清单 | 未提供 | 未提供 | 3 卡 CONTENDED；无 BAD/SLOW | 节点定位 256 PASS；定向复测通过 | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
+| C550 | 2026-08-10 | 292 | 256 | 未分级 | 未分级 | 设备、配置、单机性能与通信候选分型保留 | Final256 2,048 ranks PASS | [EXP-010](https://github.com/reiase/tenk_report/blob/master/experiments/exp-010-fleet-health-admission/README.md) |
 
-训练拓扑结果另按 `world_size + family + op + shape + group_size` 报告 case 数、期望/实际 subgroup 数、最慢 subgroup、correctness 和错误分类。`BLOCKED` 与 `NOT_RUN` 必须计入覆盖率，不能从分母中删除。
+训练拓扑结果另按 `world_size + family + op + shape + group_size` 报告 case 数、期望/实际 subgroup 数、最慢 subgroup、correctness 和错误分类。`BLOCKED` 与 `NOT_RUN` 必须计入覆盖率，不能从分母中删除。C550 主轮 Scale8 有 6 个 TIMEOUT，定向复测记录 4/4 PASS；Scale16/32/64/128 与 Final256 通过。首轮异常和复测结果同时保留，不能用最终 PASS 擦除前者。
 
 | 资源池 | 统计窗口 | 有效训练时间占比 | 中断次数 | MTBF | MTTR | 训练成功率 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | A3 | 待补充 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 |
 | C550 | 待补充 | 待实测 | 待实测 | 待实测 | 待实测 | 待实测 |
+
+### 健康检查运行时
+
+[EXP-011](https://github.com/reiase/tenk_report/blob/master/experiments/exp-011-healthcheck-runtime-optimization/README.md) 把检查墙钟与设备状态分开。A3 两个 4,096 卡 Job 的多节点阶段分别约 139 分钟和 7,799 秒；C550 的 Pairwise 有效轮约 257.9 秒，但 256 节点 topology 约 3,203.9 秒，主要受 Scale8 超时影响。共享 AFS SQLite 写锁、Pairwise 多执行波次、round barrier、硬超时和复测共同决定总墙钟。
+
+64 节点同训练拓扑的旧版/main 完整流水线分别为 1,706 秒和 1,056 秒。观察差值为 650 秒、38.1%，但旧版含一次 903.844 秒 Final64 TIMEOUT，之后独立复测 73.699 秒通过；两轮 Job、物理节点和基础 group 数也不同。主结果只报告“观察到墙钟下降并验证新机制完整跑通”，不报告纯优化收益或统计显著性。
 
 ## 观测质量与开销
 
@@ -140,6 +153,8 @@ SDC 结果按目标单元拆开，至少报告实际轮数、命中卡数、异�
 | A3 单卡同步 gap 出现 500/650 ms 级两簇 | EXP-007 的事件分布与 S005 ftrace 摘要 | IPVS timer 阻塞同 CPU 的 NPU CQ tasklet | trace 丢失样本、其他主机调度或运行时路径 | 系统级修复、IRQ/CPU 控制组与无插桩随机化回归 | 文档内闭环，原始 trace 待归档 |
 | C550 256/512 卡 AllReduce 部分重复出现长尾且增加 QP 退化 | EXP-008 聚合材料 | 规模/QP/网络竞争候选 | 多租户、交换机、NIC、退出路径或测量差异 | 同 cohort 交错复跑并绑定端口/交换机 counter | 未归因 |
 | C550 混训出现 `IBV_WC_RETRY_EXC_ERR` | EXP-009 问题记录 | RDMA 重试耗尽 | 节点、链路、路由或外部网络竞争 | 换伙伴、固定路径复现和网络遥测 | 临时筛除，根因未关闭 |
+| 历史健康检查记录约 2,600 秒但超时配置为 300/420 秒 | EXP-011 的执行顺序与 AFS 对照 | 共享 AFS SQLite 锁等待混入记录耗时 | group 真实执行、启动或清理长尾 | 将热库移到本地 `/tmp`，分开 queued/running/recovery 时间 | 控制面根因有对照，原始数据库待导入 |
+| C550 某节点与多个伙伴在 All-Reduce 运行期失败 | EXP-010 Pairwise 定位摘要 | 节点侧 RDMA/MCCL 路径候选 | 端口、驱动、路由或伙伴共同因素 | 固定换伙伴并绑定端口/交换机 counter | 节点候选已收敛，硬件根因未关闭 |
 
 健康检查可优先定位正确性失败、慢 rank、慢 group 和通信路径异常；最终归因仍需结合设备日志、交换机遥测、软件版本差异和训练 trace。一次异常应沿“作业概览 → 节点/行为组 → rank/step → module/collective → 原生 task/kernel/stack”逐级收窄，避免先挑选一段细粒度 trace 再事后构造全局解释。
 
@@ -193,6 +208,8 @@ Megatron 优化仍按单变量或已声明的组合做 A/B，保存完整配置�
 - EXP-007 的 A3 Stall 根因在来源文档中闭环到 IPVS timer 与 CQ tasklet 竞争；完整 ftrace 未归档前不升级为仓库内原始证据闭环，热点节点也不按永久坏卡处理。
 - EXP-008 的 C550 direct dispatch 与通信尾延迟均为文档级证据；缺少观察卡时和网络 counter 时，不报告修复后的事件率或网络根因。
 - EXP-009 的 800/800 与 500/500 step 只证明来源记录的功能运行；不报告收敛、MFU、端到端吞吐或检查点恢复成功率。
+- EXP-010 的设备状态保持来源分类；A3 成员清单未导入，C550 Final256 只证明 2,048-rank 集合通信通过，不外推为训练长稳或扩展效率。
+- EXP-011 的 38.1% 是不同 Job 间的观察性墙钟变化，受 Final64 长尾、物理节点和 Pairwise 计划影响；不能写成同条件软件加速比。
 - 合成 BusBW 不外推为 Megatron 吞吐或 MFU；某消息大小、collective 或 EP pattern 不外推到未测试 workload。
 - A3 与 C550 的单平台结果分别报告；加权 ECP 单列，不改写为单一异构同步训练吞吐。
 - 历史运行记录缺少原始测量、完整运行条件、版本和完整性摘要时，只能列为待导入线索。

@@ -1,0 +1,32 @@
+section	platform	case	scale	metric	value	unit	evidence_note
+card_screen	A3	a3-4096-r1	4096 logical devices	good	4093	card	document_only
+card_screen	A3	a3-4096-r1	4096 logical devices	bad	2	card	gemm_correctness
+card_screen	A3	a3-4096-r1	4096 logical devices	contended	1	card	timing_quality
+card_screen	A3	a3-4096-r1	4096 logical devices	slow	0	card	document_only
+card_screen	A3	a3-4096-r2	4096 logical devices	good	4093	card	document_only
+card_screen	A3	a3-4096-r2	4096 logical devices	bad	0	card	document_only
+card_screen	A3	a3-4096-r2	4096 logical devices	contended	3	card	timing_quality
+card_screen	A3	a3-4096-r2	4096 logical devices	slow	0	card	document_only
+card_screen	A3	a3-reserve	96 logical devices	good	96	card	document_only
+stall_screen	A3	a3-4096-r1	4096 logical devices	keep	3427	card	observation_only
+stall_screen	A3	a3-4096-r1	4096 logical devices	suspect	234	card	observation_only
+stall_screen	A3	a3-4096-r1	4096 logical devices	hot	435	card	observation_only
+stall_screen	A3	a3-4096-r2	4096 logical devices	keep	3308	card	observation_only
+stall_screen	A3	a3-4096-r2	4096 logical devices	suspect	293	card	observation_only
+stall_screen	A3	a3-4096-r2	4096 logical devices	hot	495	card	observation_only
+pairwise	A3	a3-4096-r1	256 nodes	node_pass	256	node	document_only
+pairwise	A3	a3-4096-r2	256 nodes	node_pass	256	node	document_only
+topology	A3	a3-4096-r1-final256	4096 ranks	pass	1	group	collective_only
+card_screen	C550	c550-candidate-pool	2336 cards	bad	1	card	gemm_correctness
+card_screen	C550	c550-candidate-pool	2336 cards	sdc_suspect	3	card	document_only
+card_screen	C550	c550-candidate-pool	2336 cards	dead	7	card	cumulative_uncorrectable_ecc
+card_screen	C550	c550-candidate-pool	2336 cards	slow	70	card	hbm_bandwidth
+card_screen	C550	c550-hbm-slow	70 cards	hbm_median	1050.28	GB_s	document_only
+card_screen	C550	c550-valid-hbm	valid samples	hbm_median	1488.66	GB_s	document_only
+stall_screen	C550	c550-candidate-pool	2336 cards	keep	2112	card	observation_only
+stall_screen	C550	c550-candidate-pool	2336 cards	hot	115	card	observation_only
+stall_screen	C550	c550-candidate-pool	2336 cards	suspect	109	card	observation_only
+pairwise	C550	c550-candidate-pool	296 groups	group_pass	292	group	document_only
+pairwise	C550	c550-candidate-pool	296 groups	group_fail	4	group	document_only
+pairwise	C550	c550-candidate-pool	292 nodes	node_suspect	1	node	multi_partner_runtime_error
+topology	C550	c550-final256	2048 ranks	pass	1	group	collective_only
