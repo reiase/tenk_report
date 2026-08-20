@@ -3,14 +3,14 @@ title: 稳定性、容错与可观测性
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-16
+last_updated: 2026-08-20
 ---
 
 # 稳定性、容错与可观测性
 
 ## 本章结论
 
-训练资源准入采用“静态一致性、单节点可运行性、单卡压力筛查、成对硬件筛查、目标节点选择、训练拓扑验收、训练复现”分层检查。当前材料能够支撑方法设计，但不等价于 10,240 卡生产环境已经通过验收。任何健康率、通过率和稳定性数字都必须由固定测量条件下的原始证据重新汇总。
+训练资源准入采用“静态一致性、单节点可运行性、单卡压力筛查、成对硬件筛查、目标节点选择、训练拓扑验收、训练复现”分层检查。新增材料提供了 A3/C550 前向进展 Stall 的文档级事件分布，并把 A3 的代表事件闭环到 IPVS 软中断与 NPU CQ tasklet 竞争；它们仍不等价于 10,240 卡生产环境已经通过验收。任何健康率、通过率和稳定性数字都必须由固定测量条件下的原始证据重新汇总。
 
 ![训练资源依次通过静态、动态、单卡、链路和真实训练拓扑检查，并对功能失败和性能候选分别闭环](assets/diagrams/health-admission-pipeline.svg){ .technical-diagram loading=lazy }
 
@@ -260,6 +260,23 @@ G_k=t^{\mathrm{return}}_k-t^{\mathrm{return}}_{k-1}
 观察 forward progress。若 \(G_k\) 超过预注册的 gap 门限，该事件表示在这段时间内 CPU 观察不到下一次完成。它覆盖的链路包括 CPU 线程调度、Python/框架派发、设备运行时、驱动队列、设备计算、完成通知与同步返回；因此特别适合发现短平均吞吐会掩盖的长尾停顿。[I006](references.md#i006)
 
 这一方法的强项是故障域清楚：默认不包含集合通信，每张卡独立推进，避免一个 rank 的停顿通过 collective 扩散成全组现象。它的边界也同样清楚：gap 是端到端进展延迟，不是纯 GEMM 时间；标量读取本身可能形成隐式同步；事件能够证明链路停顿，却不能单独指出停顿发生在 CPU 调度、驱动还是设备。通信版本适合观察“停顿是否会扩散成组级尾延迟”，但不能再把异常直接归属到某张卡。
+
+### A3 与 C550 的已观测 Stall
+
+[EXP-007](https://github.com/reiase/tenk_report/blob/master/experiments/exp-007-a3-forward-progress-stall/README.md) 与 [EXP-008](https://github.com/reiase/tenk_report/blob/master/experiments/exp-008-c550-stall-and-communication-tail/README.md) 使用相同的 200 ms 事件阈值，但运行时、主机、同步 API 和样本窗口不同，不能直接做芯片排名：
+
+| 资源池 | 规模与时长 | 事件数 | 事件率 | 宽度特征 |
+| --- | --- | ---: | ---: | --- |
+| A3 | 1,024 卡 x 19 min | 7,658 | 0.393 次/卡/min | P50 504 ms，P90 697 ms，max 822 ms |
+| A3 | 512 卡 x 30 min | 6,972 | 0.454 次/卡/min | 主要为约 500 ms 与 640--690 ms 两簇 |
+| C550 | 64 卡 x 60 min | 40 | 0.0104 次/卡/min | P50 212.6 ms，max 272.3 ms |
+| C550 | 64 卡 x 20 min | 15 | 0.0117 次/卡/min | P50 211 ms，max 228 ms |
+
+A3 来源报告使用 ftrace 记录到约 871--875 ms 的 IPVS `estimation_timer` 占用 `TIMER_SOFTIRQ`。同 CPU 上 NPU CQ IRQ 到达后已调度 tasklet，但 tasklet 延迟 875.392 ms 才执行；5 次 Stall 中 3 次直接配对，2 次因 trace buffer 溢出按约 2.94 s 周期推断。将 CQ IRQ 移离命中 CPU 后，被测设备的 Stall 消失。该证据把代表事件从“CPU/运行时/设备候选”收敛到“IPVS timer 与 CQ tasklet 同 CPU 竞争”，但完整 1.7 GB ftrace 未入库，因此按文档内闭环使用。
+
+C550 厂商材料把非 direct 模式的额外 CPU 派发线程、锁竞争与频繁同步列为候选，并报告 `MACA_DIRECT_DISPATCH=1` 后未复现；材料没有观察时长和同步次数，只能作为缓解方向。另一个集群的 AllReduce 长尾属于通信域证据，不与单卡 Stall 合并。
+
+A3 训练侧消融中，TaskQueue level 2、jemalloc 及组合相对基线的 step 3--500 窗口耗时分别为 80.46%、88.45% 和 73.46%。这些优化减少 Stall 暴露或主机开销，不替代 IPVS/IRQ 系统级修复。探针热度剔除只在 8B Dense 中比三个随机组快 5.8%--10.0%，在 MoE 中没有优势，因此热点排名不能升级为通用坏卡清单。
 
 定位依赖同一时间窗的联合事实：CPU 利用率、线程状态、等待通道、主动/被动上下文切换和 RSS；设备利用率、显存、功耗、温度和时钟；ECC/RAS 与内核/驱动事件；以及是否发生 collective。典型推断是：CPU 长时间不可运行且设备空闲，优先检查主机调度与系统压力；CPU 在设备等待中停留且设备无进展，候选落在运行时、驱动或设备；设备保持忙碌但完成迟迟不返回，则需要区分真实长 kernel、设备调度和完成通知。这些都是竞争假设，必须用复测或更深事件证据区分。
 

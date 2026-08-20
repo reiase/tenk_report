@@ -3,14 +3,14 @@ title: 结果与分析
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-19
+last_updated: 2026-08-20
 ---
 
 # 结果与分析
 
 ## 当前证据状态
 
-仓库已经导入六组带稳定编号的训练实验。聚合结果、冻结配置、受控原始证据位置和 SHA256 已登记；结论按“可复核短程结果、部分启动验证、待完成生产验收”分层。
+仓库已经导入九组带稳定编号的实验。聚合结果、冻结配置、受控原始证据位置和 SHA256 已登记；结论按“日志级短程结果、文档级功能/根因证据、部分启动验证、待完成生产验收”分层。
 
 | 结论层级 | 当前状态 | 可使用的证据 | 尚缺材料 |
 | --- | --- | --- | --- |
@@ -21,6 +21,9 @@ last_updated: 2026-08-19
 | [EXP-004](https://github.com/reiase/tenk_report/blob/master/experiments/exp-004-tenk-weighted-acceptance/README.md) 万卡加权验收 | 可复核点估计 | 8 组共同 13.18 小时窗口、日志包哈希与公式 | C550 稳态独立基线、完整 800 步 |
 | [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) A3 8192 卡启动 | 部分通过 | r1/r2 配置与日志、修正启动器哈希 | 完整 30 步、长稳与成员质量收据 |
 | [EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) A3 2048 die 并行策略与 MFU | 文档级证据 | 聚合表、趋势图、PDF 与 SHA256 | run ID、逐步数据、MFU 公式、完整配置与原始 profile |
+| [EXP-007](https://github.com/reiase/tenk_report/blob/master/experiments/exp-007-a3-forward-progress-stall/README.md) A3 Stall | 根因文档内闭环 | 512/1,024 卡分布、ftrace 配对摘要、缓解消融与 SHA256 | 完整 ftrace、系统级修复后的随机化回归 |
+| [EXP-008](https://github.com/reiase/tenk_report/blob/master/experiments/exp-008-c550-stall-and-communication-tail/README.md) C550 Stall/通信尾延迟 | 文档级证据 | 64 卡探针、256/512 卡通信重复、厂商 direct dispatch 说明 | 原始 gap、复测卡时、交换机 counter 和独立 A/B |
+| [EXP-009](https://github.com/reiase/tenk_report/blob/master/experiments/exp-009-200b-1t-delivery-evidence/README.md) 200B/1T 交付 | 文档级功能运行 | 模型估算、800/500 step 交付截图、混训编排与 SHA256 | 最终配置、逐步日志、检查点校验、性能与收敛评估 |
 | 2,048 卡 C550 分池验收 | 待执行 | 万卡窗口中的 C550 分组结果 | 独立分池准入、扩展曲线与长稳 |
 | 10,240 卡单作业结论 | 不适用 | 验收加权指标 92.43% | 不得改写为 10,240 卡单一同步作业效率 |
 
@@ -54,7 +57,7 @@ EXP-006 使用 `die` 作为规模单位，且没有提供与 EXP-003 对齐的�
 
 ## 端到端训练性能
 
-稳态吞吐和端到端吞吐分开报告。现有 EXP-001 至 EXP-003 是短程性能实验，禁用了检查点；EXP-004 是共同运行窗口；EXP-006 只有聚合 PDF，不能恢复端到端时间线。它们均不能替代包含启动、数据等待、检查点和故障恢复的完整端到端测量。
+稳态吞吐和端到端吞吐分开报告。现有 EXP-001 至 EXP-003 是短程性能实验，禁用了检查点；EXP-004 是共同运行窗口；EXP-006 只有聚合 PDF，不能恢复端到端时间线。EXP-009 虽报告 200B 800/800 step 和 1T MoE 500/500 step，但没有逐步墙钟、检查点和恢复明细。它们均不能替代包含启动、数据等待、检查点和故障恢复的完整端到端测量。
 
 | 资源池 | 实验 | 稳态结果 | 端到端吞吐 | 测量窗口 | 检查点开销 | 数据等待 | 故障恢复 |
 | --- | --- | ---: | ---: | --- | ---: | ---: | ---: |
@@ -63,7 +66,26 @@ EXP-006 使用 `die` 作为规模单位，且没有提供与 EXP-003 对齐的�
 | A3+C550 | EXP-004 | 加权 ECP 91.5279 TFLOPS/卡 | 未测 | 47,436 秒共同窗口 | 未分解 | 未分解 | 前段重启已排除并披露 |
 | C550 | 独立分池 | 待实测 | 待实测 | 待定义 | 待实测 | 待实测 | 待实测 |
 
+### 模型交付功能运行
+
+| 模型 | 参数量口径 | 规模 | 完成 step | 证据等级 | 不能推出 |
+| --- | ---: | ---: | ---: | --- | --- |
+| 200B Dense | 交付值 201.42B；估算 200.75B | 1,024 die | 800/800 | 文档级功能运行 | 收敛、长稳、MFU、端到端吞吐 |
+| 1T MoE | 交付值 1,099.55B；估算 1,091.80B | 2,048 die | 500/500 | 文档级功能运行 | 收敛、长稳、MFU、端到端吞吐 |
+
+来源截图显示两条 loss 曲线并报告运行无错误。仓库尚不能从原始日志复算曲线，也没有最终参数枚举、数据身份和检查点完整性，因此只确认来源所记录的有限步数训练推进。
+
 ## 稳定性结果
+
+### 前向进展 Stall
+
+A3 最小同步探针在 1,024 卡 x 19 min 中记录 7,658 次事件，在 512 卡 x 30 min 中记录 6,972 次事件；gap P50/P90 为 504/697 ms。来源报告把代表事件闭环到 IPVS `estimation_timer` 在软中断上下文占用约 875 ms，阻塞同 CPU 上 NPU CQ tasklet。[EXP-007](https://github.com/reiase/tenk_report/blob/master/experiments/exp-007-a3-forward-progress-stall/README.md)
+
+C550 64 卡 x 1 h 记录 40 次事件，P50/max 为 212.6/272.3 ms；厂商材料报告 direct dispatch 后未复现，但未给观察卡时。C550 的另一组 256/512 卡 AllReduce 尾延迟是独立通信现象。[EXP-008](https://github.com/reiase/tenk_report/blob/master/experiments/exp-008-c550-stall-and-communication-tail/README.md)
+
+两组数字都依赖同步频率、主机、运行时和插桩模式。A3 材料还观察到 profiler/插桩会提高事件率，因此正式回归必须保存无插桩控制组，不能把深度采集轮直接用于事件率验收。
+
+### 健康与训练稳定性
 
 健康检查结果按 run、phase 和节点状态汇总，训练稳定性按资源池与时间窗口汇总。二者不能混用：一次健康检查 PASS 不是长稳训练成功，一次检查 FAIL 也不能在未定位前直接计为硬件故障。
 
@@ -115,6 +137,9 @@ SDC 结果按目标单元拆开，至少报告实际轮数、命中卡数、异�
 | 8192 卡 r1 首步前 Gloo 建组失败 | EXP-005 多 rank 错误与日志哈希 | 分布式优化器 Gloo 全互连路径在该规模失效 | 节点故障或其他网络异常 | r2 仅增加 `--disable-gloo-group` 后复跑 | 启动阻塞已修正，底层网络根因未外推 |
 | C550 独立基线只有 3 个 iteration | EXP-004 基线日志 | 基线统计不足 | 热身阶段尚未结束 | 补跑 20--30 个稳态步并冻结聚合口径 | 已披露，待补证 |
 | TP8 扩展后 forward-compute 与未重叠通信增长 | EXP-006 的 TensorBoard/Profiling 聚合摘要 | 小消息 AllReduce 时延与尾部 ReduceScatter 拥塞 | 配置、placement、外部网络负载或计时口径差异 | 导入原始 profile 与网络 counter，并按相同拓扑随机化复跑 | 来源报告支持，尚未独立闭环 |
+| A3 单卡同步 gap 出现 500/650 ms 级两簇 | EXP-007 的事件分布与 S005 ftrace 摘要 | IPVS timer 阻塞同 CPU 的 NPU CQ tasklet | trace 丢失样本、其他主机调度或运行时路径 | 系统级修复、IRQ/CPU 控制组与无插桩随机化回归 | 文档内闭环，原始 trace 待归档 |
+| C550 256/512 卡 AllReduce 部分重复出现长尾且增加 QP 退化 | EXP-008 聚合材料 | 规模/QP/网络竞争候选 | 多租户、交换机、NIC、退出路径或测量差异 | 同 cohort 交错复跑并绑定端口/交换机 counter | 未归因 |
+| C550 混训出现 `IBV_WC_RETRY_EXC_ERR` | EXP-009 问题记录 | RDMA 重试耗尽 | 节点、链路、路由或外部网络竞争 | 换伙伴、固定路径复现和网络遥测 | 临时筛除，根因未关闭 |
 
 健康检查可优先定位正确性失败、慢 rank、慢 group 和通信路径异常；最终归因仍需结合设备日志、交换机遥测、软件版本差异和训练 trace。一次异常应沿“作业概览 → 节点/行为组 → rank/step → module/collective → 原生 task/kernel/stack”逐级收窄，避免先挑选一段细粒度 trace 再事后构造全局解释。
 
@@ -165,6 +190,9 @@ Megatron 优化仍按单变量或已声明的组合做 A/B，保存完整配置�
 - EXP-004 的 92.43% 是异构资源池加权验收点估计；C550 基线只有 3 步，补跑稳态基线前不能升级为最终生产结论。
 - EXP-005 只证明 8192 卡 r2 完成建组并进入 iteration 7，不报告稳态 MFU、扩展效率或 30 步完成。
 - EXP-006 的 33.4% 是 2048 die、Qwen3-200B、GBS8192、MBS1、VPP2 网格中的文档级最佳已测点；缺少逐步数据、MFU 公式和重复轮，不与日志级实验做跨口径排名。
+- EXP-007 的 A3 Stall 根因在来源文档中闭环到 IPVS timer 与 CQ tasklet 竞争；完整 ftrace 未归档前不升级为仓库内原始证据闭环，热点节点也不按永久坏卡处理。
+- EXP-008 的 C550 direct dispatch 与通信尾延迟均为文档级证据；缺少观察卡时和网络 counter 时，不报告修复后的事件率或网络根因。
+- EXP-009 的 800/800 与 500/500 step 只证明来源记录的功能运行；不报告收敛、MFU、端到端吞吐或检查点恢复成功率。
 - 合成 BusBW 不外推为 Megatron 吞吐或 MFU；某消息大小、collective 或 EP pattern 不外推到未测试 workload。
 - A3 与 C550 的单平台结果分别报告；加权 ECP 单列，不改写为单一异构同步训练吞吐。
 - 历史运行记录缺少原始测量、完整运行条件、版本和完整性摘要时，只能列为待导入线索。

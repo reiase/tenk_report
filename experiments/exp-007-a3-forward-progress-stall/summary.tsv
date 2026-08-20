@@ -1,0 +1,14 @@
+section	case	scale	window_or_steps	metric	value	unit	evidence_note
+probe	a3-1024	1024 cards	19 min	events	7658	count	document_only
+probe	a3-1024	1024 cards	19 min	event_rate	0.393	per_card_min	document_only
+probe	a3-512	512 cards	30 min	events	6972	count	document_only
+probe	a3-512	512 cards	30 min	event_rate	0.4539	per_card_min	document_only
+probe	gap-width	mixed	all events	p50	504	ms	document_only
+probe	gap-width	mixed	all events	p90	697	ms	document_only
+concentration	a3-512	512 cards	30 min	top10_stall_time_share	88.9	percent	document_only
+mitigation	baseline	hotspot node	steps 3-500	mean_window_time	234447.8	ms	2 repeats
+mitigation	taskqueue2	hotspot node	steps 3-500	mean_window_time	188643.4	ms	3 repeats
+mitigation	jemalloc	hotspot node	steps 3-500	mean_window_time	207358.9	ms	3 repeats
+mitigation	taskqueue2-jemalloc	hotspot node	steps 3-500	mean_window_time	172215.2	ms	3 repeats
+node_exclusion	dense8b-hot-out	448 cards	steps 5-25	median_step	4828	ms	document_only
+node_exclusion	moe-hot-out	448 cards	steps 5-25	median_step	30996	ms	document_only

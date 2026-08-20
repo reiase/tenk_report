@@ -3,7 +3,7 @@ title: 集群、网络与存储
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-16
+last_updated: 2026-08-20
 ---
 
 # 集群、网络与存储
@@ -40,6 +40,8 @@ resource_pool -> fault_domain -> node_name -> pod_name -> local_rank -> device_i
 通信性能优先采用同硬件、同规模、同一运行窗口内的横向比较。固定绝对门限仅在完成硬件、拓扑、消息规模和软件版本标定后启用，不把其他硬件或其他节点规模的阈值直接移植。具体测量与复测规则见[评测方法](07-evaluation-methodology.md)。
 
 两类资源池现在都有厂家通信工具对照入口：A3 使用官方 HCCL test，C550 使用镜像内置 `mccl_perf`，后者覆盖六类 collective 和 1 KiB～2 GiB 消息矩阵。厂家扫描用于通信库极限、环境复现和实现交叉验证，不属于训练 topology gate；尤其是全局 All-to-All 的 QP 压力可能远高于真实 EP 子组，不能用其失败直接判定 Megatron 训练拓扑失败。
+
+[EXP-008](https://github.com/reiase/tenk_report/blob/master/experiments/exp-008-c550-stall-and-communication-tail/README.md) 补充了一组不同集群上的 C550 文档级 AllReduce 现象：256 MiB、256 卡干净轮次超过 60 GB/s，512 卡约 50 GB/s，但部分重复出现长尾，512 卡 P99 最高 1,043 ms；增加 QP 反而使 256 卡从 63.3 降到 19.4 GB/s、512 卡从 49.7 降到 29.1 GB/s。另有混训记录出现 `IBV_WC_RETRY_EXC_ERR`。这些证据缺少交换机与端口 counter，且不来自同一集群，只能形成通信栈/网络复测候选，不能归因到 C550 芯片或与单卡 Stall 合并。
 
 ## A3 通信优化与超节点亲和性调度
 
@@ -191,4 +193,4 @@ B_{\mathrm{alg}}=
 
 ## 当前证据边界
 
-本章给出了网络与存储的测量原则，但当前材料没有生产资产清单、交换机遥测、存储压测或原始健康检查结果。因此，本章描述的是待落地的测量协议，不构成对 10,240 卡生产网络与存储能力的验收结论。复现和证据导入要求见[复现实验清单](appendix-b-reproducibility.md)。
+本章给出了网络与存储的测量原则，并导入了 C550 通信尾延迟与 RDMA retry 的文档级现象，但当前材料仍没有生产资产清单、交换机遥测、存储压测或可独立重算的原始健康检查结果。因此，本章不构成对 10,240 卡生产网络与存储能力的验收结论。复现和证据导入要求见[复现实验清单](appendix-b-reproducibility.md)。

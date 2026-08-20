@@ -3,14 +3,16 @@ title: 训练系统与并行策略
 status: draft
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-19
+last_updated: 2026-08-20
 ---
 
 # 训练系统与并行策略
 
 ## 模型与工作负载
 
-当前已导入的主性能工作负载是 Qwen3-200B 稠密模型，sequence length 4096、MBS 1，训练代码冻结到 commit `54daa56ad07f86e510b8be9027fcdbd9957fc998`。实验以 12--30 步短程性能测量为主，不用于收敛结论；MoE 与正式 mid-training 工作负载尚未进入本报告主结果。
+当前主性能工作负载仍是 Qwen3-200B 稠密模型，sequence length 4096、MBS 1，训练代码冻结到 commit `54daa56ad07f86e510b8be9027fcdbd9957fc998`。EXP-001 至 EXP-006 以短程性能或聚合 MFU 为主，不用于收敛结论。
+
+[EXP-009](https://github.com/reiase/tenk_report/blob/master/experiments/exp-009-200b-1t-delivery-evidence/README.md) 新增两组功能运行证据：交付材料报告 201.42B Dense 在 1,024 die 完成 800/800 step，1,099.55B MoE 在 2,048 die 完成 500/500 step，并提供 loss 曲线截图。模型估算分别为 200.75B 与 1,091.80B，和交付值相差约 0.33% 与 0.71%。这些结果把 MoE/1T 从“没有运行证据”推进到“文档级功能运行”，但缺少逐步原始日志、最终配置枚举、数据身份、检查点校验和收敛评估，不进入主性能排名。
 
 ## 并行策略
 
@@ -32,6 +34,12 @@ last_updated: 2026-08-19
 | [EXP-003](https://github.com/reiase/tenk_report/blob/master/experiments/exp-003-a3-1024-4096-weak-scaling/README.md) | 1,024 / 4,096 | TP1/PP64/DP16 或 64/VPP2 | 4,096 / 16,384 | block1 | 7 步弱扩展效率 94.26% |
 | [EXP-005](https://github.com/reiase/tenk_report/blob/master/experiments/exp-005-a3-8192-startup/README.md) | 8,192 | TP2/PP16/DP256/VPP2 | 32,768 | uniform1 | 无 Gloo 路径完成建组并进入 iteration 7 |
 | [EXP-006](https://github.com/reiase/tenk_report/blob/master/experiments/exp-006-a3-2048die-parallelism-mfu/README.md) | 2,048 die | TP1--8 / PP8--64 / VPP2；另有 VPP4 消融 | 1,024 / 8,192 | uniform1 / block1 | 网格中 TP2/PP16/uniform1 的 MFU 最高，为 33.4%；文档级证据 |
+
+### 模型交付与混训编排
+
+模型估算提出的 TP4/PP8/EP8、DP40 等 10,240 卡候选是容量规划，不是已验证的单一同步并行策略。实际协同运行由 4 个 A3 训练组和 4 个 C550 训练组组成：每个 A3 组 2,048 张卡，每个 C550 组 512 张卡，并通过 64 个参数服务器按不同周期同步。各组内部维护自己的 Megatron 与集合通信域，因此并行效率应按组和资源池分别测量；跨组只报告预注册的参数同步与加权验收指标。
+
+估算文档按每参数 14 bytes 粗算完整训练状态：200B 约 2.8 TB/次、1T 约 14 TB/次，保留 25 份分别约 70 TB 与 350 TB。该口径假设 FP16/BF16 权重和 FP32 master/m/v，未包含文件系统冗余与实现元数据，只用于容量预留。
 
 ### 并行度、GBS 与重计算的联合选择
 
@@ -112,4 +120,4 @@ last_updated: 2026-08-19
 
 ## 当前证据缺口
 
-A3 已有 1024/4096 卡短程性能、8192 卡启动证据和 2048 die 并行策略文档级分析，但缺少长稳、检查点恢复、完整 placement 与成员质量收据；EXP-006 还缺逐步数据、运行版本和原始 profile。C550 仍缺 2048 卡独立分池扩展实验。Qwen3 MoE、1T 模型与 offload 探索尚未形成冻结工作负载和可比较重复，不进入主性能结论。健康检查中的示例专家并行度或非均匀全交换模式也不能反推正式训练并行度。
+A3 已有 1024/4096 卡短程性能、8192 卡启动证据和 2048 die 并行策略文档级分析，但缺少长稳、检查点恢复、完整 placement 与成员质量收据；EXP-006 还缺逐步数据、运行版本和原始 profile。C550 仍缺 2048 卡独立分池扩展实验。Qwen3 1T MoE 已有 2,048 die、500 step 的文档级功能运行，尚未形成冻结工作负载、原始逐步数据和可比较重复；offload 也不进入主性能结论。健康检查中的示例专家并行度或非均匀全交换模式也不能反推正式训练并行度。

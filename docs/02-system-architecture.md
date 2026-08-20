@@ -3,7 +3,7 @@ title: 系统总体架构
 status: outline
 owner: unassigned
 reviewers: []
-last_updated: 2026-08-15
+last_updated: 2026-08-20
 ---
 
 # 系统总体架构
@@ -39,6 +39,8 @@ last_updated: 2026-08-15
 训练可观测性采用“公共训练语义层 + 可选厂商原生层”：两个资源池共享 step、module、rank、通信组和 collective API 数据模型，A3 再通过 HCCL MSProf shim 补充 task、plane、算法和 transport 细节。这样既保留跨卡分析的一致性，也不抹平通信库差异；具体设计见 [训练通信观测与多加速卡兼容设计](06a-training-communication-observability.md)。
 
 升级后的健康检查工具支持一个控制端向两个资源池的开发机提交独立后台 runner，并要求每端使用与声明提交一致的固定 release。控制端只等待 Job Ready、编排阶段和汇总状态，不承载跨资源池集合通信；两端分别执行 static、single-node、单卡筛查和 multi-node topology gate。因此，“统一控制”可以落到同一 run set、证据字段和状态汇总上，同时保持 A3 与 C550 的配置、拓扑、门限和性能指标隔离。
+
+交付期的 10,240 卡协同运行采用 8 个训练组和 64 个共享参数服务器：A3 group 0--3 每组 2,048 张卡，C550 group 4--7 每组 512 张卡；两类组使用不同训练步数与参数服务器同步周期。[EXP-009](https://github.com/reiase/tenk_report/blob/master/experiments/exp-009-200b-1t-delivery-evidence/README.md) 该编排属于组级训练加周期同步，不建立一个跨 10,240 张异构卡的 TP/PP/DP/EP 或 collective 域。统一控制与异构分池并不矛盾：统一的是实验、状态和聚合口径，分离的是训练数据面、通信域和性能基线。
 
 多资源池控制面的示例规模不代表本项目部署基线。实际运行配置必须按 8,192 张 A3 与 2,048 张 C550 的资产清单、调度边界和故障域逐项对账。
 

@@ -1,0 +1,12 @@
+section	case	scale	window_or_repeats	metric	value	unit	evidence_note
+probe	c550-long	64 cards	60 min	events	40	count	document_only
+probe	c550-long	64 cards	60 min	event_rate	0.0104	per_card_min	document_only
+probe	c550-long	64 cards	60 min	gap_p50	212.6	ms	document_only
+probe	c550-long	64 cards	60 min	gap_max	272.3	ms	document_only
+probe	c550-repeat	64 cards	20 min	events	15	count	document_only
+probe	c550-repeat	64 cards	20 min	event_rate	0.0117	per_card_min	document_only
+allreduce	256-qp1	256 cards	3 repeats	bandwidth	63.3	GB_s	document_only
+allreduce	256-qp32	256 cards	3 repeats	bandwidth	19.4	GB_s	document_only
+allreduce	512-qp1	512 cards	5 repeats	bandwidth	49.7	GB_s	document_only
+allreduce	512-qp16	512 cards	5 repeats	bandwidth	29.1	GB_s	document_only
+allreduce	512-tail	512 cards	5 repeats	p99_max	1043	ms	document_only

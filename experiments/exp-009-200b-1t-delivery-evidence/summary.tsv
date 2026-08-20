@@ -1,0 +1,9 @@
+section	model_or_case	scale	window	metric	value	unit	evidence_note
+model	dense-estimate	NA	NA	parameters	200.74988544	billion	estimate
+model	dense-delivery	1024 die	800 steps	parameters	201.42	billion	document_only
+run	dense-delivery	1024 die	800 steps	completed_steps	800	step	document_only
+model	moe-estimate	NA	NA	parameters	1091.797254144	billion	estimate
+model	moe-delivery	2048 die	500 steps	parameters	1099.55	billion	document_only
+run	moe-delivery	2048 die	500 steps	completed_steps	500	step	document_only
+checkpoint	dense-200b	NA	per checkpoint	full_state_size	2.8	TB_decimal	estimate_14_bytes_per_parameter
+checkpoint	moe-1t	NA	per checkpoint	full_state_size	14	TB_decimal	estimate_14_bytes_per_parameter
