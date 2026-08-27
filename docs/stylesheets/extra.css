@@ -1,13 +1,13 @@
 :root {
-  --report-navy-900: #102f49;
-  --report-navy-700: #1b4f72;
-  --report-cyan-600: #087f8c;
-  --report-cyan-400: #22a6b3;
+  --report-ink-900: #1c2927;
+  --report-ink-700: #3f5450;
+  --report-teal-600: #147d75;
+  --report-rust-500: #c8513d;
   --report-line: #d8e2ea;
-  --md-primary-fg-color: var(--report-navy-900);
-  --md-primary-fg-color--light: var(--report-navy-700);
-  --md-primary-fg-color--dark: #0a2338;
-  --md-accent-fg-color: var(--report-cyan-600);
+  --md-primary-fg-color: var(--report-ink-900);
+  --md-primary-fg-color--light: var(--report-ink-700);
+  --md-primary-fg-color--dark: #111b19;
+  --md-accent-fg-color: var(--report-teal-600);
   --md-text-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
     sans-serif;
@@ -20,22 +20,22 @@
   --md-default-fg-color: #182631;
   --md-default-fg-color--light: #526574;
   --md-default-fg-color--lighter: #718392;
-  --md-typeset-a-color: var(--report-cyan-600);
+  --md-typeset-a-color: var(--report-teal-600);
   --md-code-bg-color: #eef3f7;
   --md-code-fg-color: #18354a;
 }
 
 [data-md-color-scheme="slate"] {
-  --md-hue: 210;
-  --md-primary-fg-color: #8bd4e1;
-  --md-primary-fg-color--light: #b5e7ef;
-  --md-primary-fg-color--dark: #54b8c8;
-  --md-accent-fg-color: #5eead4;
-  --md-typeset-a-color: #67d3df;
-  --md-default-bg-color: #0e1722;
-  --md-default-fg-color: #e1eaf0;
-  --md-code-bg-color: #152333;
-  --md-code-fg-color: #d9e7ef;
+  --md-hue: 165;
+  --md-primary-fg-color: #8fd6c9;
+  --md-primary-fg-color--light: #bce9df;
+  --md-primary-fg-color--dark: #59b8a7;
+  --md-accent-fg-color: #e5b84b;
+  --md-typeset-a-color: #73cfbd;
+  --md-default-bg-color: #101715;
+  --md-default-fg-color: #e7ecea;
+  --md-code-bg-color: #18211f;
+  --md-code-fg-color: #dfe9e5;
 }
 
 .md-grid {
@@ -50,7 +50,7 @@
 .md-typeset h1 {
   color: var(--md-default-fg-color);
   font-weight: 720;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
   border-bottom: 1px solid color-mix(in srgb, var(--md-default-fg-color) 14%, transparent);
   padding-bottom: 0.45rem;
 }
@@ -58,7 +58,7 @@
 .md-typeset h2 {
   color: var(--md-default-fg-color);
   font-weight: 680;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
   margin-top: 2.2em;
 }
 
@@ -84,6 +84,34 @@
   padding: 0.7em 0.9em;
 }
 
+
+.md-typeset__table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.md-typeset__table table:not([class]) {
+  min-width: 100%;
+}
+
+.md-typeset__table:has(th:nth-child(4)) table:not([class]) {
+  min-width: 46rem;
+}
+
+.md-typeset__table:has(th:nth-child(7)) table:not([class]) {
+  min-width: 64rem;
+}
+
+.md-typeset p:has(> .technical-diagram) {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
 .md-typeset code {
   border-radius: 0.24rem;
 }
@@ -133,5 +161,10 @@
 @media screen and (max-width: 76.234375em) {
   .md-typeset {
     font-size: 0.76rem;
+  }
+
+  .technical-diagram {
+    width: 48rem;
+    max-width: none;
   }
 }

@@ -1,9 +1,5 @@
 ---
 title: 训练通信观测与多加速卡兼容设计
-status: draft
-owner: unassigned
-reviewers: []
-last_updated: 2026-08-16
 ---
 
 # 训练通信观测与多加速卡兼容设计
@@ -21,7 +17,7 @@ last_updated: 2026-08-16
 - A3：通用 Torch 路径与 HCCL shim 并用，前者提供训练 step 上下文，后者提供 HCCL host op、collective 元数据和 task/plane/transport 细节。
 - C550：当前 Probing 代码中没有 C550、MetaX 或 MCCL 专用采集器；应先验证其 PyTorch 栈是否完整兼容标准 `torch.distributed` 路径，再把通信库内部采集作为独立适配工作，不能把 API 层可见性表述成 MCCL 内部已经可见。[I002](references.md#i002)
 
-## 1. 设计目标与边界
+## 1. 设计目标与系统范围
 
 这套观测链路在本项目中承担四类职责：
 
@@ -70,7 +66,7 @@ shim 先记录事件，再把原始参数和返回语义转发给真实 CANN 库
 
 实现不会再次按裸名称加载 `libprofapi.so`，以避免 shim 递归加载自身。真实库使用一次性初始化并在进程生命周期内保持加载；转发真实调用时不持有初始化锁，以避免回调重入造成死锁。
 
-### 3.2 为什么选择 MSProf 边界
+### 3.2 MSProf 采集层
 
 这一接入点产生三个直接后果：
 
@@ -379,7 +375,7 @@ M_{\mathrm{other}}(t)=M_{\mathrm{driver}}(t)-M_{\mathrm{reserved}}(t)
 
 ## 11. 兼容性与测量验证
 
-### 11.1 原生通信观测边界
+### 11.1 原生通信观测能力
 
 原生通信观测必须验证“记录层存在”与“底层真实库仍按原语义执行”两个条件。需要固定通信库与运行时版本，确认所有关键事件类型可解析，并用最小通信组对照无观测基线验证初始化、collective 正确性、完成语义和退出行为。若原生事件为空，不能仅凭训练仍在运行就判断采集成功；若原生适配退化，也不能让它改变训练路径的返回值、错误传播或同步关系。
 
@@ -399,26 +395,25 @@ M_{\mathrm{other}}(t)=M_{\mathrm{driver}}(t)-M_{\mathrm{reserved}}(t)
 
 公共路径的验证对象不是某个 API 名称是否存在，而是张量、stream、event、同步和 `Work.wait()` 是否保持同一后端的完成契约。同步与异步 collective 必须分开测量；API 返回、设备完成与消费点暴露等待分别记录。每个资源池还要验证显存统计的层次、未支持 collective、未完成 async work 和参与 rank 解析失败的数量。若某个后端只能回退到主机计时，结果必须携带不同的计时模式，不能与设备 event 样本直接混合。
 
-## 12. 数据质量与结论边界
+## 12. 实现能力与生产验证
 
-报告中的观测结论必须附带实现仓库 commit、Python/PyTorch、CANN/HCCL 或 C550 软件栈版本、启用的采集器、环境变量、表覆盖率和时间窗口。
+观测结果与实现仓库 commit、Python/PyTorch、CANN/HCCL 或 C550 软件栈版本、采集器、环境变量、表覆盖率和时间窗口共同归档。
 
-当前代码审阅能够确认的是：
+### 已实现能力
 
-- 当前 Probing 代码已实现 HCCL MSProf shim、五类 `hccl.*` 表、真实库转发与独立表失败隔离；
-- 通用 collective tracer 使用 `torch.distributed`，可以作为厂商后端之上的公共 API 观测面；
-- timing helper 已包含 `torch.npu` 能力探测，但其他 Torch 计时路径并非全部支持 NPU；
-- 分层成员发现、按需联邦查询、聚合下推、lazy scan、来源标签和 partial 质量信息已经具备实现与回归覆盖；
-- 分布式调用栈已能在 rank 本地折叠后合并相同路径并保留贡献 rank，module 火焰图已支持同 step 的 duration 与 peak-memory 口径；
-- 当前代码快照没有 C550/MCCL 专用原生采集器。
+- HCCL MSProf shim 支持五类 `hccl.*` 表、真实库转发与独立表失败隔离。
+- 通用 collective tracer 基于 `torch.distributed` 提供跨厂商公共 API 观测面。
+- timing helper 完成 `torch.npu` 能力探测，并按设备 event 与主机计时分别标记。
+- 分层成员发现、按需联邦查询、聚合下推、lazy scan、来源标签和 partial 质量信息已纳入实现。
+- 分布式调用栈在 rank 本地折叠后合并相同路径并保留贡献 rank，module 火焰图支持 duration 与 peak-memory。
+- C550 使用公共 Torch 路径接入，MCCL 原生事件通过独立适配器扩展。
 
-尚不能仅由代码确认的是：
+### 生产验证路径
 
-- 当前生产 CANN/HCCL 版本的所有 MSProf 结构体字段均正确解析；
-- 8,192 卡 A3 上的 shim 开销、事件完整率和跨 rank 时钟关联精度；
-- 8,192 卡上常驻采样、成员心跳和查询 fan-out 的 P50/P95/Max 开销与控制流量；
-- 多分辨率 Timeline、稳定 Path Hash、Rank Set Token 和带分位数的差分/方差火焰图是否达到完整设计；
-- C550 的 PyTorch 兼容层是否覆盖上述 collective、event 和显存接口；
-- 均衡调度是否已经提高实际 NIC 利用率或 AllReduce 带宽。
+1. 对当前 CANN/HCCL 与 MXMACA/MCCL 版本执行 ABI 字段抽样和语义对照。
+2. 在 A3 与 C550 分别校验 collective、event、stream、显存和异步完成契约。
+3. 按规模报告常驻采样、成员心跳和查询 fan-out 的 P50/P95/Max 开销。
+4. 使用 Rank Set Token、稳定 Path Hash 和多分辨率 Timeline 固化跨 rank 查询结果。
+5. 通过通信放置 A/B 关联 NIC 利用率、AllReduce 尾部与 Megatron step time。
 
-这些结论必须通过小规模 ABI 验证、两资源池兼容矩阵和 [EXP-005](07-evaluation-methodology.md#实验索引) 的通信放置 A/B 实验补齐。
+该路径将代码能力、运行时兼容性、观测开销和训练收益纳入同一验证矩阵，为两类国产加速卡提供一致的通信诊断接口。

@@ -52,5 +52,5 @@
   <path class="link roce" d="M790 355 H859"/>
   <text class="linktext" x="825" y="330" text-anchor="middle">RoCE</text>
   <rect x="315" y="575" width="600" height="42" rx="8" fill="#e8f5f7"/>
-  <text class="minor" x="615" y="602" text-anchor="middle">跨域路径由 Device 网卡、RoCE 网络与通信算法共同决定，不能由总卡数推断。</text>
+  <text class="minor" x="615" y="602" text-anchor="middle">跨域链路：Device 网卡 → RoCE 网络 → 通信算法与并行组。</text>
 </svg>

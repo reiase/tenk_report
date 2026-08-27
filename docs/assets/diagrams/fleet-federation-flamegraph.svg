@@ -53,5 +53,5 @@
   <path class="line" d="M785 606 H829"/>
   <path class="line dash" d="M972 662 V685 H417 V653"/>
 
-  <text class="minor" x="52" y="735">常驻成本由 dispatch 与采样重路径分别测量；联邦查询和短窗口 profiler 的成本不计入同一个百分比。</text>
+  <text class="minor" x="52" y="735">成本分项：dispatch · 采样重路径 · 联邦查询 · 短窗口 profiler。</text>
 </svg>

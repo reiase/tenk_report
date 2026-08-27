@@ -1,40 +1,48 @@
 # 万卡国产加速卡训练技术报告
 
-本仓库用于以 Markdown 方式协作撰写“万卡规模国产加速卡训练”技术报告。报告同时维护方法设计与已核验实验：生产数字必须链接到稳定实验编号、冻结配置、统计窗口和证据哈希；尚未达到该标准的材料继续标为待核验或计划项。
+本仓库维护 10,240 张国产加速卡大模型训练项目的技术报告与实验记录。报告覆盖双资源池总体架构、Megatron 并行调优、HCCL/MCCL 通信、健康准入、前向进展、规模扩展和工程资产管理。
 
-## 从这里开始
+## 项目规模
 
-- 报告目录与进度：[docs/README.md](docs/README.md)
-- 协作与评审：[CONTRIBUTING.md](CONTRIBUTING.md)
-- 写作规范：[guides/writing-guide.md](guides/writing-guide.md)
-- 数据、图表与引用：[guides/evidence-guide.md](guides/evidence-guide.md)
-- 实验记录：[experiments/README.md](experiments/README.md)
-- 架构决策：[decisions/README.md](decisions/README.md)
+- 华为 Atlas 900 A3：8,192 张加速卡
+- 沐曦曦云 C550：2,048 张加速卡
+- 协同编排：8 个训练组与 64 个参数服务器
+- 总纳管规模：10,240 张加速卡
 
-## 推荐工作流
+## 代表结果
 
-1. 在 [docs/README.md](docs/README.md) 认领章节，并填写负责人和计划时间。
-2. 从 [templates/chapter.md](templates/chapter.md) 复制章节模板；实验和技术决策使用对应模板。
-3. 将原始数据、生成图表的代码和最终图片分开保存，确保图表可复现。
-4. 提交前运行 `make check`，然后发起 Pull Request，请至少一位内容评审者审阅。
+| 方向 | 结果 |
+| --- | --- |
+| Qwen3-200B 弱扩展 | 1,024→4,096 卡效率 94.26% |
+| 2,048 die 并行网格 | TP2/PP16/uniform1，MFU 33.4% |
+| 4,096 卡 Dense | 124.264 TFLOPS/GPU，CV 1.68% |
+| 万卡协同窗口 | 加权 ECP 保留率 92.43% |
+| 模型运行 | 200B Dense 800 step，1T MoE 500 step |
+| 健康准入 | A3 两批 4,096 卡；C550 2,336 卡与 Final256 |
+| 健康检查效率 | 1,706→1,056 秒 |
 
-当前已登记十四组实验，覆盖 A3 1024 卡调优、4096 卡通信消融、1024 到 4096 卡弱扩展、8192 卡建组修正、10240 卡异构资源池加权验收、2048 die 并行策略与 MFU、A3/C550 Stall、200B/1T 交付、双资源池健康准入、健康检查运行时优化、4096 卡 Dense TP2/PP16、1T MoE 1024--4096 卡调优，以及工程资产备份与恢复状态。权威数字与适用边界见[结果与分析](docs/08-results-and-analysis.md)。
+## 本地预览
 
-## 常用命令
-
-```bash
-make check       # 检查 Markdown 内部链接、图片替代文本和基本格式
-make todo        # 汇总未完成事项
-make tree        # 查看报告相关目录
+```powershell
+uv run zensical serve
 ```
 
-## 文档站预览
+站点默认地址为 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)。
 
-本仓库使用 Zensical 生成技术报告站点。首次运行会由 `uv` 创建隔离环境并安装锁定版本的 Zensical：
+## 构建与校验
 
-```bash
-make site-serve    # 本地实时预览
-make site-build    # 校验并生成静态站点
+```powershell
+python scripts/check_markdown.py
+uv run zensical build --clean --strict
 ```
 
-站点采用系统中文字体、自动明暗配色、全文搜索、章节导航和固定布局的 SVG 技术图。静态输出位于 `site/`，不提交版本库；Markdown 文件仍可直接在 Git 平台评审。
+## 仓库结构
+
+- `docs/`：正式报告章节、技术图和站点资源
+- `experiments/`：十四组实验摘要与结构化数据
+- `references/`：项目材料与引用索引
+- `guides/`：写作与实验记录规范
+- `scripts/`：Markdown 质量校验
+- `zensical.toml`：站点导航与主题配置
+
+报告入口见 [docs/README.md](docs/README.md)，核心结果见 [docs/08-results-and-analysis.md](docs/08-results-and-analysis.md)。

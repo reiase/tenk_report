@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
-  <title id="title">异步操作的计时边界与前向进展观测</title>
+  <title id="title">异步操作计时与前向进展观测</title>
   <desc id="desc">图中区分 CPU 提交、运行时排队、设备执行和等待返回，并展示设备事件时间、完成时间、暴露等待以及重复同步间隔各自覆盖的范围。</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#3e718d"/></marker>
@@ -25,8 +25,8 @@
     </style>
   </defs>
   <rect width="1200" height="650" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
-  <text class="title" x="48" y="50">异步完成不是单一时间点</text>
-  <text class="subtitle" x="48" y="77">设备执行时间、端到端完成时间与消费点暴露等待回答不同问题</text>
+  <text class="title" x="48" y="50">异步操作的三类时间度量</text>
+  <text class="subtitle" x="48" y="77">设备执行、端到端完成与消费点等待采用独立时间轴</text>
 
   <text class="label" x="48" y="137">CPU / 训练线程</text>
   <line class="lane" x1="190" y1="132" x2="1140" y2="132"/>

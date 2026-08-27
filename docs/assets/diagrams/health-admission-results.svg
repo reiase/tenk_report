@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="620" viewBox="0 0 1280 620" role="img" aria-labelledby="title desc">
+  <title id="title">A3与C550健康准入结果</title>
+  <desc id="desc">展示A3两个4096卡批次和96卡备机筛查，以及C550的2336卡候选池、异常分型和2048 rank训练拓扑。</desc>
+  <style>
+    text{font-family:"Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif;fill:#182323;letter-spacing:0}
+    .title{font-size:30px;font-weight:700}.subtitle{font-size:15px;fill:#526060}.panel-title{font-size:21px;font-weight:700}
+    .label{font-size:14px}.small{font-size:13px;fill:#526060}.value{font-size:24px;font-weight:700}.metric{font-size:28px;font-weight:700}
+    .panel{fill:#fff;stroke:#d7dfdc;stroke-width:1.2}.grid{stroke:#d8dfdd;stroke-width:1}
+  </style>
+  <rect width="1280" height="620" fill="#f5f7f6"/>
+  <text class="title" x="48" y="54">双资源池健康准入结果</text>
+  <text class="subtitle" x="48" y="82">设备筛查、异常分型与训练拓扑验收</text>
+
+  <rect class="panel" x="40" y="112" width="582" height="448" rx="6"/>
+  <text class="panel-title" x="68" y="150">Atlas 900 A3</text>
+  <text class="small" x="68" y="177">两个 4,096 卡批次 + 96 卡备机</text>
+  <g>
+    <text class="label" x="68" y="225">批次 r1</text>
+    <rect x="158" y="204" width="398" height="28" fill="#138a83"/>
+    <rect x="556" y="204" width="2" height="28" fill="#d65a45"/>
+    <rect x="558" y="204" width="1" height="28" fill="#d5a72b"/>
+    <text class="value" x="570" y="227" text-anchor="end">4,096</text>
+    <text class="small" x="158" y="253">4,093 GOOD · 2 BAD · 1 CONTENDED</text>
+
+    <text class="label" x="68" y="305">批次 r2</text>
+    <rect x="158" y="284" width="398" height="28" fill="#138a83"/>
+    <rect x="556" y="284" width="3" height="28" fill="#d5a72b"/>
+    <text class="value" x="570" y="307" text-anchor="end">4,096</text>
+    <text class="small" x="158" y="333">4,093 GOOD · 0 BAD · 3 CONTENDED</text>
+
+    <text class="label" x="68" y="385">备机</text>
+    <rect x="158" y="364" width="398" height="28" fill="#4f7772"/>
+    <text class="value" x="570" y="387" text-anchor="end">96</text>
+    <text class="small" x="158" y="413">96 GOOD</text>
+  </g>
+  <line class="grid" x1="68" y1="442" x2="594" y2="442"/>
+  <text class="metric" x="68" y="493" fill="#138a83">8,192 卡</text>
+  <text class="small" x="202" y="493">主资源全量覆盖</text>
+  <text class="metric" x="374" y="493" fill="#4f7772">Final256</text>
+  <text class="small" x="510" y="493">拓扑通过</text>
+
+  <rect class="panel" x="642" y="112" width="598" height="448" rx="6"/>
+  <text class="panel-title" x="670" y="150">曦云 C550</text>
+  <text class="small" x="670" y="177">292 节点 · 2,336 卡候选池</text>
+
+  <text class="small" x="670" y="220">候选池</text>
+  <rect x="670" y="235" width="510" height="38" fill="#647b77"/>
+  <text class="value" x="925" y="262" text-anchor="middle" fill="#fff">2,336 卡</text>
+  <path d="M925 282 L925 316" stroke="#82908d" stroke-width="2"/>
+  <path d="M917 307 L925 317 L933 307" fill="none" stroke="#82908d" stroke-width="2"/>
+
+  <text class="small" x="670" y="340">训练集合</text>
+  <rect x="670" y="355" width="447" height="38" fill="#138a83"/>
+  <text class="value" x="894" y="382" text-anchor="middle" fill="#fff">2,048 ranks · Final256 PASS</text>
+
+  <line class="grid" x1="670" y1="424" x2="1210" y2="424"/>
+  <g>
+    <text class="metric" x="685" y="474" fill="#d65a45">1</text><text class="small" x="685" y="498">BAD</text>
+    <text class="metric" x="805" y="474" fill="#d5a72b">3</text><text class="small" x="805" y="498">SDC-SUSPECT</text>
+    <text class="metric" x="965" y="474" fill="#7d6d64">7</text><text class="small" x="965" y="498">DEAD</text>
+    <text class="metric" x="1085" y="474" fill="#9a6f3a">70</text><text class="small" x="1085" y="498">HBM SLOW</text>
+  </g>
+  <text class="small" x="670" y="535">HBM SLOW 集中于 9 个节点 · 中位数 1,050.28 GB/s</text>
+</svg>

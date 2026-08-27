@@ -1,9 +1,5 @@
 ---
 title: 术语与缩略语
-status: outline
-owner: unassigned
-reviewers: []
-last_updated: 2026-08-19
 ---
 
 # 术语与缩略语

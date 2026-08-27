@@ -21,7 +21,7 @@
   </defs>
   <rect width="1200" height="820" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
   <text class="title" x="52" y="52">ECC/RAS 信号如何进入训练系统决策</text>
-  <text class="subtitle" x="52" y="79">目标不是生成设备告警清单，而是约束结果可信度、rank 前向进度和固定 world size 的资源集合。</text>
+  <text class="subtitle" x="52" y="79">目标：保障结果可信度、rank 前向进度与固定 world size 资源集合。</text>
 
   <g transform="translate(40 125)">
     <rect class="box" width="190" height="112"/>
@@ -46,8 +46,8 @@
     <text class="minor" x="24" y="140">时间：event / aggregate / delta</text>
     <text class="minor" x="24" y="172">覆盖：expected / observed</text>
     <line x1="24" y1="200" x2="226" y2="200" stroke="#b9c9d3"/>
-    <text class="minor" x="24" y="232">缺失 ≠ 0</text>
-    <text class="minor" x="24" y="260">累计值 ≠ 当前错误率</text>
+    <text class="minor" x="24" y="232">覆盖状态独立编码</text>
+    <text class="minor" x="24" y="260">累计值与窗口增量分列</text>
   </g>
   <path class="line" d="M230 181 H284"/>
   <path class="line" d="M230 347 H260 V330 H284"/>
@@ -61,8 +61,8 @@
     <text class="minor" x="105" y="163" text-anchor="middle">strict</text>
     <text class="minor" x="105" y="187" text-anchor="middle">提高正确性约束</text>
     <line x1="28" y1="216" x2="182" y2="216" stroke="#b9c9d3"/>
-    <text class="minor" x="105" y="251" text-anchor="middle">关键事件不随</text>
-    <text class="minor" x="105" y="274" text-anchor="middle">策略放宽</text>
+    <text class="minor" x="105" y="251" text-anchor="middle">关键事件保持</text>
+    <text class="minor" x="105" y="274" text-anchor="middle">统一硬约束</text>
   </g>
   <path class="line" d="M535 272 H584"/>
 
@@ -73,13 +73,13 @@
   <path class="line" d="M795 272 H849"/>
   <path class="line" d="M795 360 H825 V366 H849"/>
 
-  <g transform="translate(285 490)"><rect class="unknown" width="250" height="100"/><text class="label" x="125" y="34" text-anchor="middle">证据不可判定</text><text class="minor" x="125" y="61" text-anchor="middle">查询、覆盖或时间语义不完整</text><text class="minor" x="125" y="82" text-anchor="middle">EVIDENCE_BLOCKED</text></g>
+  <g transform="translate(285 490)"><rect class="unknown" width="250" height="100"/><text class="label" x="125" y="34" text-anchor="middle">覆盖状态</text><text class="minor" x="125" y="61" text-anchor="middle">查询、覆盖与时间语义校验</text><text class="minor" x="125" y="82" text-anchor="middle">COVERAGE_STATE</text></g>
   <path class="line" d="M410 420 V489"/>
 
   <g transform="translate(625 490)">
     <rect class="model" width="310" height="100"/>
     <text class="label" x="155" y="34" text-anchor="middle">节点资源状态</text>
-    <text class="minor" x="155" y="61" text-anchor="middle">硬约束 + 风险向量 + 待验证约束</text>
+    <text class="minor" x="155" y="61" text-anchor="middle">硬约束 + 风险向量 + 复测状态</text>
     <text class="minor" x="155" y="82" text-anchor="middle">保留 device / chip 解释粒度</text>
   </g>
   <path class="line" d="M1002 187 V450 H860 V489"/>
@@ -91,6 +91,6 @@
   <path class="line" d="M410 590 V620 H550 V649"/>
 
   <g transform="translate(135 765)"><text class="edge" x="0" y="0" fill="#087f8c">OBSERVE_ELIGIBLE：参与风险排序</text></g>
-  <g transform="translate(445 765)"><text class="edge" x="0" y="0" fill="#b87825">RETEST_REQUIRED：验证完成前不候选</text></g>
+  <g transform="translate(445 765)"><text class="edge" x="0" y="0" fill="#b87825">RETEST_REQUIRED：复测队列</text></g>
   <g transform="translate(800 765)"><text class="edge" x="0" y="0" fill="#a95454">HARD_EXCLUDED：正确性或进度硬失败</text></g>
 </svg>

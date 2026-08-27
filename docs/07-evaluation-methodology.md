@@ -1,9 +1,5 @@
 ---
 title: 评测方法与实验设计
-status: draft
-owner: unassigned
-reviewers: []
-last_updated: 2026-08-19
 ---
 
 # 评测方法与实验设计

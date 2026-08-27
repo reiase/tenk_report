@@ -38,7 +38,7 @@
   <circle class="step" cx="412" cy="395" r="14"/><text class="steptext" x="412" y="399" text-anchor="middle">3</text><line class="msg" x1="472" y1="395" x2="773" y2="395"/>
   <text class="label" x="622" y="378" text-anchor="middle">追加本进程事实</text>
   <rect class="note" x="620" y="420" width="320" height="55"/>
-  <text class="minor" x="780" y="443" text-anchor="middle">每张表独立、延迟打开</text><text class="minor" x="780" y="463" text-anchor="middle">单表失败不阻断真实调用</text>
+  <text class="minor" x="780" y="443" text-anchor="middle">每张表独立、延迟打开</text><text class="minor" x="780" y="463" text-anchor="middle">故障隔离 · 真实调用透传</text>
 
   <circle class="step" cx="412" cy="515" r="14"/><text class="steptext" x="412" y="519" text-anchor="middle">4</text><line class="msg" x1="472" y1="515" x2="1053" y2="515"/>
   <text class="label" x="766" y="498" text-anchor="middle">原参数转发同名调用</text>

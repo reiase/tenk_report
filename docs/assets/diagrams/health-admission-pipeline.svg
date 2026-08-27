@@ -20,7 +20,7 @@
   </defs>
   <rect width="1200" height="680" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
   <text class="title" x="54" y="55">训练资源健康准入与异常闭环</text>
-  <text class="minor" x="54" y="82">每一级只回答其覆盖范围内的问题；性能偏离先复测，不与功能故障混为一类。</text>
+  <text class="minor" x="54" y="82">分层输出：功能状态 · 性能候选 · 复测结果 · 训练拓扑。</text>
 
   <g transform="translate(35 140)"><rect class="box" width="135" height="86"/><text class="label" x="67" y="36" text-anchor="middle">资产与作业</text><text class="label" x="67" y="59" text-anchor="middle">快照</text></g>
   <g transform="translate(195 140)"><rect class="box" width="125" height="86"/><text class="label" x="62" y="49" text-anchor="middle">静态检查</text></g>

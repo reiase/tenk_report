@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
   <title id="title">Rank 与并行角色热力图的联邦计算路径</title>
-  <desc id="desc">每个 rank 将训练、内存和系统事实保留在本地，先按训练坐标完成本地关联，再经节点归并和角色条件统计形成多分辨率热力图；缺失和部分结果单独编码。</desc>
+  <desc id="desc">每个 rank 将训练、内存和系统事实保留在本地，先按训练坐标完成本地关联，再经节点归并和角色条件统计形成多分辨率热力图；覆盖状态和部分结果单独编码。</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#3e718d"/></marker>
     <style>
@@ -96,7 +96,7 @@
     <text class="minor" x="100" y="310" text-anchor="middle">collective × rank 等待</text>
     <line class="thin" x1="24" y1="332" x2="177" y2="332"/>
     <rect x="24" y="353" width="18" height="18" fill="url(#hatch)"/>
-    <text class="minor" x="52" y="367">缺失 ≠ 0</text>
+    <text class="minor" x="52" y="367">覆盖状态</text>
     <text class="minor" x="100" y="404" text-anchor="middle">缩放：job → node → role → rank</text>
   </g>
 

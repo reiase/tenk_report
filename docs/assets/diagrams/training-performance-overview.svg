@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">万卡训练关键性能结果</title>
+  <desc id="desc">展示Qwen3-200B弱扩展、2048 die并行配置MFU以及Dense性能、万卡协同ECP、健康检查效率和8192卡启动规模。</desc>
+  <style>
+    text{font-family:"Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif;fill:#182323;letter-spacing:0}
+    .title{font-size:30px;font-weight:700}.subtitle{font-size:15px;fill:#526060}
+    .panel-title{font-size:20px;font-weight:700}.label{font-size:14px}.value{font-size:22px;font-weight:700}
+    .metric{font-size:28px;font-weight:700}.metric-label{font-size:14px;fill:#526060}
+    .grid{stroke:#d8dfdd;stroke-width:1}.axis{stroke:#82908d;stroke-width:1.4}.panel{fill:#fff;stroke:#d7dfdc;stroke-width:1.2}
+  </style>
+  <rect width="1280" height="720" fill="#f5f7f6"/>
+  <text class="title" x="48" y="54">万卡训练关键性能结果</text>
+  <text class="subtitle" x="48" y="82">规模扩展、并行策略与工程效率</text>
+
+  <rect class="panel" x="40" y="112" width="372" height="360" rx="6"/>
+  <text class="panel-title" x="66" y="148">Qwen3-200B 弱扩展</text>
+  <text class="subtitle" x="66" y="174">每卡吞吐（TFLOPS）</text>
+  <line class="axis" x1="92" y1="398" x2="374" y2="398"/>
+  <line class="grid" x1="92" y1="236" x2="374" y2="236"/>
+  <line class="grid" x1="92" y1="317" x2="374" y2="317"/>
+  <text class="label" x="64" y="402">0</text><text class="label" x="55" y="321">60</text><text class="label" x="48" y="240">120</text>
+  <rect x="132" y="252" width="78" height="146" fill="#138a83"/>
+  <rect x="266" y="260" width="78" height="138" fill="#d65a45"/>
+  <text class="value" x="171" y="238" text-anchor="middle">108.56</text>
+  <text class="value" x="305" y="246" text-anchor="middle">102.33</text>
+  <text class="label" x="171" y="426" text-anchor="middle">1,024 卡</text>
+  <text class="label" x="305" y="426" text-anchor="middle">4,096 卡</text>
+  <text class="metric" x="66" y="458" fill="#138a83">94.26%</text>
+  <text class="metric-label" x="190" y="458">弱扩展效率</text>
+
+  <rect class="panel" x="432" y="112" width="510" height="360" rx="6"/>
+  <text class="panel-title" x="458" y="148">2,048 die 并行策略 MFU</text>
+  <text class="subtitle" x="458" y="174">Qwen3-200B · GBS8192 · MBS1 · VPP2</text>
+  <line class="axis" x1="482" y1="398" x2="914" y2="398"/>
+  <line class="grid" x1="482" y1="224" x2="914" y2="224"/>
+  <line class="grid" x1="482" y1="311" x2="914" y2="311"/>
+  <text class="label" x="456" y="402">0</text><text class="label" x="449" y="315">20</text><text class="label" x="449" y="228">40</text>
+  <g>
+    <rect x="500" y="282" width="42" height="116" fill="#647b77"/><text class="label" x="521" y="270" text-anchor="middle">26.7</text>
+    <rect x="560" y="266" width="42" height="132" fill="#4f7772"/><text class="label" x="581" y="254" text-anchor="middle">30.4</text>
+    <rect x="620" y="269" width="42" height="129" fill="#4f7772"/><text class="label" x="641" y="257" text-anchor="middle">29.8</text>
+    <rect x="680" y="253" width="42" height="145" fill="#d5a72b"/><text class="value" x="701" y="238" text-anchor="middle">33.4</text>
+    <rect x="740" y="262" width="42" height="136" fill="#138a83"/><text class="label" x="761" y="250" text-anchor="middle">31.3</text>
+    <rect x="800" y="293" width="42" height="105" fill="#d65a45"/><text class="label" x="821" y="281" text-anchor="middle">24.1</text>
+    <rect x="860" y="276" width="42" height="122" fill="#9a6f3a"/><text class="label" x="881" y="264" text-anchor="middle">28.1</text>
+  </g>
+  <g class="label">
+    <text x="521" y="424" text-anchor="middle">1/64</text><text x="581" y="424" text-anchor="middle">2/32</text>
+    <text x="641" y="424" text-anchor="middle">4/16</text><text x="701" y="424" text-anchor="middle">2/16</text>
+    <text x="761" y="424" text-anchor="middle">4/8</text><text x="821" y="424" text-anchor="middle">8/8</text>
+    <text x="881" y="424" text-anchor="middle">8/8 B</text>
+    <text x="698" y="454" text-anchor="middle" fill="#526060">TP / PP（B = block1）</text>
+  </g>
+
+  <rect class="panel" x="962" y="112" width="278" height="360" rx="6"/>
+  <text class="panel-title" x="988" y="148">工程结果</text>
+  <text class="metric" x="988" y="205" fill="#138a83">124.264</text>
+  <text class="metric-label" x="988" y="228">4,096 卡 Dense TFLOPS/GPU</text>
+  <line class="grid" x1="988" y1="248" x2="1214" y2="248"/>
+  <text class="metric" x="988" y="294" fill="#d5a72b">92.43%</text>
+  <text class="metric-label" x="988" y="317">万卡协同加权 ECP</text>
+  <line class="grid" x1="988" y1="337" x2="1214" y2="337"/>
+  <text class="metric" x="988" y="383" fill="#d65a45">-38.1%</text>
+  <text class="metric-label" x="988" y="406">健康检查墙钟</text>
+  <line class="grid" x1="988" y1="426" x2="1214" y2="426"/>
+  <text class="metric" x="988" y="459" fill="#4f7772">8,192 卡</text>
+  <text class="metric-label" x="1114" y="459">启动验证</text>
+
+  <rect class="panel" x="40" y="492" width="1200" height="180" rx="6"/>
+  <text class="panel-title" x="66" y="530">模型与资源交付</text>
+  <g>
+    <text class="metric" x="92" y="584" fill="#138a83">10,240</text><text class="metric-label" x="92" y="610">纳管加速卡</text>
+    <line class="grid" x1="288" y1="538" x2="288" y2="638"/>
+    <text class="metric" x="340" y="584" fill="#d65a45">800 / 800</text><text class="metric-label" x="340" y="610">200B Dense step</text>
+    <line class="grid" x1="558" y1="538" x2="558" y2="638"/>
+    <text class="metric" x="610" y="584" fill="#9a6f3a">500 / 500</text><text class="metric-label" x="610" y="610">1T MoE step</text>
+    <line class="grid" x1="826" y1="538" x2="826" y2="638"/>
+    <text class="metric" x="878" y="584" fill="#d5a72b">2,048 ranks</text><text class="metric-label" x="878" y="610">C550 Final256 PASS</text>
+  </g>
+</svg>

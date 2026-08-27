@@ -19,7 +19,7 @@
     </style>
   </defs>
   <rect width="1200" height="650" rx="18" fill="#f8fafc" stroke="#d8e2ea"/>
-  <text class="title" x="54" y="55">从物理故障到 ECC 事件：检测结果不是根因</text>
+  <text class="title" x="54" y="55">从物理故障到 ECC 事件与系统处置</text>
 
   <g transform="translate(45 105)"><rect class="box source" width="235" height="105"/><text class="label" x="117" y="30" text-anchor="middle">瞬态扰动</text><text class="minor" x="117" y="57" text-anchor="middle">粒子辐射 · 电源噪声</text><text class="minor" x="117" y="80" text-anchor="middle">电荷泄漏 · 邻位扰动</text></g>
   <g transform="translate(45 255)"><rect class="box source" width="235" height="105"/><text class="label" x="117" y="30" text-anchor="middle">间歇性边缘状态</text><text class="minor" x="117" y="57" text-anchor="middle">温度 · 电压 · 负载相关</text><text class="minor" x="117" y="80" text-anchor="middle">时序或信号完整性裕量</text></g>
@@ -40,9 +40,9 @@
   <rect class="box fail" x="935" y="255" width="220" height="105"/>
   <text class="label" x="1045" y="288" text-anchor="middle">不可纠正错误 · UE</text><text class="minor" x="1045" y="315" text-anchor="middle">检测到但无法恢复原值</text><text class="minor" x="1045" y="338" text-anchor="middle">阻断、隔离或修复</text>
   <rect class="box warn" x="935" y="415" width="220" height="105"/>
-  <text class="label" x="1045" y="448" text-anchor="middle">未覆盖或误纠正</text><text class="minor" x="1045" y="475" text-anchor="middle">可能表现为 SDC</text><text class="minor" x="1045" y="498" text-anchor="middle">依赖端到端正确性检查</text>
+  <text class="label" x="1045" y="448" text-anchor="middle">静默数据异常 · SDC</text><text class="minor" x="1045" y="475" text-anchor="middle">可能表现为 SDC</text><text class="minor" x="1045" y="498" text-anchor="middle">依赖端到端正确性检查</text>
   <path class="line" d="M870 255 L934 166"/><path class="line" d="M870 305 H934"/><path class="line dash" d="M870 355 L934 448"/>
 
   <rect x="350" y="550" width="805" height="48" rx="9" fill="#eaf0f4"/>
-  <text class="minor" x="752" y="579" text-anchor="middle">处置依据 = 是否可纠正 × 是否重复 × 空间位置 × 时间聚集 × 是否已污染作业，而不是只看累计计数。</text>
+  <text class="minor" x="752" y="579" text-anchor="middle">处置向量 = 可纠正性 × 重复性 × 空间位置 × 时间聚集 × 作业影响。</text>
 </svg>
