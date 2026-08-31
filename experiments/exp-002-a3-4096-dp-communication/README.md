@@ -26,10 +26,10 @@
 | no-overlap | 111.764 | 112.1 | 2.51% | +6.89% |
 | no-param-overlap-b | 106.304 | 105.3 | 2.38% | +1.67% |
 
-本轮最高均值来自 `no-overlap`，比首个 `no-param-overlap-a` 高 6.89%；`bucket-128m` 高 5.35%。但同一 `no-param-overlap` 的重复轮次相差 1.67%，且计划中的 `full-overlap-b` 没有数据，说明实验顺序或资源组差异仍可能影响结果。
+本轮最高均值来自 `no-overlap`，比首个 `no-param-overlap-a` 高 6.89%；`bucket-128m` 高 5.35%。同一 `no-param-overlap` 的重复轮次相差 1.67%，且计划中的 `full-overlap-b` 没有数据，因此实验顺序和资源组差异作为复测因子保留。
 
-## 结论边界
+## 适用范围
 
-- 当前结果支持把 `no-overlap` 和 `bucket-128m` 送入随机化复测，不足以直接宣称通信重叠在 4096 卡一定有负收益。
-- `full-overlap-b=NO_DATA` 必须保留在实验分母中，不能只展示完成用例。
+- 当前结果支持把 `no-overlap` 和 `bucket-128m` 送入随机化复测，通信重叠的默认策略由复测后的同条件比较确定。
+- `full-overlap-b=NO_DATA` 保留在实验分母中，与完成用例共同构成实验矩阵。
 - 正式默认值应由相同 placement 下的交错 A/B 和至少一轮重复确认。

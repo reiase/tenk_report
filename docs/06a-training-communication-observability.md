@@ -321,7 +321,7 @@ M_{\mathrm{other}}(t)=M_{\mathrm{driver}}(t)-M_{\mathrm{reserved}}(t)
 
 ### 9.4 查询执行与多分辨率表达
 
-跨表特征先在 rank 本地计算。例如 step 耗时与同 step 的 CPU、GPU、显存事实先按本地时间窗或训练坐标关联，再只上传角色分组的计数、和、极值、分位数 sketch、Top-K 候选和覆盖集合。节点层加入本机拓扑，协调层再完成角色分位数、异常集合和显示矩阵。现有联邦关系计算支持“本地 JOIN 后汇集”，但不支持任意跨 rank JOIN；后者必须改写成明确的归并状态。[I004](references.md#i004)
+跨表特征先在 rank 本地计算。例如 step 耗时与同 step 的 CPU、GPU、显存事实先按本地时间窗或训练坐标关联，再只上传角色分组的计数、和、极值、分位数 sketch、Top-K 候选和覆盖集合。节点层加入本机拓扑，协调层再完成角色分位数、异常集合和显示矩阵。现有联邦关系计算采用“本地 JOIN 后汇集”；跨 rank 关系计算改写成明确的归并状态。[I004](references.md#i004)
 
 时间热力图按屏幕分辨率返回 tile，而不是把原始 slice 全部发送到浏览器。对一个 rank 和一个时间桶，compute、communication、idle 的占用必须先对重叠区间求并集，再计算比例：
 

@@ -23,6 +23,7 @@
 | 模型运行 | 200B Dense 完成 800/800 step；1T MoE 完成 500/500 step |
 | 健康准入 | A3 完成两批 4,096 卡筛查；C550 完成 2,336 卡筛查及 2,048-rank Final256 |
 | 稳定性治理 | A3 Stall 定位到 IPVS timer 与 NPU CQ tasklet 竞争；健康检查墙钟由 1,706 秒降至 1,056 秒 |
+| 可靠性工程 | 以健康准入、有效训练时间、Goodput、MTBF/MTTR、恢复收据和资产快照构成万卡训练评价闭环 |
 | 工程资产 | 10/10 个 tar、6/6 个 Git bundle、75/75 项 SHA256 校验通过 |
 
 ## 技术主线
@@ -45,6 +46,7 @@
 | [A3 HCCL 通信优化](04a-a3-hccl-communication-optimization.md) | 超节点亲和调度、rank 映射与验证方法 |
 | [训练系统与并行策略](05-training-and-parallelism.md) | Dense/MoE 工作负载、并行网格与扩展路径 |
 | [稳定性、容错与可观测性](06-reliability-and-observability.md) | 健康检查、Stall、ECC/RAS、恢复与诊断 |
+| [万卡训练可靠性工程研究](12-reliability-engineering-study.md) | 以论文方法论和项目证据串联准入、训练、恢复与 Goodput |
 | [训练通信观测](06a-training-communication-observability.md) | HCCL 原生观测、公共 Torch 路径与联邦分析 |
 | [评测方法与实验设计](07-evaluation-methodology.md) | 指标公式、变量控制、统计方法与实验矩阵 |
 | [结果与分析](08-results-and-analysis.md) | 性能、扩展、稳定性、健康准入与消融结果 |

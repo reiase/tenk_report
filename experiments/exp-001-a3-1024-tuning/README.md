@@ -24,16 +24,16 @@
 | TP8 + block | 135.00 | 129.86 | 3.96% |
 | TP1 + HCCL PCIe | 109.88 | 107.58 | 2.14% |
 
-在本轮中，`mapping0` 在五组直接配对对比中均更高。TP8 + block + mapping0 达到 135.00 TFLOPS/GPU，是本轮最高值；该结果同时改变了并行与重计算条件，不能把全部收益单独归因给 mapping。
+在本轮中，`mapping0` 在五组直接配对对比中均更高。TP8 + block + mapping0 达到 135.00 TFLOPS/GPU，是本轮最高值；该结果同时改变了并行与重计算条件，收益按联合配置记录，单因素归因进入拓扑 A/B 复测。
 
 TP1 基线复测为 109.92 TFLOPS/GPU，相对首次 109.68 高 0.22%。因此 0.64% 和 0.77% 的小差异需要更多重复轮确认；2.10% 至 3.96% 的 mapping 差异更值得进入拓扑 A/B 复测。
 
-`tp1-no-grad-overlap` 的 64 个 pod 全部失败，不能据此判断关闭梯度重叠的性能。`full-overlap`、`no-param-overlap`、`no-overlap` 与 TaskQueue 变体在 TP1 组的末 5 步均值差异很小，仍需随机化顺序和重复运行排除时间漂移。
+`tp1-no-grad-overlap` 的 64 个 pod 全部失败，状态记录为启动失败，不进入关闭梯度重叠性能评价。`full-overlap`、`no-param-overlap`、`no-overlap` 与 TaskQueue 变体在 TP1 组的末 5 步均值差异很小，后续通过随机化顺序和重复运行评估时间漂移。
 
-S017 的完整会话复核还发现命名边界：运行器中的 `mapping0/1` 对应 `USE_TP_PP_DP_MAPPING=0/1` 开关，但历史日志另有 `MAPPING=tp-dp-pp` 等人类可读标签，二者未归档成一一对应的 resolved command 与代码路径。因此本实验保留 `mapping0/1` 作为用例名，不将 `mapping0` 直接定义为某个 rank-order 字符串。
+S017 的完整会话复核还确认了命名口径：运行器中的 `mapping0/1` 对应 `USE_TP_PP_DP_MAPPING=0/1` 开关，历史日志另有 `MAPPING=tp-dp-pp` 等人类可读标签。当前记录保留 `mapping0/1` 作为用例名，rank-order 字符串以归档的 resolved command 与代码路径为准。
 
-## 结论边界
+## 适用范围
 
-- 这是短窗口性能消融，不是长稳训练、收敛或端到端吞吐结论。
-- 汇总没有冻结硬件批次、物理 placement 和外部网络负载，不能把小于约 1% 的差异直接写成稳定收益。
-- `mapping0` 的优势需要与实际超节点和 rank placement 快照关联后才能完成因果归因。
+- 本记录服务于短窗口性能消融，适用对象为 20 iteration 用例末 5 个有效 iteration。
+- 小于约 1% 的差异按观察结果登记，稳定收益评价结合硬件批次、物理 placement、外部网络负载和重复轮次完成。
+- `mapping0` 的优势进入实际超节点和 rank placement 快照关联分析后，再形成因果归因结论。

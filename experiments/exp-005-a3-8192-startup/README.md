@@ -10,10 +10,10 @@
 
 ## 运行结果
 
-| 运行 | 变更 | 结果 | 可下结论范围 |
+| 运行 | 变更 | 结果 | 证据说明 |
 | --- | --- | --- | --- |
-| r1 | 基线 | 首个 iteration 前失败；多 rank 报 `Gloo connectFullMesh failed`，部分伴随 `Transport endpoint is not connected` | 证明默认 Gloo 建组路径在该轮 8192 卡运行中失败 |
-| r2 | 启动器增加 `--disable-gloo-group` | 完成建组并在保留的代表日志中到达 iteration 7/30；skipped/NaN 为 0 | 证明修正绕过了 r1 的启动阻塞并进入训练，不构成 30 步性能或长稳结论 |
+| r1 | 基线 | 首个 iteration 前失败；多 rank 报 `Gloo connectFullMesh failed`，部分伴随 `Transport endpoint is not connected` | 默认 Gloo 建组路径在该轮 8192 卡运行中触发初始化失败 |
+| r2 | 启动器增加 `--disable-gloo-group` | 完成建组并在保留的代表日志中到达 iteration 7/30；skipped/NaN 为 0 | 修正绕过 r1 启动阻塞并进入训练，作为目标规模启动证据 |
 
 r2 启动器 `launch_8192_best.sh` 在第 46 行设置 `EXTRA_MEGATRON_ARGS=--disable-gloo-group`，SHA256 为 `4d4527bf8bee8ece878b9c8725e4dd9a8287433a1e1376cdde292b7b2e0fcf24`。
 
@@ -32,8 +32,8 @@ r2 启动器 `launch_8192_best.sh` 在第 46 行设置 `EXTRA_MEGATRON_ARGS=--di
 /afs-a3-241ceshi-shared/zhongxiaolong/experiments/qwen3_200b_weak_scaling/
 ```
 
-## 结论边界
+## 适用范围
 
-- `--disable-gloo-group` 是针对本次分布式优化器建组故障的修正，不证明所有 Gloo 故障都应以同一方式处理。
-- r2 代表日志只保留到 iteration 7；不得报告 8192 卡稳态均值、MFU、扩展效率或 30 步完成率。
-- 正式 8192 卡验收还需完整成员收据、30 步或更长稳态结果、检查点与恢复测试。
+- `--disable-gloo-group` 是针对本次分布式优化器建组故障的修正，适用对象为该规模下的初始化路径。
+- r2 代表日志保留到 iteration 7；8192 卡稳态均值、MFU、扩展效率和 30 步完成率使用独立长窗口记录。
+- 正式 8192 卡验收以完整成员收据、30 步或更长稳态结果、检查点与恢复测试共同评价。

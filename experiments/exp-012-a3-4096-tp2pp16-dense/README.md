@@ -25,7 +25,7 @@ S017 中保存了远端目录核验、逐 iteration 聚合和最终统计，但�
 | 运行时 | TaskQueue=2、HCCL RoCE 开启、HCCL PCIe 关闭 |
 | 训练步数 | 30；iteration 6--30 进入稳态统计 |
 
-运行脚本记录 `USE_TP_PP_DP_MAPPING=0`。该值只证明开关状态，不足以单独恢复当时代码中最终 rank-order 字符串；`mapping0`、`mapping1` 和日志中的人类可读别名在归档 resolved command 与对应代码前不能互换使用。
+运行脚本记录 `USE_TP_PP_DP_MAPPING=0`。该值记录开关状态，最终 rank-order 字符串由 resolved command 与对应代码共同确定；`mapping0`、`mapping1` 和日志中的人类可读别名按各自归档语义使用。
 
 ## 主要结果
 
@@ -49,13 +49,13 @@ S017 中保存了远端目录核验、逐 iteration 聚合和最终统计，但�
 
 同一会话中的 r6 候选为 TP8/PP8/VPP4/block1/no-overlap，iteration 6--30 平均 111.764 TFLOPS/GPU、180.625 秒/步、CV 2.51%。TP2/PP16 方案相对提高 11.18%，平均步时降低 10.09%，波动也更低。
 
-这不是单变量 TP 消融：PP、DP、VPP、microbatch 数和重计算方法同时变化。因此可支持的结论是“本轮 TP2/PP16 整套方案优于已测 TP8/PP8 方案”，不能把 11.18% 全部归因于降低 TP。
+这是一组并行策略组合对比：PP、DP、VPP、microbatch 数和重计算方法同时变化。因此本轮支持的结论是“TP2/PP16 整套方案优于已测 TP8/PP8 方案”；单变量 TP 贡献由后续固定 PP/DP/VPP 的消融实验评价。
 
 EXP-006 在 2048 die、GBS8192、MBS1、VPP2 下也报告 TP2/PP16/uniform1 为 33.4% MFU。两边在一位小数上相同，支持继续复测其弱扩展方向；但 EXP-006 使用 `die`、只有聚合 PDF，且两边 MFU 公式与逐步窗口未共同冻结，当前不报告精确的 2048→4096 弱扩展效率。
 
-## 结论边界
+## 适用范围
 
 - 这是 25 个稳态步的短程结果，不证明长稳、检查点恢复、端到端吞吐或收敛。
-- `host_ip` 与 `superpod` 在当时 topology 摘要中为 `unknown`，不能排除 placement 对结果的贡献。
+- `host_ip` 与 `superpod` 在当时 topology 摘要中为 `unknown`，placement 作为复测因子登记。
 - MFU 约 33.4% 依赖来源会话中的理论峰值口径；正式复跑需归档 FLOPs 公式、理论峰值和是否计入重计算。
-- 运行目录在共享 AFS 中被现场核验，后续又进入全量备份清单；本仓库仍缺原始逐 rank 日志，不能独立重算 25 个点。
+- 运行目录在共享 AFS 中被现场核验，后续又进入全量备份清单；25 个点的独立重算由原始逐 rank 日志恢复后执行。

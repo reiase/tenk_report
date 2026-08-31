@@ -28,6 +28,7 @@ nav = [
   ] },
   { "可靠性与评测" = [
     { "稳定性、容错与可观测性" = "06-reliability-and-observability.md" },
+    { "万卡训练可靠性工程研究" = "12-reliability-engineering-study.md" },
     { "评测方法与实验设计" = "07-evaluation-methodology.md" },
     { "结果与分析" = "08-results-and-analysis.md" },
     { "成本、能耗与资源效率" = "09-cost-energy-efficiency.md" },

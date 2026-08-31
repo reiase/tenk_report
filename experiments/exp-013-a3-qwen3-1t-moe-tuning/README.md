@@ -2,7 +2,7 @@
 
 ## 目的
 
-把 Qwen3-1T MoE 从 1024 卡到 4096 卡的短程性能、扩展趋势、有效优化和失败边界固化为独立证据，避免继续把早期 Qwen3-235B 试跑、1T 功能运行截图和 1T 性能调优混在一起。
+把 Qwen3-1T MoE 从 1024 卡到 4096 卡的短程性能、扩展趋势、有效优化和失败形态固化为独立证据，避免继续把早期 Qwen3-235B 试跑、1T 功能运行截图和 1T 性能调优混在一起。
 
 ## 来源与证据等级
 
@@ -31,15 +31,15 @@ MoE 与 Dense 的 TFLOPS/MFU 不直接横向排名。当前 FLOPs 公式按每�
 
 同区间 iteration 3--22 中，clean baseline 为 62.400 TFLOPS/GPU，关闭 parameter gather overlap 后为 64.065，提升约 2.67%；增加 CPU optimizer D2H/CPU update/H2D overlap 后只有 60.455，相对 no-param 低约 5.63%，且后段波动更大。
 
-在 no-param 基线上将 DDP bucket 从 1.024B 降到 256M，iteration 3--16 从 64.164 提高到 64.629 TFLOPS/GPU，观察提升 0.72%，CV 从 4.51% 降到 3.06%。幅度较小，但 256M 随后被保留为扩展配置。EP32 短程约 57.9 TFLOPS/GPU，低于 EP16 的约 64.1；当前证据不支持扩大 EP 作为默认方向。
+在 no-param 基线上将 DDP bucket 从 1.024B 降到 256M，iteration 3--16 从 64.164 提高到 64.629 TFLOPS/GPU，观察提升 0.72%，CV 从 4.51% 降到 3.06%。幅度较小，但 256M 随后被保留为扩展配置。EP32 短程约 57.9 TFLOPS/GPU，低于 EP16 的约 64.1；默认方向保留 EP16，并将扩大 EP 作为独立复测项。
 
 早期基础脚本在第 5--6 步固定开启 profiler，导致多组 step 6 同时变慢。后续 clean/no-param/bucket 主比较均删除 profiler 参数；含固定 profiler 的 step 6 不进入性能归因。
 
-## 失败与边界矩阵
+## 失败与适用条件矩阵
 
-| 方向 | 结果 | 归因边界 |
+| 方向 | 结果 | 归因说明 |
 | --- | --- | --- |
-| EP8 | 首次 DDP buffer 申请 15.75 GiB 时 OOM | 显存硬边界，不是性能结论 |
+| EP8 | 首次 DDP buffer 申请 15.75 GiB 时 OOM | 显存硬约束，作为容量配置结果登记 |
 | EP32 | 可运行但短程吞吐下降 | 只形成方向性淘汰，缺重复轮 |
 | recompute 7→6 | FlashAttention/后续内存申请 OOM | 当前内存条件下不可用 |
 | BF16 main grad + BF16 reduce | MoE 融合反向调用 `npu_groupmatmul_add_fp32` 时 dtype 不兼容 | 当前 MindSpeed 实现限制，不外推到其他版本 |
@@ -47,14 +47,14 @@ MoE 与 Dense 的 TFLOPS/MFU 不直接横向排名。当前 FLOPs 公式按每�
 | 4096 卡 bucket128 首次任务 | Gloo full-mesh 在 iteration 前失败 | 没有产生 128M 性能数据；后以 no-Gloo 重跑 |
 | 4096 卡 bucket128 no-Gloo | last5 56.66 TFLOPS/GPU | 比 256M no-Gloo 低 1.73% |
 | 4096 卡 bucket256 no-Gloo | last5 57.66 TFLOPS/GPU | 相比旧 256M 的 57.46 只高 0.35%，主要价值是启动稳定性 |
-| 4096 卡 recompute4 | master Service DNS/rendezvous 超时，未进入训练 | 配置收益未知，不能记为 recompute4 失败 |
+| 4096 卡 recompute4 | master Service DNS/rendezvous 超时，未进入训练 | 配置收益待训练态复测确认，按启动路径失败登记 |
 
-`--disable-gloo-group` 解决的是 4096 卡初始化路径：首个失败位于 Gloo full-mesh，后续 no-Gloo 任务完成 30 步。它没有显示出稳态吞吐收益，不能被描述为训练性能优化。
+`--disable-gloo-group` 解决的是 4096 卡初始化路径：首个失败位于 Gloo full-mesh，后续 no-Gloo 任务完成 30 步。它按启动可靠性配置登记，稳态吞吐收益由独立性能窗口评价。
 
-## 结论边界
+## 适用范围
 
 - 主结果统一报告会话最终复核的 last5，并同时披露 last10；不同早期答复采用的 iteration 3--N 均值不与主表混用。
 - 1024/2048/4096 卡均为 30 步级短程运行，没有检查点恢复、长稳、数据身份或收敛结论。
 - 4096 卡 placement 分布跨多个 Pod-IP 网段，缺少 SuperPod ID；EP16 单节点内映射的判断还需用最终 rank-order 与物理拓扑快照复核。
 - 当前 MFU 分子没有完整覆盖 MoE 路由、通信和 offload 成本，因此本实验以 TFLOPS/GPU、步时和样本吞吐为主，不把约 17% 的早期 MFU 估算作为主结论。
-- 1T 原始日志已进入 AFS 全量备份范围，但对象存储迁移尚未完成；在恢复原始包前，本仓库不能独立重算所有窗口。
+- 1T 原始日志已进入 AFS 全量备份范围；对象存储迁移完成后，本仓库可按原始包重算所有窗口。
