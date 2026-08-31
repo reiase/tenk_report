@@ -8,11 +8,11 @@ title: 术语与缩略语
 
 | 术语 | 英文或缩写 | 本报告定义 | 备注 |
 | --- | --- | --- | --- |
-| 万卡规模 | 10K-scale | 待定义：物理卡数、分配卡数或有效参与训练卡数 | 必须在摘要中沿用同一口径 |
-| 模型 FLOPs 利用率 | MFU | (	ext{模型有效 FLOPs/s}/(N P_{mathrm{peak}})) | 冻结模型 FLOPs、精度峰值、设备单位与重计算口径 |
-| 硬件 FLOPs 利用率 | HFU | (	ext{实际执行 FLOPs/s}/(N P_{mathrm{peak}})) | 明确实际执行 FLOPs 与重计算口径 |
-| 有效训练时间占比 | 待统一 | 待给出分子、分母和排除项 | 不与集群可用率混用 |
-| 扩展效率 | Scaling efficiency | 待定义强扩展和弱扩展公式 | 标明基准规模 |
+| 万卡规模 | 10K-scale | 本报告指 A3 8,192 卡与 C550 2,048 卡资源池共同构成的 10,240 卡项目规模；单项训练结果按实际参与卡数单独标注 | 摘要、结果表和图表保持同一规模口径 |
+| 模型 FLOPs 利用率 | MFU | \(\mathrm{模型有效\ FLOPs/s}/(N P_{\mathrm{peak}})\) | 冻结模型 FLOPs、精度峰值、设备单位与重计算口径 |
+| 硬件 FLOPs 利用率 | HFU | \(\mathrm{实际执行\ FLOPs/s}/(N P_{\mathrm{peak}})\) | 明确实际执行 FLOPs 与重计算口径 |
+| 有效训练时间占比 | ETTR, Effective Training Time Ratio | 有效推进训练 step 的卡时 / 训练 run 墙钟卡时；排队、启动、检查点、重启和恢复按预注册统计规则计入 | 与集群可用率、MFU 和资源纳管率分别统计 |
+| 扩展效率 | Scaling efficiency | 弱扩展按同模型配置下每卡吞吐相对基准规模的比例计算；强扩展按固定工作量下吞吐或完成时间相对基准规模计算 | 同一表格必须标明基准规模、全局 batch、序列长度和并行配置 |
 | 算法带宽 | AlgBW | collective 有效 payload 除以执行时间 | payload 解释随 collective 变化 |
 | 总线带宽 | BusBW | 由 AlgBW 按 collective 和 group size 换算的链路负载指标 | 不是物理链路逐端口实测值 |
 | 单卡测试 HBM 有效带宽 | Effective HBM bandwidth | 流式读取、简单变换和写回的名义总字节数除以设备执行时间 | 不是厂商原始 HBM 峰值，也不是 scale-up 互连带宽 |
@@ -34,7 +34,7 @@ title: 术语与缩略语
 | 最终训练拓扑验收 | Final training topology | 在精确目标节点上按真实子通信组完成的功能性准入 | 不做大规模 group 间性能归因 |
 | 阻断 | Blocked | 在线成员、硬通过节点或对应拓扑条件不足，无法按目标规模执行 | 不得降级冒充目标规模通过 |
 | standby | Standby | 通过硬 gate 但未进入本轮精确训练集合的候选节点 | 与因硬失败被 excluded 区分 |
-| 物理超节点 | Physical SuperPod | 由产品物理拓扑确定的超节点边界 | 以资产清单和设备管理面的超节点标识为准 |
+| 物理超节点 | Physical SuperPod | 由产品物理拓扑确定的超节点范围 | 以资产清单和设备管理面的超节点标识为准 |
 | 逻辑超节点 | Logical SuperPod | 在一个物理超节点内为作业划分的连续资源块 | 不跨物理超节点；逻辑块内 rank 连续 |
 | 超节点亲和性 | SuperPod affinity | 根据 NPU、节点和超节点拓扑选择资源的调度约束 | 小任务优先局部，大任务跨域后均衡 |
 | HCCL rank table | HCCL rank table | 描述通信域内 Server、Device、rank、网卡和超节点关系的配置 | A3 超节点模式使用 1.2 格式 |

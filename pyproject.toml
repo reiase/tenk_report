@@ -1,6 +1,6 @@
 [project]
 name = "tenk-technical-report"
-version = "0.8.0"
+version = "0.9.0"
 description = "万卡国产加速卡训练技术报告站点"
 requires-python = ">=3.10"
 dependencies = [

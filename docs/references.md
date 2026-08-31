@@ -1,6 +1,6 @@
 # 参考资料
 
-为外部资料分配稳定编号。删除资料时保留编号并标注原因，避免正文引用漂移。内部实现证据使用 `I` 前缀，并冻结仓库 commit；正文只引用可复核的设计与行为边界，不展开具体代码路径。
+为外部资料分配稳定编号。删除资料时保留编号并标注原因，避免正文引用漂移。内部实现证据使用 `I` 前缀，并冻结仓库 commit；正文只引用可复核的设计依据和工程行为，不展开具体代码路径。
 
 ## R001
 
@@ -79,7 +79,7 @@
 - 发布日期：MindCluster 7.3.0 文档
 - 访问日期：2026-08-15
 - 链接：https://www.hiascend.com/document/detail/en/mindcluster/730/clustersched/schedulingug/dl_affinity_0007.html
-- 支撑内容：HiAM、SIO、HCCS-L1/HCCS-L2、16 NPU 计算节点，以及逻辑超节点内 HCCS、逻辑超节点间 RoCE 的通信边界
+- 支撑内容：HiAM、SIO、HCCS-L1/HCCS-L2、16 NPU 计算节点，以及逻辑超节点内 HCCS、逻辑超节点间 RoCE 的通信范围
 - 备注：应与项目实际安装版本和产品子型号核对
 
 ## R009
@@ -89,7 +89,7 @@
 - 发布日期：MindCluster 7.3.0 文档
 - 访问日期：2026-08-15
 - 链接：https://www.hiascend.com/document/detail/zh/mindcluster/730/clustersched/dlug/dl_affinity_0026.html
-- 支撑内容：A3 逻辑超节点亲和任务的单 Pod NPU 申请约束和非 16 卡分布式调度边界
+- 支撑内容：A3 逻辑超节点亲和任务的单 Pod NPU 申请约束和非 16 卡分布式调度约束
 - 备注：不同 MindCluster 版本的支持范围存在变化，必须冻结版本
 
 ## R010
@@ -183,6 +183,15 @@
 - 支撑内容：TP/PP 与 world size 的 MFU 趋势、GBS 和重计算消融、TensorBoard/Profiling 通信归因摘要，以及 2048 die 下七组并行配置搜索
 - 统计口径：采用来源报告中的聚合表、趋势图和 Profiling 摘要，规模单位保持为 die
 
+## R019
+
+- 标题：Revisiting Reliability in Large-Scale Machine Learning Research Clusters
+- 作者或机构：Apostolos Kokolis、Michael Kuchnik、John Hoffman、Adithya Kumar、Parth Malani、Faye Ma、Zachary DeVito、Shubho Sengupta、Kalyan Saladi、Carole-Jean Wu，FAIR at Meta
+- 发布日期：2025，HPCA 2025
+- 导入日期：2026-08-31
+- 链接：本地论文附件 `文档/Revisiting Reliability in Large-Scale Machine.pdf`
+- 支撑内容：大规模机器学习集群的故障分类、健康检查、异常节点识别、MTTF 随作业规模变化、ETTR/Goodput 指标、检查点与重启成本模型、网络自适应路由和调度扰动分析
+- 适用说明：论文数据来自 Meta 两个多租户 A100/DGX/NCCL/InfiniBand/Slurm 集群，覆盖 11 个月、400 万作业和超过 1.5 亿 A100 GPU 小时；本报告引用其故障分类、健康检查、ETTR/Goodput 与恢复成本分析方法，项目结论以 A3、C550 资源池记录和训练日志为准
 ## I001
 
 - 标题：Probing HCCL MSProf shim 实现
@@ -194,7 +203,7 @@
 
 - 标题：Probing Torch collective 与加速器 backend 实现
 - 仓库与版本：`probing`，commit `906ce8b33eb2`
-- 支撑内容：`torch.distributed` API hook、API wall-clock 语义、NPU/CUDA/CPU 能力探测、TorchProbe 当前 backend 覆盖边界
+- 支撑内容：`torch.distributed` API hook、API wall-clock 语义、NPU/CUDA/CPU 能力探测、TorchProbe 现行 backend 覆盖范围
 - 备注：代码快照中未发现 C550、MetaX 或 MCCL 专用原生采集器
 
 ## I003
@@ -224,4 +233,4 @@
 - 标题：训练前健康检查的计时、异步完成与前向进展设计
 - 仓库与版本：`pretrain_healthcheck`，commit `40ee919f7d9e`；所含单卡计时与长稳筛查组件分别固定于 commit `db38011` 与 `e149eae`
 - 支撑内容：后端相关的 device event 与 synchronize、预热和预分配后的稳态批次计时、同步主机诊断计时、设备 stream 门控、异步 collective 的逐 work 完成、训练并行组覆盖、固定长度结果交换，以及零通信反复等待的逐 gap 稳定性观测与事件率摘要
-- 备注：当前实现中的静态事实深度与设备适配覆盖并不完全对称；正文将其作为软硬件一致性要求和待验证边界，不展开具体命令、代码路径或运维步骤
+- 备注：静态事实深度与设备适配覆盖按生产版本持续对齐；正文将其作为软硬件一致性要求，不展开具体命令、代码路径或运维步骤

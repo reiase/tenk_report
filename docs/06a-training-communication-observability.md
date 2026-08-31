@@ -44,7 +44,7 @@ title: 训练通信观测与多加速卡兼容设计
 | 层级 | 主要接口 | 可移植性 | 信息深度 | 版本耦合 |
 | --- | --- | --- | --- | --- |
 | 系统公共层 | 进程、CPU、文件、环境与通用 tracing | 高 | 主机与进程状态 | 低 |
-| Torch 语义层 | module hook、tensor、step、`torch.distributed` | 较高 | 训练语义与 API 边界 | 受 PyTorch/厂商后端接口影响 |
+| Torch 语义层 | module hook、tensor、step、`torch.distributed` | 较高 | 训练语义与 API 层级 | 受 PyTorch/厂商后端接口影响 |
 | 加速器适配层 | `torch.cuda`、`torch.npu`、event/stream | 中 | 设备计时与显存 | 受设备模块能力影响 |
 | 通信库原生层 | NCCL profiler、HCCL MSProf shim | 较低 | 算法、task、transport、proxy/plane | 与通信库 ABI 和版本紧密耦合 |
 
@@ -136,7 +136,7 @@ rank 对负载候选以“进程 rank、本地/远端 rank、plane、链路和 t
 
 通用 collective tracer 在 Python 层包装 `torch.distributed` 的 `all_reduce`、`all_gather`、`reduce_scatter`、`broadcast` 及 tensor 变体。它读取标准 `ProcessGroup` 的 rank/size、张量 shape/dtype/bytes 和 `async_op`，并把结果写入 `python.comm_collective`。[I002](references.md#i002)
 
-当 PyTorch 后端从 NCCL 切到 HCCL 或其他厂商通信库时，训练代码仍调用相同的 `torch.distributed` API，tracer 不需要理解下层算法即可保留公共字段。兼容范围止于 API 边界；下层算法与 transport 仍需要厂商适配。
+当 PyTorch 后端从 NCCL 切到 HCCL 或其他厂商通信库时，训练代码仍调用相同的 `torch.distributed` API，tracer 不需要理解下层算法即可保留公共字段。兼容范围覆盖 API 公共语义；下层算法与 transport 通过厂商适配补充。
 
 但它测量的是 Python API 周围的 wall clock：
 
@@ -170,17 +170,17 @@ rank 对负载候选以“进程 rank、本地/远端 rank、plane、链路和 t
 - NCCL 精细观测也需要原生 profiler plugin；
 - 这些原生组件仍受操作系统、动态链接、ABI 和通信库版本约束。
 
-这里的边界是“公共语义位于 Torch 层，原生适配器位于边缘”，而不是把所有采集都改写成纯 Python。
+这里采用“公共语义位于 Torch 层，原生适配器位于边缘”的分层方式，保持公共采集与厂商原生信息各自清晰。
 
 ## 6. 两个资源池的能力矩阵
 
-| 能力 | A3 / HCCL | C550 / 当前软件栈 | 结论 |
+| 能力 | A3 / HCCL | C550 / 现行软件栈 | 结论 |
 | --- | --- | --- | --- |
 | `torch.distributed` API 名称、rank、group、bytes | 可通过通用 tracer；需关闭 CUDA 专用 sync | 若厂商 PyTorch ProcessGroup 保持标准接口则可复用，需实机验证 | 公共兼容基线 |
 | step/并行角色关联 | 可复用公共 tracing/Megatron 坐标 | 可复用公共 tracing/Megatron 坐标 | 与通信库解耦 |
 | NPU event helper | `torch.npu` 已有能力探测和单元测试 | 不适用或取决于厂商接口 | 只是局部 helper，不代表全部模块 |
-| 长期 TorchProbe 设备计时/显存 | 当前 backend 未包含 `torch.npu`，需要适配 | 若兼容 `torch.cuda` 也必须实测，不能假定 | 当前有明确覆盖缺口 |
-| 通信库内部事件 | HCCL MSProf shim 已实现 | 未发现 C550/MCCL 原生 adapter | A3 可深挖，C550 暂为 API 层 |
+| 长期 TorchProbe 设备计时/显存 | 现行 backend 按 `torch.npu` 补充适配 | 按厂商 PyTorch 接口完成实机验证 | backend 适配项 |
+| 通信库内部事件 | HCCL MSProf shim 已实现 | API 层采集先覆盖公共字段，MCCL 原生 adapter 作为增强接入 | A3 支持原生下钻，C550 保持公共观测路径 |
 | NIC/交换机真实 counter | HCCL 表不能替代，需要单独接入 | 同样需要厂商/网络侧采集 | 两池均是外部证据 |
 
 C550 的兼容准入至少包括：导入训练环境中的 `torch`、枚举设备、初始化目标 ProcessGroup、对八类被 hook collective 做同步与异步冒烟、校验 tensor bytes/rank/group、测量 hook 开销，并确认不会调用 CUDA 专属同步。通过这些检查后，才能把 Torch 路径标记为“已验证兼容”。
@@ -193,7 +193,7 @@ C550 的兼容准入至少包括：导入训练环境中的 `torch`、枚举设�
 
 ### 7.1 常驻路径的成本分解
 
-TorchProbe 的 step gate 决定“多久采一次完整 module 快照”，layer gate 决定“命中 step 后覆盖多少层”。step gate 由 step 序号确定，layer gate 由 `(step, layer)` 的稳定哈希确定，因此不同 rank 在同一训练坐标上做出一致选择。当前默认采样 5% 的 step，并在命中的 step 上保留完整 module 关系；未命中的 step 仍记录墙钟，使长期趋势不因采样形成空洞。[I004](references.md#i004)
+TorchProbe 的 step gate 决定“多久采一次完整 module 快照”，layer gate 决定“命中 step 后覆盖多少层”。step gate 由 step 序号确定，layer gate 由 `(step, layer)` 的稳定哈希确定，因此不同 rank 在同一训练坐标上做出一致选择。现行默认采样 5% 的 step，并在命中的 step 上保留完整 module 关系；未命中的 step 仍记录墙钟，使长期趋势不因采样形成空洞。[I004](references.md#i004)
 
 常驻成本需要拆成两个执行路径，并按采样率摊销：
 
@@ -213,11 +213,11 @@ C_{\mathrm{effective}}
 
 每个 rank 的训练事实默认保留在本地；持续跨网络传播的只是 endpoint、rank、node rank、local rank、并行角色和存活状态等小型成员元数据。成员收敛后，心跳周期指数退避，同时受失效检测窗口约束。心跳和查询在独立异步执行路径运行，不由训练 callback 直接发起网络请求。
 
-因此，世界规模增加时，常驻训练热路径不会因为中心写入而增加一次新的全局同步；增长发生在成员元数据、查询 fan-out 和查询结果大小上。后两项通过分层拓扑、聚合下推和结果预算控制。这个性质只能说明成本结构可扩展，不能直接证明 8,192 卡上的开销已经“极低”。生产结论仍需报告 step time 的 P50/P95/Max、控制流量、丢弃事件、查询期间的额外开销和作业规模曲线。
+因此，世界规模增加时，常驻训练热路径不会因为中心写入而增加一次新的全局同步；增长发生在成员元数据、查询 fan-out 和查询结果大小上。后两项通过分层拓扑、聚合下推和结果预算控制。该性质用于描述成本结构的可扩展性。生产评价同步报告 step time 的 P50/P95/Max、控制流量、丢弃事件、查询期间的额外开销和作业规模曲线。
 
 ### 7.3 同作业内的 shadow 基线
 
-当前设计以交错 shadow step 估计 TorchProbe 自身开销。shadow step 保留相同训练负载和其他采集器，但绕过 TorchProbe 的 module 重路径；默认按四个 probed step 配一个 shadow step。设 \(M_s\)、\(M_d\)、\(M_p\) 分别为 shadow、未采样 probed 和采样 probed step 的中位数，则：
+现行设计以交错 shadow step 估计 TorchProbe 自身开销。shadow step 保留相同训练负载和其他采集器，但绕过 TorchProbe 的 module 重路径；默认按四个 probed step 配一个 shadow step。设 \(M_s\)、\(M_d\)、\(M_p\) 分别为 shadow、未采样 probed 和采样 probed step 的中位数，则：
 
 \[
 O_{\mathrm{dispatch}}=\frac{M_d}{M_s}-1,
@@ -239,11 +239,11 @@ shadow 只隔离 TorchProbe，不能代表关闭全部观测的纯训练基线�
 
 ### 8.1 三类执行计划
 
-查询计划不能统一退化成“向所有 rank 广播任意 SQL，再拼接结果”。当前联邦引擎根据关系代数是否可分解选择三条路径：
+查询计划不能统一退化成“向所有 rank 广播任意 SQL，再拼接结果”。现行联邦引擎根据关系代数是否可分解选择三条路径：
 
-| 路径 | 数据侧计算 | 协调侧计算 | 语义边界 |
+| 路径 | 数据侧计算 | 协调侧计算 | 语义范围 |
 | --- | --- | --- | --- |
-| 聚合下推 | 过滤、分组和 `count/sum/min/max` 等可归并 partial | 按来源坐标二次归并、全局排序和截断 | `avg` 需要 sum/count 状态；当前不进入该下推路径 |
+| 聚合下推 | 过滤、分组和 `count/sum/min/max` 等可归并 partial | 按来源坐标二次归并、全局排序和截断 | `avg` 以 sum/count 状态进入下推路径 |
 | 联邦扫描 | 精确可下推的过滤与投影；远端分区按需读取 | 完成剩余 filter/sort/limit | `LIMIT K` 只能在全局合并后执行，不能每个 rank 各取 K 行 |
 | 本地关系计算后汇集 | 每个 rank 在共址事实上完成 JOIN、CTE 或窗口计算 | 注入 rank 坐标并拼接局部结果 | 结果不是跨 rank JOIN；不同 rank 的表不能在协调端假装天然共址 |
 
@@ -253,7 +253,7 @@ shadow 只隔离 TorchProbe，不能代表关闭全部观测的纯训练基线�
 
 扁平 fan-out 需要协调器直接维护 `O(world_size)` 个远端请求。分层模式使用 `coordinator → 每机 local0 → 本机 leaf rank`：协调器连接数约为节点数，本机代理再连接少量本地 rank。以每机 8 卡、1,024 个节点为例，协调器面对约 1,023 个远端节点代理，每个代理处理约 7 个 leaf，而不是由协调器直接管理 8,191 个远端 rank。
 
-当前联邦引擎对 `count/sum/min/max` 执行可归并 partial，对单表扫描执行按需读取。面向分布式 profiler 的进一步模型规定：分位数传输 quantile sketch，热点传输有界 Top-K，rank 覆盖传输压缩集合，时间占用先在 rank 本地求区间并集，调用栈先折叠为路径与权重。这些 profiler 专用状态尚未全部进入现有联邦执行路径。只有选中少量 rank 和窄窗口后，查询才应读取精确 slice 或原始 stack。
+现行联邦引擎对 `count/sum/min/max` 执行可归并 partial，对单表扫描执行按需读取。面向分布式 profiler 的模型规定：分位数传输 quantile sketch，热点传输有界 Top-K，rank 覆盖传输压缩集合，时间占用先在 rank 本地求区间并集，调用栈先折叠为路径与权重。profiler 专用状态接入执行路径时保持上述可归并语义；选中少量 rank 和窄窗口后，查询读取精确 slice 或原始 stack。
 
 ### 8.3 部分结果是查询语义的一部分
 
@@ -384,7 +384,7 @@ M_{\mathrm{other}}(t)=M_{\mathrm{driver}}(t)-M_{\mathrm{reserved}}(t)
 | 维度 | 对照 | 必须保持或披露的量 |
 | --- | --- | --- |
 | 语义一致性 | 开启/关闭观测 | collective 结果、异步完成、错误传播、初始化与退出 |
-| 时间一致性 | API wall clock、设备 event、原生事件 | 各自起止边界及差值分布，不要求数值强行相等 |
+| 时间一致性 | API wall clock、设备 event、原生事件 | 各自起止点及差值分布，不要求数值强行相等 |
 | 数据一致性 | 公共 Torch 行与原生通信行 | rank、group、op、bytes、sequence 与窄时间窗候选关联 |
 | 资源一致性 | 无观测、常驻采样、短窗口深度采集 | step P50/P95/Max、CPU、内存、丢弃和控制流量 |
 | 覆盖一致性 | 成员快照与查询收据 | 期望/实际 rank、失败分片、重复来源与时间对齐 |

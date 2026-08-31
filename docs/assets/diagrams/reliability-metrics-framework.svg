@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">大规模训练可靠性评价闭环</title>
+  <desc id="desc">展示健康准入、训练运行、故障恢复和指标归集之间的关系，指标包括有效训练时间占比、MTBF、MTTR和集群有效产出。</desc>
+  <style>
+    text{font-family:"Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif;fill:#182323;letter-spacing:0}
+    .title{font-size:30px;font-weight:700}.subtitle{font-size:15px;fill:#526060}.panel-title{font-size:20px;font-weight:700}
+    .label{font-size:15px}.small{font-size:13px;fill:#526060}.metric{font-size:21px;font-weight:700}
+    .panel{fill:#fff;stroke:#d7dfdc;stroke-width:1.2}.chip{fill:#eef4f2;stroke:#c6d5d1;stroke-width:1}.arrow{fill:none;stroke:#4f7772;stroke-width:3;marker-end:url(#arrow)}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4f7772"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="640" fill="#f5f7f6"/>
+  <text class="title" x="48" y="58">大规模训练可靠性评价闭环</text>
+  <text class="subtitle" x="48" y="86">资源准入、作业推进、故障恢复与集群有效产出统一统计</text>
+
+  <rect class="panel" x="64" y="150" width="250" height="176" rx="6"/>
+  <text class="panel-title" x="90" y="190">健康准入</text>
+  <text class="label" x="90" y="225">静态一致性</text>
+  <text class="label" x="90" y="254">单卡与整机压力</text>
+  <text class="label" x="90" y="283">Pairwise 与训练拓扑</text>
+
+  <rect class="panel" x="394" y="150" width="250" height="176" rx="6"/>
+  <text class="panel-title" x="420" y="190">训练运行</text>
+  <text class="label" x="420" y="225">step 持续推进</text>
+  <text class="label" x="420" y="254">MFU 与通信暴露</text>
+  <text class="label" x="420" y="283">rank 级尾部等待</text>
+
+  <rect class="panel" x="724" y="150" width="250" height="176" rx="6"/>
+  <text class="panel-title" x="750" y="190">故障恢复</text>
+  <text class="label" x="750" y="225">检查点写入与加载</text>
+  <text class="label" x="750" y="254">重启与恢复 step</text>
+  <text class="label" x="750" y="283">隔离、复验、回池</text>
+
+  <rect class="panel" x="1034" y="150" width="182" height="176" rx="6"/>
+  <text class="panel-title" x="1060" y="190">指标归集</text>
+  <text class="label" x="1060" y="225">有效训练时间占比</text>
+  <text class="label" x="1060" y="254">MTBF / MTTR</text>
+  <text class="label" x="1060" y="283">集群有效产出</text>
+
+  <path class="arrow" d="M314 238 H384"/>
+  <path class="arrow" d="M644 238 H714"/>
+  <path class="arrow" d="M974 238 H1024"/>
+  <path class="arrow" d="M1125 326 V394 H210 V336"/>
+
+  <rect class="chip" x="88" y="430" width="260" height="108" rx="6"/>
+  <text class="metric" x="112" y="468">资源层</text>
+  <text class="small" x="112" y="497">节点、设备、链路、存储路径</text>
+  <text class="small" x="112" y="522">准入通过率与风险画像</text>
+
+  <rect class="chip" x="390" y="430" width="260" height="108" rx="6"/>
+  <text class="metric" x="414" y="468">作业层</text>
+  <text class="small" x="414" y="497">训练 run、检查点、恢复 step</text>
+  <text class="small" x="414" y="522">有效训练时间占比</text>
+
+  <rect class="chip" x="692" y="430" width="260" height="108" rx="6"/>
+  <text class="metric" x="716" y="468">集群层</text>
+  <text class="small" x="716" y="497">多作业调度与卡时消耗</text>
+  <text class="small" x="716" y="522">Goodput 与排队扰动</text>
+
+  <rect class="chip" x="994" y="430" width="190" height="108" rx="6"/>
+  <text class="metric" x="1018" y="468">工程闭环</text>
+  <text class="small" x="1018" y="497">隔离、维修、复验</text>
+  <text class="small" x="1018" y="522">指标回归分析</text>
+</svg>
